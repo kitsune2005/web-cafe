@@ -1,0 +1,33 @@
+.brew-item {
+    text-align: center;
+    cursor: pointer;
+}
+
+.brew-circle {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: #fff6e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s ease;
+    overflow: hidden;
+}
+
+.brew-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.brew-item:hover .brew-circle {
+    transform: scale(0.82);
+    background: #f3dcc0;
+}
+
+.brew-item p {
+    font-weight: 600;
+    font-size: 14px;
+}

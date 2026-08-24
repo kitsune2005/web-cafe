@@ -1,0 +1,119 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "name": "Cà Phê Rang Xay Blend",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate6.png"
+        },
+        {
+            "id": 2,
+            "name": "Cà Phê Hạt Liberica",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate3.png"
+        },
+        {
+            "id": 3,
+            "name": "Cà Phê Hạt Excelsa",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate2.png"
+        }
+    ],
+    "products": [
+        {
+            "id": 1,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        }
+    ],
+    "journey": [
+        {
+            "id": 1,
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-step1.png",
+            "title": "Xử Lý Hạt Cà Phê",
+            "description": "Sau khi thu hoạch, hạt cà phê được tách chất bã và vỏ thông qua quá trình xử lý."
+        },
+        {
+            "id": 2,
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-step2.png",
+            "title": "Rang Hạt Cà Phê",
+            "description": "Hạt cà phê sau khi được xử lý sẽ được rang để tạo ra hương vị đặc trưng."
+        }
+    ],
+    "brews": [
+        {
+            "id": 1,
+            "name": "Kalita Wave",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-2.png"
+        },
+        {
+            "id": 2,
+            "name": "Chemex",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-5.png"
+        },
+        {
+            "id": 3,
+            "name": "Espresso",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-1.png"
+        },
+        {
+            "id": 4,
+            "name": "Pour-Over",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-6.png"
+        },
+        {
+            "id": 5,
+            "name": "Flash Brew",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
+        },
+        {
+            "id": 6,
+            "name": "Máy Pha Tự Động",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-4.png"
+        }
+    ],
+    "testimonials": [
+        {
+            "id": 1,
+            "rating": 5,
+            "title": "Sản phẩm chất lượng",
+            "content": "Tôi rất ấn tượng với chất lượng sản phẩm. Sự tươi mới và tự nhiên của sản phẩm khiến tôi cảm thấy hài lòng...",
+            "author": "Văn Long"
+        },
+        {
+            "id": 2,
+            "rating": 5,
+            "title": "Quá tuyệt vời",
+            "content": "Tôi rất ấn tượng với chất lượng sản phẩm...",
+            "author": "Lê Hảo"
+        },
+        {
+            "id": 3,
+            "rating": 5,
+            "title": "Rất hài lòng",
+            "content": "Tôi rất ấn tượng với chất lượng sản phẩm...",
+            "author": "Bạch Ngân"
+        }
+    ],
+    "instagram": [
+        "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg",
+        "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta2.jpg",
+        "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta3.jpg",
+        "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta4.jpg",
+        "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta5.jpg"
+    ],
+    "brands": [
+        "DALGONA COFFEE",
+        "La Croissanterie",
+        "Belle Café",
+        "THE RISTRETTO",
+        "Coffeep",
+        "Roses Coffee",
+        "DALGONA COFFEE",
+        "La Croissanterie",
+        "Belle Café",
+        "THE RISTRETTO",
+        "Coffeep",
+        "Roses Coffee"
+    ]
+}
