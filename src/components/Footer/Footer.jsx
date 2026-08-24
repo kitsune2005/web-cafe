@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container footer-grid">
                 <div className="footer-col footer-brand">
                     <a href="#" className="logo logo-light">
-                        <img style={{ marginLeft: '-15px' }} src="./img/logo_fox_coffee.png" alt="" />
+                        <img style={{ marginLeft: '-15px' }} src="./src/img/logo_fox_coffee.png" alt="" />
                     </a>
                     <p>Cà phê nguyên chất được chế biến 100% nguyên chất, không pha trộn với bất kỳ loại hạt cà phê nào khác.</p>
                 </div>
