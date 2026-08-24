@@ -1,0 +1,175 @@
+.brew-section {
+    padding: 60px 0;
+    background-color: #ffffff;
+    width: 100%;
+  }
+  
+  /* =========================================
+     TIÊU ĐỀ
+  ========================================= */
+  .brew-head {
+    text-align: center;
+    margin-bottom: 45px;
+  }
+  
+  .brew-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #3b1708;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+  }
+  
+  .brew-desc {
+    font-size: 13.5px;
+    color: #555555;
+    margin: 0;
+  }
+  
+  /* =========================================
+     CAROUSEL CONTAINER & TRACK (6 CỘT)
+  ========================================= */
+  .brew-carousel-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .brews-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 10px 0 20px 0;
+    scrollbar-width: none;
+  }
+  
+  .brews-track::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* 6 CỘT CHUẨN TRÊN CONTAINER 1200PX */
+  .brew-item {
+    flex: 0 0 calc((100% - 100px) / 6);
+    min-width: 0;
+    text-align: center;
+    cursor: pointer;
+    scroll-snap-align: start;
+  }
+  
+  /* =========================================
+     HIỆU ỨNG THU NHỎ KHI HOVER (SCALE DOWN)
+  ========================================= */
+  .brew-circle-wrap {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 14px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .brew-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: #fff6e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.35s ease;
+  }
+  
+  .brew-circle img {
+    width: 72%;
+    height: 72%;
+    object-fit: contain;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  /* Hover: Vòng tròn thu nhỏ lại và chuyển tông nền */
+  .brew-item:hover .brew-circle {
+    transform: scale(0.85);
+    background-color: #f3dcc0;
+  }
+  
+  .brew-item:hover .brew-circle img {
+    transform: scale(0.95);
+  }
+  
+  /* TÊN LOẠI PHA CHẾ */
+  .brew-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2b170b;
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+  
+  .brew-item:hover .brew-name {
+    color: #8b5e3c;
+  }
+  
+  /* =========================================
+     ĐIỀU HƯỚNG CAROUSEL
+  ========================================= */
+  .brew-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  
+  .brew-nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #b5b5b5;
+    background: #ffffff;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  
+  .brew-nav-btn:hover {
+    background: #3b1708;
+    color: #ffffff;
+    border-color: #3b1708;
+  }
+  
+  .brew-nav-btn i {
+    font-size: 11px;
+  }
+  
+  .brew-page-num {
+    font-size: 13.5px;
+    color: #444444;
+    letter-spacing: 1px;
+  }
+  
+  /* =========================================
+     RESPONSIVE
+  ========================================= */
+  @media (max-width: 1024px) {
+    .brew-item {
+      flex: 0 0 calc((100% - 60px) / 4);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .brew-item {
+      flex: 0 0 calc((100% - 40px) / 3);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .brew-item {
+      flex: 0 0 calc((100% - 20px) / 2);
+    }
+  }

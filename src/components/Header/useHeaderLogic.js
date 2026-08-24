@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from "../../context/AuthContext.jsx";
+import Swal from 'sweetalert2';
 
 export const useHeaderLogic = () => {
   const { currentUser, logout, loading } = useAuth();
@@ -63,11 +64,45 @@ export const useHeaderLogic = () => {
     return () => document.removeEventListener('click', handleClickOutsideNav);
   }, []);
 
+  // Luồng Đăng xuất: Hỏi -> Loading -> Toast thành công
   const handleLogout = () => {
-    logout();
     setUserDropdownOpen(false);
-    setAuthModalOpen(false);
     setProfileOpen(false);
+
+    Swal.fire({
+      title: 'Đăng xuất tài khoản?',
+      text: 'Bạn có chắc chắn muốn đăng xuất không?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#6f4323',
+      cancelButtonColor: '#888',
+      confirmButtonText: 'Đồng ý',
+      cancelButtonText: 'Hủy bỏ',
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Đang đăng xuất...',
+          text: 'Vui lòng chờ trong giây lát',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+            setTimeout(() => {
+              logout();
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Đã đăng xuất thành công!',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+            }, 600);
+          }
+        });
+      }
+    });
   };
 
   const menuItems = [

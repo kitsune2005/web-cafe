@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ================= ĐĂNG NHẬP =================
+  // ================= ĐĂNG NHẬP THƯỜNG =================
   const login = async (email, password) => {
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
@@ -63,6 +63,37 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('currentUser', JSON.stringify(loggedUser));
 
       return { success: true, message: data.message || 'Đăng nhập thành công!' };
+    } catch (error) {
+      return { success: false, message: 'Không thể kết nối đến máy chủ Backend!' };
+    }
+  };
+
+  // ================= ĐĂNG NHẬP BẰNG GOOGLE =================
+  const googleLogin = async (googleUserData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/google-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(googleUserData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return { success: false, message: data.message || 'Lỗi xác thực Google!' };
+      }
+
+      const loggedUser = data.user;
+      setCurrentUser(loggedUser);
+      localStorage.setItem('currentUser', JSON.stringify(loggedUser));
+
+      return {
+        success: true,
+        isNewUser: data.isNewUser,
+        message: data.message,
+      };
     } catch (error) {
       return { success: false, message: 'Không thể kết nối đến máy chủ Backend!' };
     }
@@ -104,7 +135,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, register, logout, updateUser, loading }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        login,
+        register,
+        googleLogin,
+        logout,
+        updateUser,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

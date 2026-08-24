@@ -1,22 +1,24 @@
 import React from 'react';
-// Import dữ liệu trực tiếp từ file JSON (Cách này không bị 404)
-import data from '../data/data.json'; 
+// 1. Dữ liệu tĩnh
+import data from '../data/data.json';
 
+// 2. Components dùng chung (nằm trực tiếp trong components)
 import Header from '../components/Header/Header.jsx';
-import Hero from '../components/Hero/Hero.jsx';
-import PureCoffee from '../components/PureCoffee/PureCoffee.jsx';
-import PackagedProducts from '../components/PackagedProducts/PackagedProducts.jsx';
-import Feature from '../components/Feature/Feature.jsx';
-import Journey from '../components/Journey/Journey.jsx';
-import BrewSection from '../components/BrewSection/BrewSection.jsx';
-import Testimonials from '../components/Testimonials/Testimonials.jsx';
-import Instagram from '../components/Instagram/Instagram.jsx';
-import BrandsStrip from '../components/BrandsStrip/BrandsStrip.jsx';
 import Footer from '../components/Footer/Footer.jsx';
 import ScrollTop from '../components/ScrollTop/ScrollTop.jsx';
 
+// 3. Components Trang chủ (nằm trong components/home)
+import Hero from '../components/home/Hero/Hero.jsx';
+import Feature from '../components/home/Feature/Feature.jsx';
+import BrandsStrip from '../components/home/BrandsStrip/BrandsStrip.jsx';
+import PureCoffee from '../components/home/PureCoffee/PureCoffee.jsx';
+import PackagedProducts from '../components/home/PackagedProducts/PackagedProducts.jsx';
+import BrewSection from '../components/home/BrewSection/BrewSection.jsx';
+import Journey from '../components/home/Journey/Journey.jsx';
+import Instagram from '../components/home/Instagram/Instagram.jsx';
+import Testimonials from '../components/home/Testimonials/Testimonials.jsx';
+
 const HomePage = () => {
-  // Dữ liệu đã được import trực tiếp, không cần useState hay useEffect fetch
   return (
     <div className="home-page">
       <Header />

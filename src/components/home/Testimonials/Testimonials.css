@@ -1,0 +1,182 @@
+.testimonials-section {
+    background-color: #ffffff;
+    width: 100%;
+  }
+  
+  /* =========================================
+     TIÊU ĐỀ SECTION
+  ========================================= */
+  .testimonials-head {
+    text-align: center;
+    margin-bottom: 45px;
+  }
+  
+  .testimonials-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #3b1708;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+  }
+  
+  .testimonials-desc {
+    font-size: 13.5px;
+    color: #4a4a4a;
+    margin: 0;
+  }
+  
+  /* =========================================
+     CAROUSEL CONTAINER & TRACK
+  ========================================= */
+  .testimonials-carousel-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .testimonials-track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 10px 4px 20px 4px;
+    scrollbar-width: none;
+  }
+  
+  .testimonials-track::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* =========================================
+     THẺ ĐÁNH GIÁ (CARD) - CHUẨN 3 CỘT
+  ========================================= */
+  .testimonial-card {
+    flex: 0 0 calc((100% - 48px) / 3);
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 35px 30px 28px 30px;
+    text-align: center;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* NGÔI SAO VÀNG */
+  .testimonial-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+  
+  .testimonial-rating i {
+    font-size: 13px;
+    color: #f7b731; /* Màu vàng sao chuẩn theo ảnh */
+  }
+  
+  /* TIÊU ĐỀ ĐÁNH GIÁ */
+  .testimonial-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 14px 0;
+  }
+  
+  /* NỘI DUNG */
+  .testimonial-card-content {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #444444;
+    margin: 0 0 24px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* ĐƯỜNG KẺ PHÂN CÁCH TRONG CARD */
+  .testimonial-divider {
+    width: 80%;
+    height: 1px;
+    background-color: #a0a0a0; /* Nét gạch xám mảnh */
+    margin: 0 auto 20px auto;
+  }
+  
+  /* TÁC GIẢ */
+  .testimonial-author {
+    font-size: 13.5px;
+    color: #333333;
+    margin: 0;
+  }
+  
+  .author-name {
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  
+  /* =========================================
+     ĐIỀU HƯỚNG CAROUSEL
+  ========================================= */
+  .testimonials-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 25px;
+  }
+  
+  .testimonials-nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #b5b5b5;
+    background: #ffffff;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  
+  .testimonials-nav-btn:hover {
+    background: #3b1708;
+    color: #ffffff;
+    border-color: #3b1708;
+  }
+  
+  .testimonials-nav-btn i {
+    font-size: 11px;
+  }
+  
+  .testimonials-page-num {
+    font-size: 13.5px;
+    color: #444444;
+    letter-spacing: 1px;
+  }
+  
+  /* =========================================
+     RESPONSIVE
+  ========================================= */
+  @media (max-width: 992px) {
+    .testimonial-card {
+      flex: 0 0 calc((100% - 24px) / 2);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .testimonial-card {
+      flex: 0 0 100%;
+    }
+  }

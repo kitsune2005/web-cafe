@@ -14,11 +14,74 @@
             "id": 3,
             "name": "Cà Phê Hạt Excelsa",
             "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate2.png"
+        },
+        {
+            "id": 4,
+            "name": "Cà Phê Rang Xay Blend",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate6.png"
+        },
+        {
+            "id": 5,
+            "name": "Cà Phê Hạt Liberica",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate3.png"
+        },
+        {
+            "id": 6,
+            "name": "Cà Phê Hạt Excelsa",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate2.png"
         }
     ],
     "products": [
         {
             "id": 1,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 2,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 3,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 4,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 5,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 6,
+            "name": "Cà Phê Enchanted Espresso",
+            "price": "2,679,000₫",
+            "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
+            "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
+            "rating": 5
+        },
+        {
+            "id": 7,
             "name": "Cà Phê Enchanted Espresso",
             "price": "2,679,000₫",
             "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
@@ -67,7 +130,27 @@
             "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
         },
         {
+            "id": 4,
+            "name": "Pour-Over",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-6.png"
+        },
+        {
+            "id": 5,
+            "name": "Flash Brew",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
+        },
+        {
             "id": 6,
+            "name": "Pour-Over",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-6.png"
+        },
+        {
+            "id": 7,
+            "name": "Flash Brew",
+            "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
+        },
+        {
+            "id": 8,
             "name": "Máy Pha Tự Động",
             "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-4.png"
         }
@@ -115,5 +198,10 @@
         "THE RISTRETTO",
         "Coffeep",
         "Roses Coffee"
+    ],
+
+    "product-cart" :[
+        "Tạo càng nhiều product càng tốt"
+
     ]
 }

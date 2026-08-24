@@ -1,0 +1,110 @@
+.instagram-section {
+    padding: 60px 0;
+    background-color: #ffffff;
+    width: 100%;
+  }
+  
+  /* =========================================
+     TIÊU ĐỀ & MÔ TẢ
+  ========================================= */
+  .instagram-head {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .instagram-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #3b1708;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+  }
+  
+  .instagram-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #555555;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  
+  /* =========================================
+     LƯỚI 5 CỘT (GRID)
+  ========================================= */
+  .instagram-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    width: 100%;
+  }
+  
+  /* THẺ ẢNH */
+  .insta-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    display: block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+  }
+  
+  .insta-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  
+  /* HIỆU ỨNG HOVER PHỦ TỐI & HIỆN ICON INSTAGRAM */
+  .insta-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(59, 23, 8, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .insta-overlay i {
+    color: #ffffff;
+    font-size: 28px;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+  }
+  
+  .insta-item:hover img {
+    transform: scale(1.08);
+  }
+  
+  .insta-item:hover .insta-overlay {
+    opacity: 1;
+  }
+  
+  .insta-item:hover .insta-overlay i {
+    transform: scale(1);
+  }
+  
+  /* =========================================
+     RESPONSIVE
+  ========================================= */
+  @media (max-width: 992px) {
+    .instagram-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .instagram-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .instagram-desc {
+      font-size: 13px;
+    }
+  }

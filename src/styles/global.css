@@ -11,7 +11,8 @@
     --color-star: #f2b200;
     --container-width: 1240px;
     --radius: 18px;
-    --font-body: 'Manrope', sans-serif;
+    --font-main: 'Plus Jakarta Sans', 'Montserrat', sans-serif;
+    --font-heading: 'Montserrat', sans-serif;
     --transition: 0.25s ease;
     --header-height: 84px;
 }
@@ -50,7 +51,9 @@ button {
 .container {
     max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 10px 24px;
+    width: 100%;
+    max-width: 1100px;
 }
 
 .section {
@@ -269,4 +272,31 @@ button {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+}
+
+/* Buộc chuột luôn hiển thị trên toàn trang */
+*,
+*::before,
+*::after {
+    cursor: auto !important;
+}
+
+button,
+a,
+input[type="button"],
+input[type="submit"],
+.clickable {
+    cursor: pointer !important;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    cursor: text !important;
+}
+
+/* Ưu tiên hiển thị SweetAlert2 trên toàn bộ Modal */
+.swal2-container {
+    z-index: 100000 !important;
 }

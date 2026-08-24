@@ -1,85 +1,144 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
 import './AuthModal.css';
 
+// Cấu hình Toast popup góc trên bên phải
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer);
+    toast.addEventListener('mouseleave', Swal.resumeTimer);
+  }
+});
+
 const AuthModal = ({ isOpen, onClose }) => {
-  const { login, register } = useAuth();
-  const [mode, setMode] = useState('login'); // 'login' hoặc 'register'
+  const { login, register, googleLogin } = useAuth();
+  const [mode, setMode] = useState('login');
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null); // { type: 'success' | 'error', message: '' }
+
+  // Khóa cuộn trang khi Modal mở (Luôn đặt trên đầu Hook)
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (alert) setAlert(null);
   };
 
   const handleSwitchMode = (newMode) => {
     setMode(newMode);
-    setAlert(null);
   };
 
+  // 1. Xử lý Google Login
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      const googleUserData = {
+        name: decoded.name,
+        email: decoded.email,
+        googleId: decoded.sub,
+        avatar: decoded.picture,
+      };
+
+      const result = await googleLogin(googleUserData);
+      if (result.success) {
+        Toast.fire({
+          icon: 'success',
+          title: result.isNewUser ? 'Tạo tài khoản Google thành công!' : 'Đăng nhập Google thành công!',
+        });
+        onClose();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Đăng nhập Google thất bại',
+          text: result.message || 'Không thể đăng nhập bằng Google.',
+          confirmButtonColor: '#6f4323',
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi xác thực',
+        text: 'Không thể giải mã dữ liệu Google.',
+        confirmButtonColor: '#6f4323',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Xử lý Đăng ký / Đăng nhập thường
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setAlert(null);
 
     if (mode === 'register') {
       const result = await register(formData.name, formData.email, formData.password);
       if (result.success) {
-        setAlert({
-          type: 'success',
+        Swal.fire({
+          icon: 'success',
           title: 'Đăng ký thành công!',
-          message: 'Hồ sơ đã được lưu. Đang tự động chuyển sang trang Đăng nhập...',
-        });
-        setTimeout(() => {
+          text: 'Tài khoản đã được tạo. Vui lòng đăng nhập để tiếp tục.',
+          confirmButtonColor: '#6f4323',
+          confirmButtonText: 'Đăng nhập ngay',
+        }).then(() => {
           setMode('login');
           setFormData({ name: '', email: formData.email, password: '' });
-          setAlert(null);
-          setLoading(false);
-        }, 2200);
-      } else {
-        setAlert({
-          type: 'error',
-          title: 'Đăng ký thất bại',
-          message: result.message || 'Email này đã tồn tại hoặc xảy ra lỗi hệ thống.',
         });
-        setLoading(false);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Đăng ký thất bại',
+          text: result.message || 'Email này đã tồn tại trong hệ thống.',
+          confirmButtonColor: '#6f4323',
+        });
       }
+      setLoading(false);
     } else {
       const result = await login(formData.email, formData.password);
       if (result.success) {
-        setAlert({
-          type: 'success',
+        Toast.fire({
+          icon: 'success',
           title: 'Đăng nhập thành công!',
-          message: 'Chào mừng Kitsune quay trở lại thưởng thức cà phê!',
         });
-        setTimeout(() => {
-          onClose();
-          setAlert(null);
-          setLoading(false);
-        }, 1800);
+        onClose();
       } else {
-        setAlert({
-          type: 'error',
+        Swal.fire({
+          icon: 'error',
           title: 'Đăng nhập thất bại',
-          message: result.message || 'Email hoặc mật khẩu không chính xác.',
+          text: result.message || 'Email hoặc mật khẩu không chính xác.',
+          confirmButtonColor: '#6f4323',
         });
-        setLoading(false);
       }
+      setLoading(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="auth-modal-overlay" onClick={onClose}>
-      <div className="auth-modal-card" onClick={(e) => e.stopPropagation()}>
+    <div className="auth-modal-overlay">
+      <div className="auth-modal-card">
         <button className="auth-modal-close" onClick={onClose} aria-label="Đóng">
           <i className="fa-solid fa-xmark"></i>
         </button>
 
-        {/* Header Modal */}
         <div className="auth-header">
           <div className="auth-icon-badge">
             <i className={mode === 'login' ? 'fa-solid fa-mug-hot' : 'fa-solid fa-user-plus'}></i>
@@ -87,24 +146,34 @@ const AuthModal = ({ isOpen, onClose }) => {
           <h2>{mode === 'login' ? 'Chào Mừng Trở Lại' : 'Tạo Tài Khoản Mới'}</h2>
           <p className="auth-subtitle">
             {mode === 'login'
-              ? 'Đăng nhập để nhận các ưu đãi và quản lý đơn hàng'
-              : 'Gia nhập cộng đồng yêu hương vị cà phê nguyên bản'}
+              ? 'Đăng nhập để nhận ưu đãi và quản lý đơn hàng'
+              : 'Gia nhập cộng đồng yêu hương vị cà phê'}
           </p>
         </div>
 
-        {/* Khung thông báo UI/UX */}
-        {alert && (
-          <div className={`auth-alert auth-alert-${alert.type}`}>
-            <div className="auth-alert-icon">
-              <i className={alert.type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-triangle-exclamation'}></i>
-            </div>
-            <div className="auth-alert-content">
-              <h4>{alert.title}</h4>
-              <p>{alert.message}</p>
-            </div>
-            {alert.type === 'success' && <div className="auth-alert-progress"></div>}
-          </div>
-        )}
+        {/* Nút Đăng nhập Google */}
+        <div className="google-auth-wrapper">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Thất bại',
+                text: 'Đăng nhập bằng Google không thành công!',
+                confirmButtonColor: '#6f4323',
+              });
+            }}
+            useOneTap={false}
+            shape="pill"
+            theme="outline"
+            text={mode === 'login' ? 'signin_with' : 'signup_with'}
+            width="100%"
+          />
+        </div>
+
+        <div className="auth-divider">
+          <span>HOẶC TIẾP TỤC VỚI EMAIL</span>
+        </div>
 
         {/* Form nhập liệu */}
         <form onSubmit={handleSubmit} className="auth-form">
@@ -158,12 +227,11 @@ const AuthModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Nút Submit có Loading Spinner */}
           <button type="submit" className={`auth-submit-btn ${loading ? 'is-loading' : ''}`} disabled={loading}>
             {loading ? (
               <span className="btn-loading-wrap">
                 <span className="auth-spinner"></span>
-                <span>Đang xử lý dữ liệu...</span>
+                <span>Đang xử lý...</span>
               </span>
             ) : (
               <span>{mode === 'login' ? 'Đăng Nhập Ngay' : 'Hoàn Tất Đăng Ký'}</span>
@@ -171,7 +239,6 @@ const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </form>
 
-        {/* Switch Login / Register */}
         <div className="auth-footer-switch">
           {mode === 'login' ? (
             <p>

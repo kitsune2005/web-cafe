@@ -1,0 +1,466 @@
+/* =========================================
+   PURE COFFEE SECTION
+========================================= */
+
+.pure-coffee-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+/* =========================================
+   LAYOUT CHÍNH - FLEX
+========================================= */
+
+.pure-flex {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 40px;
+}
+
+
+/* =========================================
+   CỘT TRÁI
+========================================= */
+
+.pure-left {
+    flex: 0 0 calc(35% - 20px);
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+
+/* Nội dung phía trên */
+
+.pc-left-content {
+    width: 100%;
+}
+
+
+/* Tiêu đề */
+
+.pure-left .section-title {
+    margin: 0 0 12px;
+
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+
+    color: #3d2115;
+}
+
+
+/* Mô tả */
+
+.pure-left .section-desc {
+    margin: 0;
+    max-width: 400px;
+    text-align: justify;
+    font-size: 13px;
+    line-height: 1.55;
+
+    color: #555;
+}
+
+
+/* =========================================
+   LINK KHÁM PHÁ
+========================================= */
+
+.link-arrow {
+    display: flex;
+
+    width: fit-content;
+    margin-top: 18px;
+    margin-left: auto;
+
+    align-items: center;
+    gap: 6px;
+
+    color: #3d2115;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: all 0.3s ease;
+}
+
+.link-arrow:hover {
+    color: #8b5e3c;
+}
+
+.link-arrow i {
+    transition: transform 0.3s ease;
+}
+
+.link-arrow:hover i {
+    transform: translateX(4px);
+}
+
+
+/* =========================================
+   ẢNH LY CÀ PHÊ
+========================================= */
+
+.pc-image {
+    width: 100%;
+
+    margin-top: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+
+    overflow: visible;
+}
+
+.pc-image img {
+    display: block;
+
+    width: 350px;
+    max-width: 100%;
+    height: auto;
+
+    object-fit: contain;
+
+    background: transparent;
+
+    transform: scale(1.1);
+}
+
+
+/* =========================================
+   CỘT PHẢI
+========================================= */
+
+.pure-right {
+    flex: 1 1 65%;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+/* =========================================
+   HEADER CỘT PHẢI
+========================================= */
+
+.pc-right-header {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 30px;
+}
+
+
+/* Tiêu đề bên phải */
+
+.pc-heading {
+    flex: 0 0 45%;
+    min-width: 0;
+}
+
+.pc-heading .sub-title {
+    margin: 0;
+
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+
+    color: #3d2115;
+}
+
+
+/* Mô tả bên phải */
+
+.pc-text {
+    flex: 1 1 55%;
+
+    min-width: 0;
+
+    padding-top: 4px;
+}
+
+.pc-text .sub-desc {
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #555;
+}
+
+
+/* =========================================
+   CATEGORY CAROUSEL
+========================================= */
+
+.pc-categories {
+    width: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+/* Track dùng FLEX */
+
+.carousel-track {
+    width: 100%;
+
+    display: flex;
+    gap: 10px;
+
+    overflow-x: auto;
+    overflow-y: visible;
+
+    padding: 10px 5px 10px;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+
+    scrollbar-width: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================================
+   CATEGORY CARD
+========================================= */
+
+.category-card {
+    /* TĂNG ĐỘ RỘNG THẺ: 
+       Thay vì chia 3, Kitsune đổi thành 2.6 để thẻ to ra hơn một chút, 
+       đồng thời tạo hiệu ứng hé lộ thẻ kế tiếp để người dùng biết có thể vuốt */
+    flex: 0 0 calc((100% - 20px) / 2.6);
+
+    min-width: 0;
+    padding: 20px 15px; /* Tăng khoảng cách bên trong để thẻ bề thế hơn */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    scroll-snap-align: start;
+    
+    /* Chuyển động mượt mà cho đổ bóng */
+    transition: box-shadow 0.4s ease;
+}
+
+/* KHUNG ĐỨNG YÊN, CHỈ TĂNG ĐỔ BÓNG ĐỂ TẠO CHIỀU SÂU MƯỢT MÀ */
+.category-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================================
+   HÌNH TRÒN CỦA SẢN PHẨM
+========================================= */
+
+.category-img {
+    width: 120px;  /* Tăng kích thước vòng tròn lên 120px (cũ là 100px) */
+    height: 120px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* BÍ QUYẾT Ở ĐÂY: Khóa chặt những thứ tràn ra ngoài khung tròn */
+    overflow: hidden; 
+    
+    background: #fff;
+    border-radius: 50%;
+}
+
+/* HÌNH ẢNH SẢN PHẨM BÊN TRONG */
+.category-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    
+    /* Gắn bộ nhún siêu mượt 0.5s */
+    transition: transform 0.5s ease;
+}
+
+/* LỆNH PHÓNG TO: Khi chuột lia vào thẻ Card -> Ảnh bên trong tự phóng to lên 15% */
+.category-card:hover .category-img img {
+    transform: scale(1.15);
+}
+
+/* Icon fallback (Nếu không có ảnh) */
+.circle-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78873 0%, #573216 100%);
+    color: #fff;
+    font-size: 36px;
+    
+    transition: transform 0.5s ease;
+}
+
+.category-card:hover .circle-icon {
+    transform: scale(1.15);
+}
+
+/* =========================================
+   TÊN CATEGORY
+========================================= */
+
+.category-card h3 {
+    width: 100%;
+    margin: 0;
+    font-size: 14px; /* Chữ to ra một chút cho cân đối với ảnh 120px */
+    line-height: 1.4;
+    font-weight: 700;
+    color: #2b170b;
+}
+
+/* =========================================
+   CAROUSEL CONTROLS
+========================================= */
+
+.carousel-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Tăng khoảng cách giữa nút và chữ cho thoáng */
+    margin-top: 24px; /* Đẩy cụm nút cách xa khung thẻ ra một chút */
+}
+
+.nav-btn {
+    width: 38px;  /* Nút to ra để dễ bấm hơn (cũ là 20px) */
+    height: 38px; 
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2ded9; /* Viền nhạt, tinh tế hơn */
+    border-radius: 50%;
+    background: #fff;
+    color: #444;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ cho nút nổi lên */
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #3d2115;
+    color: #fff;
+    border-color: #3d2115;
+    box-shadow: 0 4px 12px rgba(61, 33, 21, 0.25); /* Nút sáng bóng lên khi hover */
+}
+
+.nav-btn i {
+    font-size: 13px; /* Mũi tên to và rõ ràng hơn */
+}
+
+.carousel-page {
+    font-size: 14px;
+    font-weight: 600; /* Làm đậm chữ lên để dễ đọc */
+    color: #444;
+    min-width: 50px; /* Cố định độ rộng để khi số nhảy lên nút không bị giật ngang */
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-state {
+    min-height: 150px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 13px;
+    color: #777;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 992px) {
+
+    .pure-flex {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .pure-left {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .pure-right {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .pc-right-header {
+        gap: 20px;
+    }
+
+    .pc-heading {
+        flex: 0 0 45%;
+    }
+
+    .category-card {
+        flex-basis: calc((100% - 10px) / 2);
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .pc-right-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pc-heading {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .pc-text {
+        width: 100%;
+    }
+
+    .category-card {
+        flex-basis: 75%;
+    }
+
+    .pc-image img {
+        width: 280px;
+    }
+}

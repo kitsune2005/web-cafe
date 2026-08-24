@@ -10,6 +10,7 @@
     color: #fff;
     z-index: 500;
     transition: background 0.35s ease, box-shadow 0.35s ease;
+    padding: 15px 0;
 }
 
 .site-header.scrolled {

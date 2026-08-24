@@ -1,9 +1,8 @@
 import React from 'react';
 import { useHeaderLogic } from './useHeaderLogic.js';
-import AuthModal from '../AuthModal/AuthModal'; 
+import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
 import './Header.css';
-
 
 const Header = () => {
   const {
@@ -35,14 +34,14 @@ const Header = () => {
     <>
       <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="container header-inner">
-          
+
           {/* Menu Desktop */}
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
             <ul>
               {menuItems.map((item, index) => (
                 <li key={index} className={item.dropdown ? 'has-dropdown' : ''}>
-                  <a 
-                    href={item.link} 
+                  <a
+                    href={item.link}
                     onClick={() => setNavDropdown(item.dropdown ? item.label : null)}
                   >
                     {item.label}
@@ -63,12 +62,12 @@ const Header = () => {
 
           {/* Logo */}
           <a href="#" className="logo">
-            <img src="./src/img/logo_fox_coffee.png" alt="Logo" />
+            <img src="./src/assets/img/logo_fox_coffee.png" alt="Logo" />
           </a>
 
           {/* Actions bên phải */}
           <div className="header-actions">
-            
+
             {/* Search */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
               <form className="search-form" role="search" onSubmit={(e) => e.preventDefault()}>
@@ -125,7 +124,7 @@ const Header = () => {
 
             {/* User Dropdown / Auth Button */}
             {currentUser ? (
-             <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
+              <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
                 <button
                   className="icon-btn user-btn"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
@@ -143,7 +142,7 @@ const Header = () => {
                       </div>
                     </div>
                     <div className="user-dropdown-divider"></div>
-                    
+
                     <button
                       className="user-dropdown-item"
                       onClick={() => {

@@ -1,102 +1,219 @@
-/* src/components/UserProfileModal/UserProfileModal.css */
-.profile-modal-overlay {
+/* =========================================
+   USER PROFILE MODAL OVERLAY & CARD
+   ========================================= */
+   .profile-modal-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    inset: 0;
+    background: rgba(13, 13, 13, 0.78);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-  }
-  
-  .profile-modal {
-    background: #fff;
-    border-radius: 16px;
-    padding: 40px;
-    width: 450px;
-    max-width: 90%;
+    z-index: 9999;
+    padding: 20px;
+    animation: profileFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-modal-card {
     position: relative;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    text-align: center;
-  }
-  
-  .profile-modal-close {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    animation: profileSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-modal-close {
     position: absolute;
-    top: 15px; right: 15px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #999;
-  }
-  
-  .profile-modal h2 {
-    margin-bottom: 20px;
-    color: var(--color-primary-dark);
-  }
-  
-  .profile-avatar {
-    width: 80px;
-    height: 80px;
+    top: 18px;
+    right: 18px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: var(--color-primary);
-    color: #fff;
-    font-size: 32px;
+    border: none;
+    background: #f4f1ec;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer !important;
+    transition: all 0.25s ease;
+}
+
+.profile-modal-close:hover {
+    background: #b23a2c;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+/* Header & Avatar */
+.profile-header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.profile-avatar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.profile-avatar-char {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6f4323 0%, #c99a6b 100%);
+    color: #ffffff;
+    font-size: 28px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
-  }
-  
-  .form-group {
+    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.3);
+}
+
+.profile-avatar-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #6f4323;
+    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.25);
+}
+
+.profile-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.profile-user-role {
+    font-size: 13px;
+    color: #777;
+    margin: 0;
+}
+
+/* Form Styles */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-group-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     text-align: left;
-    margin-bottom: 16px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
+}
+
+.form-group-field label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 14px;
+    color: #999;
     font-size: 14px;
-    color: #444;
-  }
-  
-  .form-group input {
+}
+
+.input-with-icon input {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    padding: 11px 14px 11px 38px;
+    border: 1.5px solid #e2ded9;
+    border-radius: 10px;
     font-size: 14px;
+    background: #faf9f7;
+    color: #222;
     outline: none;
-    transition: border-color 0.2s;
-  }
-  
-  .form-group input:focus {
-    border-color: var(--color-primary);
-  }
-  
-  .btn-block {
+    transition: all 0.25s ease;
+}
+
+.input-with-icon input:focus {
+    background: #ffffff;
+    border-color: #6f4323;
+    box-shadow: 0 0 0 4px rgba(111, 67, 35, 0.12);
+}
+
+.input-disabled {
+    background: #ebe7e1 !important;
+    color: #777 !important;
+    cursor: not-allowed !important;
+}
+
+/* Submit & Logout Buttons */
+.profile-save-btn {
     width: 100%;
-    margin-top: 10px;
     padding: 12px;
-    font-size: 16px;
-  }
-  
-  .profile-logout-btn {
+    margin-top: 4px;
+    background: linear-gradient(135deg, #6f4323 0%, #4a2811 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer !important;
+    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.25);
+    transition: all 0.3s ease;
+}
+
+.profile-save-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(111, 67, 35, 0.35);
+}
+
+.profile-footer {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.profile-logout-btn {
+    background: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #a8071a;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
     width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background: #fdecea;
-    border: 1px solid #f5c6cb;
-    border-radius: 6px;
-    color: #e74c3c;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  .profile-logout-btn:hover {
-    background: #f5c6cb;
-  }
+    justify-content: center;
+}
+
+.profile-logout-btn:hover {
+    background: #ffccc7;
+}
+
+@keyframes profileFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes profileSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
