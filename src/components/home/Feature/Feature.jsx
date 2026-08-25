@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import latteCoffeCup from '../../../assets/img/vi-dang-cafe-3.jpg';
 import './Feature.css';
 
 const Feature = () => {
@@ -56,7 +57,7 @@ const Feature = () => {
           {/* NỬA PHẢI (Ảnh tràn full chiều cao) */}
           <div className="feature-right-col">
             <img 
-              src="./src/assets/img/vi-dang-cafe-3.jpg" 
+              src={latteCoffeCup}
               alt="Ly cà phê latte" 
             />
           </div>

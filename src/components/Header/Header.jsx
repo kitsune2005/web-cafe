@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useHeaderLogic } from './useHeaderLogic.js';
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
+import { Link, useLocation } from 'react-router-dom'; // Thêm useLocation
+import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
 
 const Header = () => {
@@ -28,6 +30,37 @@ const Header = () => {
     menuItems
   } = useHeaderLogic();
 
+  // ----- LOGIC CHO HIỆU ỨNG GẠCH CHÂN (MAGIC LINE) -----
+  const location = useLocation();
+  const navListRef = useRef(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+
+  const updateIndicator = (el) => {
+    if (!el || !navListRef.current) return;
+    const navRect = navListRef.current.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    setIndicatorStyle({
+      left: elRect.left - navRect.left,
+      width: elRect.width,
+      opacity: 1
+    });
+  };
+
+  const resetIndicator = () => {
+    // Tìm thẻ <li> đang active để gạch chân trôi về vị trí ban đầu
+    const activeEl = navListRef.current?.querySelector('li.active');
+    if (activeEl) {
+      updateIndicator(activeEl);
+    } else {
+      setIndicatorStyle(prev => ({ ...prev, opacity: 0 })); // Ẩn đi nếu không ở trang nào trong menu
+    }
+  };
+
+  // Tính toán lại vị trí mỗi khi chuyển trang
+  useEffect(() => {
+    setTimeout(resetIndicator, 100);
+  }, [location.pathname, menuItems]);
+
   if (loading) return null;
 
   return (
@@ -37,37 +70,59 @@ const Header = () => {
 
           {/* Menu Desktop */}
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
-            <ul>
-              {menuItems.map((item, index) => (
-                <li key={index} className={item.dropdown ? 'has-dropdown' : ''}>
-                  <a
-                    href={item.link}
-                    onClick={() => setNavDropdown(item.dropdown ? item.label : null)}
+            {/* Thêm sự kiện onMouseLeave và thẻ div .nav-indicator vào ul */}
+            <ul ref={navListRef} onMouseLeave={resetIndicator} style={{ position: 'relative' }}>
+              {menuItems.map((item, index) => {
+                const isActive = location.pathname === item.link;
+                return (
+                  <li
+                    key={index}
+                    className={`${item.dropdown ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}
+                    onMouseEnter={(e) => updateIndicator(e.currentTarget)} // Chuột vào là tính vị trí
                   >
-                    {item.label}
-                  </a>
-                  {item.dropdown && navDropdown === item.label && (
-                    <ul className="nav-dropdown">
-                      {item.dropdown.map((sub, subIndex) => (
-                        <li key={subIndex}>
-                          <a href={sub.link}>{sub.label}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
+                    <Link
+                      to={item.link || '#'}
+                      onClick={(e) => {
+                        // NẾU ẤN VÀO "GIỚI THIỆU" -> CUỘN LÊN ĐẦU TRANG
+                        if (item.label.toLowerCase() === 'giới thiệu') {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+
+                        // Toggle Dropdown (nếu có)
+                        if (item.dropdown) {
+                          setNavDropdown(navDropdown === item.label ? null : item.label);
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+
+                    {/* Bảng Dropdown */}
+                    {item.dropdown && (
+                      <ul className={`nav-dropdown ${navDropdown === item.label ? 'force-show' : ''}`}>
+                        {item.dropdown.map((sub, subIndex) => (
+                          <li key={subIndex}>
+                            <Link to={sub.link || '#'}>{sub.label}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
+
+              {/* THANH GẠCH CHÂN CHẠY NGANG (MAGIC LINE) */}
+              <div className="nav-indicator" style={indicatorStyle}></div>
             </ul>
           </nav>
 
           {/* Logo */}
-          <a href="#" className="logo">
-            <img src="./src/assets/img/logo_fox_coffee.png" alt="Logo" />
-          </a>
+          <Link to="/" className="logo">
+            <img src={logoFox} alt="Logo" />
+          </Link>
 
-          {/* Actions bên phải */}
+          {/* Actions bên phải (Giữ nguyên như cũ) */}
           <div className="header-actions">
-
             {/* Search */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
               <form className="search-form" role="search" onSubmit={(e) => e.preventDefault()}>
@@ -87,9 +142,9 @@ const Header = () => {
                   <div className="search-dropdown-block">
                     <h4>Sản phẩm bán chạy</h4>
                     <div className="search-tags">
-                      <a href="#"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Cà phê</a>
-                      <a href="#"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Nguyên chất</a>
-                      <a href="#"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Rang xay</a>
+                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Cà phê</Link>
+                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Nguyên chất</Link>
+                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Rang xay</Link>
                     </div>
                   </div>
                   <div className="search-dropdown-block">
@@ -100,7 +155,7 @@ const Header = () => {
                           <img src="https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3-191x300.png" alt="" />
                         </div>
                         <div className="search-result-info">
-                          <a href="#" className="search-result-name">Cà Phê Enchanted Espresso</a>
+                          <Link to="/product/1" className="search-result-name">Cà Phê Enchanted Espresso</Link>
                           <span className="search-result-price">2,679,000₫</span>
                         </div>
                       </li>
@@ -109,7 +164,7 @@ const Header = () => {
                           <img src="https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2-191x300.png" alt="" />
                         </div>
                         <div className="search-result-info">
-                          <a href="#" className="search-result-name">Cà Phê Emerald Burst</a>
+                          <Link to="/product/2" className="search-result-name">Cà Phê Emerald Burst</Link>
                           <span className="search-result-price">2,119,000₫</span>
                         </div>
                       </li>
@@ -120,9 +175,9 @@ const Header = () => {
             </div>
 
             {/* Yêu thích */}
-            <a href="#" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></a>
+            <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
 
-            {/* User Dropdown / Auth Button */}
+            {/* User Dropdown */}
             {currentUser ? (
               <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
                 <button
@@ -136,7 +191,11 @@ const Header = () => {
                 {userDropdownOpen && (
                   <div className="user-dropdown">
                     <div className="user-dropdown-header">
-                      <span className="user-avatar">{currentUser.name.charAt(0).toUpperCase()}</span>
+                      {currentUser.avatar ? (
+                        <img src={currentUser.avatar} alt="Avatar" className="user-avatar-img" />
+                      ) : (
+                        <span className="user-avatar">{currentUser.name.charAt(0).toUpperCase()}</span>
+                      )}
                       <div>
                         <p className="user-email">{currentUser.email}</p>
                       </div>
@@ -153,12 +212,12 @@ const Header = () => {
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
 
-                    <a href="#" className="user-dropdown-item">
+                    <Link to="/orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
-                    </a>
-                    <a href="#" className="user-dropdown-item">
+                    </Link>
+                    <Link to="/setting" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-gear"></i> Cài đặt
-                    </a>
+                    </Link>
                     <div className="user-dropdown-divider"></div>
                     <button onClick={handleLogout} className="user-dropdown-item logout-btn">
                       <i className="fa-solid fa-right-from-bracket"></i> Đăng xuất
@@ -177,9 +236,9 @@ const Header = () => {
             )}
 
             {/* Giỏ hàng */}
-            <a href="#" className="icon-btn cart-btn" aria-label="Giỏ hàng">
+            <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
               <i className="fa-solid fa-cart-shopping"></i><span className="cart-count">2</span>
-            </a>
+            </Link>
           </div>
 
           {/* Toggle Menu Mobile */}

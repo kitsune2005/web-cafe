@@ -9,7 +9,8 @@ const DB_FILE = path.join(__dirname, 'users.json');
 
 // Middleware cho phép frontend gọi API
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Hàm đọc dữ liệu từ file JSON
 const readUsers = () => {
@@ -32,24 +33,32 @@ const writeUsers = (users) => {
 
 // API: Đăng ký thường
 app.post('/api/register', (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, username, email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !username || !email || !password) {
     return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ thông tin!' });
   }
 
   const users = readUsers();
-  const existingUser = users.find((user) => user.email === email);
+  
+  // Kiểm tra trùng lặp
+  const existingEmail = users.find((user) => user.email === email);
+  const existingUsername = users.find((user) => user.username === username);
 
-  if (existingUser) {
+  if (existingEmail) {
     return res.status(400).json({ success: false, message: 'Email này đã được đăng ký!' });
+  }
+  if (existingUsername) {
+    return res.status(400).json({ success: false, message: 'Tên đăng nhập này đã có người sử dụng!' });
   }
 
   const newUser = {
     id: Date.now(),
     name,
+    username,
     email,
     password,
+    role: 'customer',
     avatar: '',
     provider: 'local',
     createdAt: new Date().toISOString()
@@ -79,11 +88,18 @@ app.post('/api/login', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Đăng nhập thành công!',
-    user: { id: user.id, name: user.name, email: user.email, avatar: user.avatar }
+    user: { 
+        id: user.id, 
+        name: user.name, 
+        username: user.username, 
+        email: user.email, 
+        role: user.role, 
+        avatar: user.avatar 
+    }
   });
 });
 
-// API: Đăng nhập bằng Google (Tự tạo tài khoản nếu chưa có)
+// API: Đăng nhập bằng Google
 app.post('/api/google-login', (req, res) => {
   const { name, email, googleId, avatar } = req.body;
 
@@ -95,12 +111,13 @@ app.post('/api/google-login', (req, res) => {
   let user = users.find((u) => u.email === email);
 
   if (!user) {
-    // Nếu chưa tồn tại -> Tạo user mới và lưu vào users.json
     user = {
       id: Date.now(),
       name: name || 'Google User',
+      username: email.split('@')[0], 
       email: email,
       password: '',
+      role: 'customer',
       avatar: avatar || '',
       googleId: googleId || '',
       provider: 'google',
@@ -114,20 +131,60 @@ app.post('/api/google-login', (req, res) => {
       success: true,
       isNewUser: true,
       message: 'Tài khoản Google mới đã được tạo và đăng nhập thành công!',
-      user: { id: user.id, name: user.name, email: user.email, avatar: user.avatar }
+      user: { 
+          id: user.id, 
+          name: user.name, 
+          username: user.username, 
+          email: user.email, 
+          role: user.role, 
+          avatar: user.avatar 
+      }
     });
   }
 
-  // Nếu user đã tồn tại -> Trả về user để đăng nhập luôn
   return res.status(200).json({
     success: true,
     isNewUser: false,
     message: 'Đăng nhập Google thành công!',
-    user: { id: user.id, name: user.name, email: user.email, avatar: user.avatar }
+    user: { 
+        id: user.id, 
+        name: user.name, 
+        username: user.username, 
+        email: user.email, 
+        role: user.role, 
+        avatar: user.avatar 
+    }
   });
 });
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// ==========================================
+// API MỚI: CẬP NHẬT THÔNG TIN VÀ AVATAR
+// ==========================================
+app.put('/api/update-profile', (req, res) => {
+  const { id, name, email, avatar } = req.body;
+
+  const users = readUsers();
+  const userIndex = users.findIndex(u => u.id === id);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng!' });
+  }
+
+  // Cập nhật tên và avatar
+  users[userIndex].name = name || users[userIndex].name;
+  users[userIndex].avatar = avatar || users[userIndex].avatar;
+
+  try {
+    writeUsers(users);
+    res.status(200).json({ 
+      success: true, 
+      message: 'Cập nhật thành công!',
+      user: users[userIndex]
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi hệ thống khi lưu dữ liệu!' });
+  }
+});
 
 // Khởi động server
 app.listen(PORT, () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from "../../context/AuthContext.jsx";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
@@ -21,10 +21,12 @@ const Toast = Swal.mixin({
 const AuthModal = ({ isOpen, onClose }) => {
   const { login, register, googleLogin } = useAuth();
   const [mode, setMode] = useState('login');
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  
+  // Đã bổ sung trường username vào state
+  const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  // Khóa cuộn trang khi Modal mở (Luôn đặt trên đầu Hook)
+  // Khóa cuộn trang khi Modal mở
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -89,7 +91,9 @@ const AuthModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     if (mode === 'register') {
-      const result = await register(formData.name, formData.email, formData.password);
+      // Truyền đủ 4 trường xuống hàm register
+      const result = await register(formData.name, formData.username, formData.email, formData.password);
+      
       if (result.success) {
         Swal.fire({
           icon: 'success',
@@ -99,13 +103,14 @@ const AuthModal = ({ isOpen, onClose }) => {
           confirmButtonText: 'Đăng nhập ngay',
         }).then(() => {
           setMode('login');
-          setFormData({ name: '', email: formData.email, password: '' });
+          // Reset form nhưng giữ lại email cho tiện
+          setFormData({ name: '', username: '', email: formData.email, password: '' });
         });
       } else {
         Swal.fire({
           icon: 'error',
           title: 'Đăng ký thất bại',
-          text: result.message || 'Email này đã tồn tại trong hệ thống.',
+          text: result.message || 'Tên đăng nhập hoặc Email đã tồn tại.',
           confirmButtonColor: '#6f4323',
         });
       }
@@ -178,21 +183,40 @@ const AuthModal = ({ isOpen, onClose }) => {
         {/* Form nhập liệu */}
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'register' && (
-            <div className="form-group-field">
-              <label>Họ và tên</label>
-              <div className="input-with-icon">
-                <i className="fa-regular fa-user"></i>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Ví dụ: Kitsune Coffee"
-                  disabled={loading}
-                />
+            <>
+              <div className="form-group-field">
+                <label>Họ và tên</label>
+                <div className="input-with-icon">
+                  <i className="fa-regular fa-user"></i>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ví dụ: Kitsune Coffee"
+                    disabled={loading}
+                  />
+                </div>
               </div>
-            </div>
+
+              {/* Ô NHẬP USERNAME */}
+              <div className="form-group-field">
+                <label>Tên đăng nhập</label>
+                <div className="input-with-icon">
+                  <i className="fa-solid fa-at"></i>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ví dụ: kitsune_123"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           <div className="form-group-field">

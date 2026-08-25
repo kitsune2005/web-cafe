@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Footer.css';
 
 const Footer = () => {
@@ -21,7 +22,7 @@ const Footer = () => {
           {/* CỘT 1: LOGO & GIỚI THIỆU */}
           <div className="footer-col footer-brand">
             <Link to="/" className="footer-logo">
-              <img src="./src/assets/img/logo_fox_coffee.png" alt="The Mona Coffee Logo" />
+              <img src={logoFox} alt="The Mona Coffee Logo" />
             </Link>
             <p className="footer-brand-desc">
               Cà phê nguyên chất được chế biến 100% nguyên chất, không pha trộn với bất kỳ loại hạt cà phê nào khác.

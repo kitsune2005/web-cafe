@@ -48,10 +48,55 @@ button {
     font-family: inherit;
 }
 
+/* =========================================
+   CUSTOM SCROLLBAR UI/UX (Chuẩn Webkit & Firefox)
+========================================= */
+
+/* 1. Chiều rộng thanh cuộn mảnh mai, hiện đại (8px) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    /* Dành cho thanh cuộn ngang nếu có */
+}
+
+/* 2. Rãnh trượt (Track nền bên dưới) */
+::-webkit-scrollbar-track {
+    background: #f7f3ed;
+    /* Tone kem sáng đồng bộ nền website */
+    border-radius: 10px;
+}
+
+/* 3. Con trượt (Thumb - cục kéo) */
+::-webkit-scrollbar-thumb {
+    background: #c5a880;
+    /* Màu caramel nhẹ nhàng, tinh tế */
+    border-radius: 10px;
+    border: 2px solid #f7f3ed;
+    /* Tạo viền đệm tạo khoảng hở nổi khối */
+    transition: background-color 0.3s ease;
+}
+
+/* 4. Hiệu ứng khi rê chuột vào thanh cuộn (Hover) */
+::-webkit-scrollbar-thumb:hover {
+    background: #6a391e;
+    /* Đổi sang màu nâu cà phê đậm sang trọng */
+}
+
+/* 5. Hiệu ứng khi đang nhấn giữ kéo chuột (Active) */
+::-webkit-scrollbar-thumb:active {
+    background: #3b1708;
+}
+
+/* Hỗ trợ Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #c5a880 #f7f3ed;
+}
+
 .container {
     max-width: var(--container-width);
     margin: 0 auto;
-    padding: 10px 24px;
+    padding: 0 24px;
     width: 100%;
     max-width: 1100px;
 }

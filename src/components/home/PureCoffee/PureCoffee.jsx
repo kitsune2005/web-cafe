@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import coffeCup from "../../../assets/img/—Pngtree—flying cup of coffee with_15739217.png";
 import localData from '../../../data/data.json'; 
 import './PureCoffee.css';
 
@@ -99,7 +100,7 @@ const PureCoffee = ({ categories: propCategories }) => {
                         </div>
                         <div className="pc-image">
                             <img
-                                src="./src/assets/img/—Pngtree—flying cup of coffee with_15739217.png"
+                                src={coffeCup}
                                 alt="Ly cà phê nguyên chất"
                             />
                         </div>

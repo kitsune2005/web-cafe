@@ -49,7 +49,10 @@
 }
 
 /* Header & Avatar */
-.profile-header {
+/* =========================================
+   HEADER, AVATAR & CAMERA UPLOAD
+   ========================================= */
+   .profile-header {
     text-align: center;
     margin-bottom: 22px;
 }
@@ -60,10 +63,33 @@
     margin-bottom: 12px;
 }
 
-.profile-avatar-char {
-    width: 70px;
-    height: 70px;
+/* Khung tròn có chức năng click */
+.avatar-clickable-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.25);
+    border: 3px solid #6f4323;
+    transition: transform 0.2s ease;
+}
+
+.avatar-clickable-wrap:hover {
+    transform: scale(1.05); /* Phóng to nhẹ khi rê chuột */
+}
+
+/* Hình ảnh/Chữ cái hiển thị full khung tròn */
+.profile-avatar-char, .profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.profile-avatar-char {
     background: linear-gradient(135deg, #6f4323 0%, #c99a6b 100%);
     color: #ffffff;
     font-size: 28px;
@@ -71,18 +97,39 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.3);
 }
 
 .profile-avatar-img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #6f4323;
-    box-shadow: 0 8px 18px rgba(111, 67, 35, 0.25);
 }
 
+/* Lớp phủ đen hiện icon máy ảnh */
+.camera-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.camera-overlay i {
+    color: #ffffff;
+    font-size: 13px;
+}
+
+/* Hiện máy ảnh khi rê chuột vào Avatar */
+.avatar-clickable-wrap:hover .camera-overlay {
+    opacity: 1;
+}
+
+/* Tiêu đề */
 .profile-header h2 {
     font-size: 22px;
     font-weight: 700;
