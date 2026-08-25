@@ -5,7 +5,7 @@ import data from '../data/data.json';
 // 2. Components dùng chung (nằm trực tiếp trong components)
 import Header from '../components/Header/Header.jsx';
 import Footer from '../components/Footer/Footer.jsx';
-import ScrollTop from '../components/ScrollTop/ScrollTop.jsx';
+import ScrollTop from '../ScrollTop/ScrollTop.jsx';
 
 // 3. Components Trang chủ (nằm trong components/home)
 import Hero from '../components/home/Hero/Hero.jsx';
