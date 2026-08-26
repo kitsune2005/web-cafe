@@ -1,0 +1,844 @@
+/* =================================
+   PRODUCT PAGE
+================================= */
+
+.products-page {
+  background: #fff;
+}
+
+
+/* =================================
+   BREADCRUMB
+================================= */
+
+.product-breadcrumb {
+  min-height: 190px;
+  padding-top: 85px;
+
+  display: flex;
+  align-items: center;
+
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.72),
+      rgba(255, 255, 255, 0.72)
+    ),
+    url("https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg")
+      center / cover no-repeat;
+}
+
+.product-breadcrumb .container {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.product-breadcrumb a {
+  font-size: 13px;
+
+  color: #777;
+
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.product-breadcrumb a:hover {
+  color: #704321;
+}
+
+.product-breadcrumb strong {
+  font-size: 13px;
+
+  color: #382316;
+}
+
+.product-breadcrumb i {
+  font-size: 10px;
+
+  color: #999;
+}
+
+
+/* =================================
+   SHOP
+================================= */
+
+.shop-section {
+  padding: 60px 0 90px;
+}
+
+
+/* =================================
+   TOOLBAR
+================================= */
+
+.shop-toolbar {
+  min-height: 46px;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+
+  border: 1px solid #ddd;
+
+  border-radius: 4px;
+
+  margin-bottom: 18px;
+
+  background: #fff;
+}
+
+.toolbar-left {
+  display: flex;
+}
+
+.toolbar-left button,
+.toolbar-left select {
+  min-height: 44px;
+
+  padding: 0 22px;
+
+  border: none;
+  border-right: 1px solid #ddd;
+
+  background: transparent;
+
+  color: #555;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.toolbar-left button {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.toolbar-left select {
+  outline: none;
+}
+
+
+/* =================================
+   VIEW BUTTON
+================================= */
+
+.toolbar-view {
+  display: flex;
+  align-items: center;
+
+  padding-right: 12px;
+}
+
+.toolbar-view button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  background: transparent;
+
+  font-size: 18px;
+
+  color: #999;
+
+  cursor: pointer;
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease;
+}
+
+.toolbar-view button:hover {
+  color: #704321;
+
+  background: #f8f4f0;
+}
+
+.toolbar-view button.active {
+  color: #704321;
+
+  background: #f2ebe5;
+}
+
+
+/* =================================
+   RESULT COUNT
+================================= */
+
+.result-count {
+  text-align: right;
+
+  font-size: 13px;
+
+  color: #666;
+
+  margin: 0 0 25px;
+}
+
+
+/* =================================
+   SHOP LAYOUT
+================================= */
+
+.shop-layout {
+  display: grid;
+
+  grid-template-columns: 220px 1fr;
+
+  gap: 28px;
+}
+
+
+/* KHI ẨN SIDEBAR */
+
+.shop-layout.sidebar-hidden {
+  grid-template-columns: 1fr;
+}
+
+
+/* =================================
+   SIDEBAR
+================================= */
+
+.shop-sidebar {
+  width: 100%;
+}
+
+.sidebar-block {
+  margin-bottom: 45px;
+}
+
+.sidebar-block h3 {
+  margin: 0 0 25px;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  color: #111;
+}
+
+.sidebar-block label {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 13px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  color: #333;
+}
+
+.sidebar-block label > span:first-child {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.sidebar-block label > span:last-child {
+  color: #a1785c;
+}
+
+.sidebar-block input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+
+  accent-color: #704321;
+}
+
+
+/* =================================
+   PRODUCTS
+================================= */
+
+.shop-products {
+  display: grid;
+
+  gap: 22px;
+
+  width: 100%;
+}
+
+
+/* =================================
+   3 CỘT
+================================= */
+
+.shop-products.grid-3 {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+
+/* =================================
+   2 CỘT
+================================= */
+
+.shop-products.grid-2 {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+}
+
+
+/* =================================
+   LIST
+================================= */
+
+.shop-products.list {
+  grid-template-columns: 1fr;
+}
+
+.shop-products.list .shop-product-card {
+  display: grid;
+
+  grid-template-columns: 260px 1fr;
+
+  min-height: 270px;
+}
+
+.shop-products.list .shop-product-image {
+  height: 270px;
+
+  border-right: 1px solid #eee;
+}
+
+.shop-products.list .shop-product-info {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: flex-start;
+
+  padding: 30px;
+
+  text-align: left;
+}
+
+.shop-products.list .shop-rating {
+  margin-bottom: 12px;
+}
+
+.shop-products.list .shop-product-info h3 {
+  margin-bottom: 14px;
+
+  font-size: 21px;
+}
+
+.shop-products.list .shop-price {
+  justify-content: flex-start;
+}
+
+.shop-products.list .shop-price del {
+  font-size: 14px;
+}
+
+.shop-products.list .shop-price span {
+  font-size: 19px;
+}
+
+
+/* =================================
+   PRODUCT CARD
+================================= */
+
+.shop-product-card {
+  position: relative;
+
+  border: 1px solid #ddd;
+
+  border-radius: 9px;
+
+  overflow: hidden;
+
+  background: #fff;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.shop-product-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 10px 30px
+    rgba(0, 0, 0, 0.08);
+}
+
+
+/* =================================
+   IMAGE
+================================= */
+
+.shop-product-image {
+  position: relative;
+
+  height: 270px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 15px;
+
+  overflow: hidden;
+}
+
+.shop-product-image img {
+  position: absolute;
+
+  max-width: 82%;
+
+  max-height: 90%;
+
+  object-fit: contain;
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+
+/* ẢNH TRƯỚC */
+
+.shop-product-image .front {
+  opacity: 1;
+}
+
+
+/* ẢNH SAU */
+
+.shop-product-image .back {
+  opacity: 0;
+}
+
+
+/* HOVER ĐỔI ẢNH */
+
+.shop-product-card:hover .front {
+  opacity: 0;
+}
+
+.shop-product-card:hover .back {
+  opacity: 1;
+
+  transform: scale(1.03);
+}
+
+
+/* =================================
+   DISCOUNT
+================================= */
+
+.discount-badge {
+  position: absolute;
+
+  top: 12px;
+  left: 12px;
+
+  z-index: 5;
+
+  padding: 5px 8px;
+
+  border-radius: 4px;
+
+  background: #ff805f;
+
+  color: #fff;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* =================================
+   PRODUCT ACTION
+================================= */
+
+.product-hover-actions {
+  position: absolute;
+
+  right: 12px;
+  top: 50%;
+
+  transform:
+    translateY(-50%)
+    translateX(20px);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  opacity: 0;
+
+  transition: 0.3s;
+
+  z-index: 10;
+}
+
+.shop-product-card:hover
+.product-hover-actions {
+  opacity: 1;
+
+  transform:
+    translateY(-50%)
+    translateX(0);
+}
+
+
+/* BUTTON + LINK */
+
+.product-hover-actions button,
+.product-hover-actions a {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  box-shadow:
+    0 3px 12px
+    rgba(0, 0, 0, 0.15);
+
+  color: #333;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.product-hover-actions button:hover,
+.product-hover-actions a:hover {
+  background: #704321;
+
+  color: #fff;
+}
+
+
+/* =================================
+   PRODUCT INFO
+================================= */
+
+.shop-product-info {
+  padding: 4px 15px 18px;
+
+  text-align: center;
+}
+
+
+/* =================================
+   RATING
+================================= */
+
+.shop-rating {
+  margin-bottom: 6px;
+
+  color: #f4c400;
+
+  font-size: 12px;
+}
+
+
+/* =================================
+   PRODUCT NAME
+================================= */
+
+.shop-product-info h3 {
+  margin: 0 0 7px;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+  color: #2b1a10;
+}
+
+
+/* =================================
+   PRICE
+================================= */
+
+.shop-price {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.shop-price del {
+  font-size: 12px;
+
+  color: #999;
+}
+
+.shop-price span {
+  color: #d90000;
+
+  font-size: 15px;
+
+  font-weight: 700;
+}
+
+
+/* =================================
+   PAGINATION
+================================= */
+
+.pagination {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  margin-top: 45px;
+}
+
+.pagination button {
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid #ddd;
+
+  background: #fff;
+
+  color: #333;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: #704321;
+
+  color: #704321;
+}
+
+.pagination button.active {
+  background: #704321;
+
+  border-color: #704321;
+
+  color: #fff;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+
+/* =================================
+   KHÔNG CÓ SẢN PHẨM
+================================= */
+
+.no-products {
+  grid-column: 1 / -1;
+
+  padding: 60px 20px;
+
+  text-align: center;
+
+  font-size: 17px;
+
+  color: #777;
+}
+
+
+/* =================================
+   TABLET
+================================= */
+
+@media (max-width: 992px) {
+
+  .shop-layout {
+    grid-template-columns:
+      190px 1fr;
+  }
+
+  .shop-products.grid-3 {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-products.grid-2 {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-products.list
+  .shop-product-card {
+    grid-template-columns:
+      220px 1fr;
+  }
+
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 768px) {
+
+  .product-breadcrumb {
+    min-height: 150px;
+  }
+
+  .shop-section {
+    padding-top: 35px;
+  }
+
+  .shop-toolbar {
+    flex-direction: column;
+  }
+
+  .toolbar-left {
+    width: 100%;
+  }
+
+  .toolbar-left button,
+  .toolbar-left select {
+    flex: 1;
+  }
+
+  .toolbar-view {
+    justify-content: flex-end;
+
+    padding: 5px 10px;
+  }
+
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-sidebar {
+    display: none;
+  }
+
+  .shop-products.grid-3,
+  .shop-products.grid-2 {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  /* LIST MOBILE */
+
+  .shop-products.list
+  .shop-product-card {
+    grid-template-columns:
+      180px 1fr;
+  }
+
+  .shop-products.list
+  .shop-product-image {
+    height: 220px;
+  }
+
+  .shop-products.list
+  .shop-product-info {
+    padding: 20px;
+  }
+
+}
+
+
+/* =================================
+   SMALL MOBILE
+================================= */
+
+@media (max-width: 520px) {
+
+  .shop-products.grid-3,
+  .shop-products.grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* LIST chuyển thành card */
+
+  .shop-products.list
+  .shop-product-card {
+    display: block;
+  }
+
+  .shop-products.list
+  .shop-product-image {
+    height: 260px;
+
+    border-right: none;
+  }
+
+  .shop-products.list
+  .shop-product-info {
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .shop-products.list
+  .shop-price {
+    justify-content: center;
+  }
+
+
+  /* TOOLBAR */
+
+  .toolbar-left {
+    flex-direction: column;
+  }
+
+  .toolbar-left button,
+  .toolbar-left select {
+    border-right: none;
+
+    border-bottom:
+      1px solid #ddd;
+  }
+
+}
