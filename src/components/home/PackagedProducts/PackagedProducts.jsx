@@ -76,66 +76,77 @@ const PackagedProducts = ({ products: propProducts }) => {
             </svg>
 
             <div className="container">
-                <div className="section-head center">
+                {/* TIÊU ĐỀ - Rơi nhẹ từ trên xuống */}
+                <div className="section-head center" data-aos="fade-down">
                     <h2 className="section-title">Sản phẩm đóng gói</h2>
                     <p className="section-text">
                         Nhâm nhi mỗi ngày với những loại cà phê đặc biệt như Arabica, Robusta, Espresso và nhiều hơn nữa!
                     </p>
                 </div>
 
-                {loading ? (
-                    <div className="loading-state">Đang tải sản phẩm...</div>
-                ) : (
-                    <div className="carousel-wrapper">
-                        <div 
-                            className="products-track" 
-                            ref={trackRef}
-                            onScroll={handleScroll}
-                        >
-                            {products.map((product) => (
-                                <article className="product-card" key={product.id}>
-                                    <div className="product-img">
-                                        <img 
-                                            className="img-main" 
-                                            src={product.imageFront || product.image || product.img} 
-                                            alt={product.name} 
-                                            loading="lazy" 
-                                        />
-                                        <img 
-                                            className="img-hover" 
-                                            src={product.imageBack || product.imageFront || product.image || product.img} 
-                                            alt={`${product.name} mặt sau`} 
-                                            loading="lazy" 
-                                        />
-                                        <div className="product-actions">
-                                            <Link to={`/product/${product.id}`} className="action-btn" aria-label="Xem chi tiết">
-                                                <i className="fa-regular fa-eye"></i>
-                                            </Link>
-                                            <button className="action-btn" aria-label="Thêm vào giỏ">
-                                                <i className="fa-solid fa-cart-shopping"></i>
-                                            </button>
+                {/* KHUNG CAROUSEL - Bọc data-aos bên ngoài để tránh lỗi "tàng hình" lúc loading */}
+                <div data-aos="fade-up" data-aos-delay="200">
+                    {loading ? (
+                        <div className="loading-state">Đang tải sản phẩm...</div>
+                    ) : (
+                        <div className="carousel-wrapper">
+                            <div 
+                                className="products-track" 
+                                ref={trackRef}
+                                onScroll={handleScroll}
+                            >
+                                {products.map((product, index) => (
+                                    <article 
+                                        className="product-card" 
+                                        key={product.id}
+                                        /* Từng thẻ bay lên lần lượt (delay cộng dồn 150ms) */
+                                        data-aos="fade-up"
+                                        data-aos-delay={200 + index * 150}
+                                    >
+                                        <div className="product-img">
+                                            <img 
+                                                className="img-main" 
+                                                src={product.imageFront || product.image || product.img} 
+                                                alt={product.name} 
+                                                loading="lazy" 
+                                            />
+                                            <img 
+                                                className="img-hover" 
+                                                src={product.imageBack || product.imageFront || product.image || product.img} 
+                                                alt={`${product.name} mặt sau`} 
+                                                loading="lazy" 
+                                            />
+                                            <div className="product-actions">
+                                                <Link to={`/product/${product.id}`} className="action-btn" aria-label="Xem chi tiết">
+                                                    <i className="fa-regular fa-eye"></i>
+                                                </Link>
+                                                <button className="action-btn" aria-label="Thêm vào giỏ">
+                                                    <i className="fa-solid fa-cart-shopping"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="rating">
-                                        {[...Array(Number(product.rating) || 5)].map((_, i) => (
-                                            <i className="fa-solid fa-star" key={i}></i>
-                                        ))}
-                                    </div>
+                                        <div className="rating">
+                                            {[...Array(Number(product.rating) || 5)].map((_, i) => (
+                                                <i className="fa-solid fa-star" key={i}></i>
+                                            ))}
+                                        </div>
 
-                                    <h3>{product.name}</h3>
-                                    <p className="price">
-                                        {typeof product.price === 'number' 
-                                            ? `${product.price.toLocaleString('vi-VN')} đ` 
-                                            : product.price}
-                                    </p>
-                                </article>
-                            ))}
+                                        <h3>{product.name}</h3>
+                                        <p className="price">
+                                            {typeof product.price === 'number' 
+                                                ? `${product.price.toLocaleString('vi-VN')} đ` 
+                                                : product.price}
+                                        </p>
+                                    </article>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                <div className="carousel-nav">
+                {/* ĐIỀU HƯỚNG BÊN DƯỚI - Nổi nhẹ lên cuối cùng */}
+                <div className="carousel-nav" data-aos="fade-up" data-aos-delay="400">
                     <button className="carousel-btn" onClick={handlePrev} aria-label="Trang trước">
                         <i className="fa-solid fa-chevron-left"></i>
                     </button>

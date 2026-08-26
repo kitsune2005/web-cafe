@@ -464,3 +464,105 @@
         width: 280px;
     }
 }
+
+/* =========================================
+   RESPONSIVE (CẬP NHẬT: CANH GIỮA TEXT TRÊN MOBILE)
+========================================= */
+
+@media (max-width: 992px) {
+    .pure-flex {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .pure-left, .pure-right {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    /* 1. CANH GIỮA CỤM CHỮ BÊN TRÊN & NÚT KHÁM PHÁ */
+    .pc-left-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .pure-left .section-desc {
+        text-align: center; 
+    }
+
+    .link-arrow {
+        margin: 18px auto 0; /* Ép nút Khám phá ra chính giữa */
+    }
+
+    /* 2. CANH GIỮA CỤM CHỮ "THƠM NGON CHẤT LƯỢNG" */
+    .pc-right-header {
+        flex-direction: column; /* Đẩy đoạn mô tả rớt xuống dưới tiêu đề */
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .pc-heading {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .pc-heading .sub-title, 
+    .pc-text .sub-desc {
+        text-align: center;
+    }
+
+    /* Thẻ sản phẩm Tablet */
+    .category-card {
+        flex: 0 0 calc((100% - 15px) / 2.2);
+        padding: 15px 10px;
+    }
+
+    .category-img {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .pc-right-header {
+        gap: 8px;
+    }
+
+    .pc-text {
+        width: 100%;
+    }
+
+    .pc-image img {
+        width: 260px;
+    }
+
+    /* Thẻ sản phẩm Mobile */
+    .category-card {
+        flex: 0 0 calc((100% - 10px) / 1.6);
+        padding: 12px 10px;
+    }
+
+    .category-img {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 10px;
+    }
+
+    .category-card h3 {
+        font-size: 13px;
+    }
+
+    .carousel-controls {
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .nav-btn {
+        width: 34px;
+        height: 34px;
+    }
+}

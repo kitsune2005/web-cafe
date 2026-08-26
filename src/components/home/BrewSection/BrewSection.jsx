@@ -67,8 +67,8 @@ const BrewSection = ({ brews: propBrews }) => {
   return (
     <section className="brew-section">
       <div className="container">
-        {/* TIÊU ĐỀ */}
-        <div className="brew-head">
+        {/* TIÊU ĐỀ - Rơi nhẹ từ trên xuống */}
+        <div className="brew-head" data-aos="fade-down">
           <h2 className="brew-title">KHÁM PHÁ HƯƠNG VỊ CÀ PHÊ ĐA DẠNG</h2>
           <p className="brew-desc">
             Tìm hiểu những kiến thức cơ bản về pha cà phê, bao gồm các phương pháp pha cà phê khác nhau.
@@ -76,31 +76,40 @@ const BrewSection = ({ brews: propBrews }) => {
         </div>
 
         {/* CAROUSEL 6 CỘT */}
-        <div className="brew-carousel-wrapper">
-          <div 
-            className="brews-track" 
-            ref={trackRef}
-            onScroll={handleScroll}
-          >
-            {brews.map((brew) => (
-              <div className="brew-item" key={brew.id}>
-                <div className="brew-circle-wrap">
-                  <div className="brew-circle">
-                    <img 
-                      src={brew.image || brew.img} 
-                      alt={brew.name} 
-                      loading="lazy" 
-                    />
+        {/* Khung ngoài bọc lại để AOS nhìn thấy */}
+        <div data-aos="fade-up" data-aos-delay="100">
+          <div className="brew-carousel-wrapper">
+            <div 
+              className="brews-track" 
+              ref={trackRef}
+              onScroll={handleScroll}
+            >
+              {brews.map((brew, index) => (
+                <div 
+                  className="brew-item" 
+                  key={brew.id}
+                  /* Từng item phóng to lần lượt (cộng dồn 100ms mỗi item) */
+                  data-aos="zoom-in" 
+                  data-aos-delay={100 + index * 100}
+                >
+                  <div className="brew-circle-wrap">
+                    <div className="brew-circle">
+                      <img 
+                        src={brew.image || brew.img} 
+                        alt={brew.name} 
+                        loading="lazy" 
+                      />
+                    </div>
                   </div>
+                  <p className="brew-name">{brew.name}</p>
                 </div>
-                <p className="brew-name">{brew.name}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* ĐIỀU HƯỚNG BÊN DƯỚI */}
-        <div className="brew-controls">
+        {/* ĐIỀU HƯỚNG BÊN DƯỚI - Trượt lên cuối cùng */}
+        <div className="brew-controls" data-aos="fade-up" data-aos-delay="400">
           <button className="brew-nav-btn" onClick={handlePrev} aria-label="Trang trước">
             <i className="fa-solid fa-chevron-left"></i>
           </button>

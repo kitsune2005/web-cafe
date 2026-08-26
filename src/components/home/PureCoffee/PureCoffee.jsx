@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+// Đã giữ nguyên tên file ảnh cũ để không bị báo lỗi
 import coffeCup from "../../../assets/img/—Pngtree—flying cup of coffee with_15739217.png";
 import localData from '../../../data/data.json'; 
 import './PureCoffee.css';
@@ -84,7 +85,8 @@ const PureCoffee = ({ categories: propCategories }) => {
                     
                     {/* CỘT TRÁI */}
                     <div className="pure-left">
-                        <div className="pc-left-content">
+                        {/* Hiệu ứng trượt từ trái sang */}
+                        <div className="pc-left-content" data-aos="fade-right">
                             <h2 className="section-title">CÀ PHÊ NGUYÊN CHẤT</h2>
                             <p className="section-desc">
                                 Cà phê nguyên chất được chế biến 100% nguyên chất,
@@ -98,7 +100,8 @@ const PureCoffee = ({ categories: propCategories }) => {
                                 <i className="fa-solid fa-arrow-right"></i>
                             </Link>
                         </div>
-                        <div className="pc-image">
+                        {/* Hiệu ứng phóng to mờ ảo, trễ 200ms */}
+                        <div className="pc-image" data-aos="zoom-in" data-aos-delay="200">
                             <img
                                 src={coffeCup}
                                 alt="Ly cà phê nguyên chất"
@@ -108,7 +111,8 @@ const PureCoffee = ({ categories: propCategories }) => {
 
                     {/* CỘT PHẢI */}
                     <div className="pure-right">
-                        <div className="pc-right-header">
+                        {/* Hiệu ứng trượt từ phải sang */}
+                        <div className="pc-right-header" data-aos="fade-left">
                             <div className="pc-heading">
                                 <h3 className="sub-title">THƠM NGON<br />CHẤT LƯỢNG</h3>
                             </div>
@@ -121,42 +125,45 @@ const PureCoffee = ({ categories: propCategories }) => {
                             </div>
                         </div>
 
-                        {loading ? (
-                            <div className="loading-state">Đang tải danh mục...</div>
-                        ) : (
-                            <div className="pc-categories">
-                                <div 
-                                    className="carousel-track" 
-                                    ref={trackRef} 
-                                    onScroll={handleScroll}
-                                >
-                                    {categories.map((item) => (
-                                        <Link
-                                            key={item.id}
-                                            to={`/products?category=${item.slug || item.id}`}
-                                            className="category-card"
-                                        >
-                                            <div className="category-img">
-                                                {item.img || item.image ? (
-                                                    <img
-                                                        src={item.img || item.image}
-                                                        alt={item.name}
-                                                    />
-                                                ) : (
-                                                    <div className="circle-icon">
-                                                        <i className={item.icon || 'fa-solid fa-mug-hot'}></i>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <h3>{item.name}</h3>
-                                        </Link>
-                                    ))}
+                        {/* ĐÃ FIX: Đưa data-aos ra một div bọc bên ngoài để AOS nhận diện ngay từ đầu */}
+                        <div data-aos="fade-up" data-aos-delay="200">
+                            {loading ? (
+                                <div className="loading-state">Đang tải danh mục...</div>
+                            ) : (
+                                <div className="pc-categories">
+                                    <div 
+                                        className="carousel-track" 
+                                        ref={trackRef} 
+                                        onScroll={handleScroll}
+                                    >
+                                        {categories.map((item) => (
+                                            <Link
+                                                key={item.id}
+                                                to={`/products?category=${item.slug || item.id}`}
+                                                className="category-card"
+                                            >
+                                                <div className="category-img">
+                                                    {item.img || item.image ? (
+                                                        <img
+                                                            src={item.img || item.image}
+                                                            alt={item.name}
+                                                        />
+                                                    ) : (
+                                                        <div className="circle-icon">
+                                                            <i className={item.icon || 'fa-solid fa-mug-hot'}></i>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <h3>{item.name}</h3>
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
 
-                        {/* CỤM ĐIỀU HƯỚNG HIỂN THỊ CHUẨN SỐ TRANG (VD: 1 / 2) */}
-                        <div className="carousel-controls">
+                        {/* CỤM ĐIỀU HƯỚNG - Hiệu ứng trượt lên, trễ 300ms */}
+                        <div className="carousel-controls" data-aos="fade-up" data-aos-delay="300">
                             <button className="nav-btn" onClick={handlePrev} aria-label="Trang trước">
                                 <i className="fa-solid fa-chevron-left"></i>
                             </button>

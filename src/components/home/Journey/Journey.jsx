@@ -83,8 +83,8 @@ const Journey = ({ steps: propSteps }) => {
       </svg>
 
       <div className="container">
-        {/* TIÊU ĐỀ */}
-        <div className="journey-head">
+        {/* TIÊU ĐỀ - Rơi nhẹ từ trên xuống */}
+        <div className="journey-head" data-aos="fade-down">
           <h2 className="journey-title">HÀNH TRÌNH SẢN XUẤT CÀ PHÊ</h2>
           <p className="journey-desc">
             Khám phá quy trình chất lượng hàng đầu của sản phẩm cà phê tại cửa hàng của chúng tôi.
@@ -92,14 +92,21 @@ const Journey = ({ steps: propSteps }) => {
         </div>
 
         {/* CAROUSEL HIỂN THỊ CHUẨN 2 CỘT */}
-        <div className="journey-carousel-wrapper">
+        {/* Nguyên cái khung này trượt lên sau khi chữ rơi xuống */}
+        <div className="journey-carousel-wrapper" data-aos="fade-up" data-aos-delay="200">
           <div 
             className="journey-track" 
             ref={trackRef}
             onScroll={handleScroll}
           >
-            {steps.map((step) => (
-              <article className="journey-card" key={step.id}>
+            {steps.map((step, index) => (
+              <article 
+                className="journey-card" 
+                key={step.id}
+                // Từng cái card sẽ bay lên lần lượt (delay tăng 150ms mỗi thẻ)
+                data-aos="fade-up" 
+                data-aos-delay={200 + index * 150} 
+              >
                 <div className="journey-card-img">
                   <img src={step.image} alt={step.title} loading="lazy" />
                 </div>
@@ -115,8 +122,8 @@ const Journey = ({ steps: propSteps }) => {
           </div>
         </div>
 
-        {/* DOTS CHUYỂN TRANG */}
-        <div className="journey-dots">
+        {/* DOTS CHUYỂN TRANG - Hiện ra trễ nhất */}
+        <div className="journey-dots" data-aos="fade-in" data-aos-delay="400">
           {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
