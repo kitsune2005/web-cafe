@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../context/AuthContext.jsx";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './AuthModal.css';
 
@@ -20,13 +21,12 @@ const Toast = Swal.mixin({
 
 const AuthModal = ({ isOpen, onClose }) => {
   const { login, register, googleLogin } = useAuth();
-  const [mode, setMode] = useState('login');
+  const navigate = useNavigate();
   
-  // Đã bổ sung trường username vào state
+  const [mode, setMode] = useState('login');
   const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  // Khóa cuộn trang khi Modal mở
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -65,6 +65,10 @@ const AuthModal = ({ isOpen, onClose }) => {
           title: result.isNewUser ? 'Tạo tài khoản Google thành công!' : 'Đăng nhập Google thành công!',
         });
         onClose();
+        
+        if (result.user && result.user.role === 'admin') {
+          navigate('/admin');
+        }
       } else {
         Swal.fire({
           icon: 'error',
@@ -91,7 +95,6 @@ const AuthModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     if (mode === 'register') {
-      // Truyền đủ 4 trường xuống hàm register
       const result = await register(formData.name, formData.username, formData.email, formData.password);
       
       if (result.success) {
@@ -103,8 +106,8 @@ const AuthModal = ({ isOpen, onClose }) => {
           confirmButtonText: 'Đăng nhập ngay',
         }).then(() => {
           setMode('login');
-          // Reset form nhưng giữ lại email cho tiện
-          setFormData({ name: '', username: '', email: formData.email, password: '' });
+          // Chuyển sang login thì giữ lại username vừa đăng ký cho tiện
+          setFormData({ name: '', username: formData.username, email: '', password: '' });
         });
       } else {
         Swal.fire({
@@ -116,18 +119,23 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
       setLoading(false);
     } else {
-      const result = await login(formData.email, formData.password);
+      // 🚨 ĐÃ SỬA: Đăng nhập bằng Username thay vì Email
+      const result = await login(formData.username, formData.password);
       if (result.success) {
         Toast.fire({
           icon: 'success',
           title: 'Đăng nhập thành công!',
         });
         onClose();
+        
+        if (result.user && result.user.role === 'admin') {
+          navigate('/admin');
+        }
       } else {
         Swal.fire({
           icon: 'error',
           title: 'Đăng nhập thất bại',
-          text: result.message || 'Email hoặc mật khẩu không chính xác.',
+          text: result.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.',
           confirmButtonColor: '#6f4323',
         });
       }
@@ -156,7 +164,6 @@ const AuthModal = ({ isOpen, onClose }) => {
           </p>
         </div>
 
-        {/* Nút Đăng nhập Google */}
         <div className="google-auth-wrapper">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
@@ -177,11 +184,11 @@ const AuthModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="auth-divider">
-          <span>HOẶC TIẾP TỤC VỚI EMAIL</span>
+          <span>HOẶC TIẾP TỤC VỚI USERNAME</span>
         </div>
 
-        {/* Form nhập liệu */}
         <form onSubmit={handleSubmit} className="auth-form">
+          {/* CÁC Ô CHỈ HIỆN KHI ĐĂNG KÝ (Tên & Email) */}
           {mode === 'register' && (
             <>
               <div className="form-group-field">
@@ -200,18 +207,17 @@ const AuthModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Ô NHẬP USERNAME */}
               <div className="form-group-field">
-                <label>Tên đăng nhập</label>
+                <label>Địa chỉ Email</label>
                 <div className="input-with-icon">
-                  <i className="fa-solid fa-at"></i>
+                  <i className="fa-regular fa-envelope"></i>
                   <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     required
-                    placeholder="Ví dụ: kitsune_123"
+                    placeholder="tenban@domain.com"
                     disabled={loading}
                   />
                 </div>
@@ -219,22 +225,24 @@ const AuthModal = ({ isOpen, onClose }) => {
             </>
           )}
 
+          {/* Ô TÊN ĐĂNG NHẬP: Dùng chung cho cả Đăng nhập & Đăng ký */}
           <div className="form-group-field">
-            <label>Địa chỉ Email</label>
+            <label>Tên đăng nhập</label>
             <div className="input-with-icon">
-              <i className="fa-regular fa-envelope"></i>
+              <i className="fa-solid fa-at"></i>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
-                placeholder="tenban@domain.com"
+                placeholder="Ví dụ: kitsune_123"
                 disabled={loading}
               />
             </div>
           </div>
 
+          {/* Ô MẬT KHẨU: Dùng chung cho cả Đăng nhập & Đăng ký */}
           <div className="form-group-field">
             <label>Mật khẩu</label>
             <div className="input-with-icon">

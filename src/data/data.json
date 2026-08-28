@@ -41,6 +41,18 @@
       "name": "Cà phê rang xay Blend",
       "slug": "blend",
       "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate6.png"
+    },
+    {
+      "id": 8,
+      "name": "Cà phê hạt Robusta",
+      "slug": "robusta",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate3.png"
+    },
+    {
+      "id": 9,
+      "name": "Cà phê rang xay Blend",
+      "slug": "blend",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/h28-cate6.png"
     }
   ],
 
@@ -265,6 +277,26 @@
     },
     {
       "id": 8,
+      "name": "Cold Brew",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-6.png"
+    },
+    {
+      "id": 9,
+      "name": "French Press",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
+    },
+    {
+      "id": 10,
+      "name": "Cold Brew",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-6.png"
+    },
+    {
+      "id": 11,
+      "name": "French Press",
+      "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-7.png"
+    },
+    {
+      "id": 12,
       "name": "Máy Pha Tự Động",
       "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-4.png"
     }

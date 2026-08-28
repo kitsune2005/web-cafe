@@ -1,0 +1,218 @@
+/* =========================================
+   BỐ CỤC CHUNG TRANG SẢN PHẨM
+========================================= */
+.product-manage-page {
+    display: flex;
+    gap: 24px;
+    height: 100%;
+}
+
+.product-list-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-stats-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* =========================================
+   HEADER CỦA TRANG (Breadcrumb)
+========================================= */
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h3 {
+    font-size: 22px;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+
+.breadcrumb {
+    font-size: 13px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.breadcrumb i {
+    font-size: 10px;
+}
+
+/* =========================================
+   LƯỚI SẢN PHẨM (MENU GRID)
+========================================= */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.admin-pro-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-pro-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.admin-pro-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 16px;
+    border: 4px solid #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-pro-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 4px 0;
+}
+
+.admin-pro-cat {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 20px 0;
+}
+
+.admin-pro-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.action-dot-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-dot-btn:hover {
+    filter: brightness(0.9);
+}
+
+.btn-view {
+    background: #e8f5e9;
+    color: #4caf50;
+}
+
+.btn-edit {
+    background: #e3f2fd;
+    color: #2196f3;
+}
+
+.btn-del {
+    background: #ffebee;
+    color: #f44336;
+}
+
+.btn-dup {
+    background: #f3e5f5;
+    color: #9c27b0;
+}
+
+/* =========================================
+   CỘT THỐNG KÊ BÊN PHẢI (STATS CARDS)
+========================================= */
+.stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-title {
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.val-green {
+    color: #20c997;
+}
+
+.val-orange {
+    color: #ff6b6b;
+}
+
+.val-dark {
+    color: #333;
+}
+
+.stat-chart-mock {
+    height: 60px;
+    width: 100%;
+    margin: 10px 0;
+    /* Dùng SVG background để giả lập biểu đồ cực mượt */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.stat-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.stat-link {
+    color: #888;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.stat-badges {
+    display: flex;
+    gap: 6px;
+}
+
+.stat-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.badge-live {
+    background: #ffe3e3;
+    color: #ff6b6b;
+}
+
+.badge-visitors {
+    background: #f0f0ff;
+    color: #845ef7;
+}

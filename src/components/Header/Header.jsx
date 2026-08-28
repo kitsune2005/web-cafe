@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useHeaderLogic } from './useHeaderLogic.js';
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
-import { Link, useLocation } from 'react-router-dom'; // Thêm useLocation
+import { Link, useLocation } from 'react-router-dom';
 import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
 
@@ -35,6 +35,9 @@ const Header = () => {
   const navListRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
+  // Kiểm tra trang chủ
+  const isHomePage = location.pathname === '/';
+
   const updateIndicator = (el) => {
     if (!el || !navListRef.current) return;
     const navRect = navListRef.current.getBoundingClientRect();
@@ -47,16 +50,14 @@ const Header = () => {
   };
 
   const resetIndicator = () => {
-    // Tìm thẻ <li> đang active để gạch chân trôi về vị trí ban đầu
     const activeEl = navListRef.current?.querySelector('li.active');
     if (activeEl) {
       updateIndicator(activeEl);
     } else {
-      setIndicatorStyle(prev => ({ ...prev, opacity: 0 })); // Ẩn đi nếu không ở trang nào trong menu
+      setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
     }
   };
 
-  // Tính toán lại vị trí mỗi khi chuyển trang
   useEffect(() => {
     setTimeout(resetIndicator, 100);
   }, [location.pathname, menuItems]);
@@ -65,12 +66,11 @@ const Header = () => {
 
   return (
     <>
-      <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
+      <header className={`site-header ${scrolled ? 'scrolled' : ''} ${!isHomePage ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
           {/* Menu Desktop */}
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
-            {/* Thêm sự kiện onMouseLeave và thẻ div .nav-indicator vào ul */}
             <ul ref={navListRef} onMouseLeave={resetIndicator} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.link;
@@ -78,17 +78,14 @@ const Header = () => {
                   <li
                     key={index}
                     className={`${item.dropdown ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}
-                    onMouseEnter={(e) => updateIndicator(e.currentTarget)} // Chuột vào là tính vị trí
+                    onMouseEnter={(e) => updateIndicator(e.currentTarget)}
                   >
                     <Link
                       to={item.link || '#'}
-                      onClick={(e) => {
-                        // NẾU ẤN VÀO "GIỚI THIỆU" -> CUỘN LÊN ĐẦU TRANG
+                      onClick={() => {
                         if (item.label.toLowerCase() === 'giới thiệu') {
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
-
-                        // Toggle Dropdown (nếu có)
                         if (item.dropdown) {
                           setNavDropdown(navDropdown === item.label ? null : item.label);
                         }
@@ -97,7 +94,6 @@ const Header = () => {
                       {item.label}
                     </Link>
 
-                    {/* Bảng Dropdown */}
                     {item.dropdown && (
                       <ul className={`nav-dropdown ${navDropdown === item.label ? 'force-show' : ''}`}>
                         {item.dropdown.map((sub, subIndex) => (
@@ -111,7 +107,6 @@ const Header = () => {
                 );
               })}
 
-              {/* THANH GẠCH CHÂN CHẠY NGANG (MAGIC LINE) */}
               <div className="nav-indicator" style={indicatorStyle}></div>
             </ul>
           </nav>
@@ -121,7 +116,7 @@ const Header = () => {
             <img src={logoFox} alt="Logo" />
           </Link>
 
-          {/* Actions bên phải (Giữ nguyên như cũ) */}
+          {/* Actions bên phải */}
           <div className="header-actions">
             {/* Search */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>

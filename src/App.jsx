@@ -1,13 +1,8 @@
 import React, { useEffect } from "react";
-
 import { AuthProvider } from "./context/AuthContext";
 
-// QUAN TRỌNG: import Router
-import { Routes, Route } from "react-router-dom";
-
-// Pages
-import HomePage from "./pages/HomePage";
-import ProductsPage from "./pages/ProductsPage/ProductsPage";
+// GỌI APP ROUTES VÀO ĐÂY (Nó sẽ thay thế toàn bộ <Routes> cũ)
+import AppRoutes from "./routes/AppRoutes";
 
 // AOS
 import AOS from "aos";
@@ -25,19 +20,8 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <Routes>
-
-        <Route
-          path="/"
-          element={<HomePage />}
-        />
-
-        <Route
-          path="/products"
-          element={<ProductsPage />}
-        />
-
-      </Routes>
+      {/* Vứt bỏ <Routes> cũ đi, chỉ cần gọi một dòng này thôi */}
+      <AppRoutes />
     </AuthProvider>
   );
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// Giữ nguyên đường dẫn API xịn của Boss
 const API_BASE_URL = 'http://localhost:5000/api';
 
 export const AuthContext = createContext();
@@ -8,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. Khi load trang, lấy thông tin user đã lưu ở session/local
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -33,23 +33,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ================= ĐĂNG NHẬP THƯỜNG =================
-  const login = async (email, password) => {
+  // ================= ĐĂNG NHẬP API =================
+  // Đã sửa lại nhận username thay vì email
+  const login = async (username, password) => {
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        // Gửi username lên API (chú ý: Backend của Boss cũng phải đọc 'username' nhé)
+        body: JSON.stringify({ username, password }),
       });
+      
       const data = await response.json();
-      if (!response.ok) return { success: false, message: data.message || 'Đăng nhập thất bại!' };
+      
+      if (!response.ok) {
+        return { success: false, message: data.message || 'Đăng nhập thất bại!' };
+      }
 
       const loggedUser = data.user || data;
       setCurrentUser(loggedUser);
       localStorage.setItem('currentUser', JSON.stringify(loggedUser));
 
-      return { success: true, message: data.message || 'Đăng nhập thành công!' };
+      // Trả về user để AuthModal bắt được role admin
+      return { success: true, user: loggedUser, message: data.message || 'Đăng nhập thành công!' };
     } catch (error) {
+      console.error('Lỗi khi đăng nhập:', error);
       return { success: false, message: 'Không thể kết nối đến máy chủ Backend!' };
     }
   };
@@ -69,7 +77,7 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(loggedUser);
       localStorage.setItem('currentUser', JSON.stringify(loggedUser));
 
-      return { success: true, isNewUser: data.isNewUser, message: data.message };
+      return { success: true, isNewUser: data.isNewUser, message: data.message, user: loggedUser };
     } catch (error) {
       return { success: false, message: 'Không thể kết nối đến máy chủ Backend!' };
     }
@@ -82,7 +90,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ================= CẬP NHẬT THÔNG TIN VÀ AVATAR =================
-  // ĐÃ BỔ SUNG BIẾN avatar VÀO ĐÂY NHÉ:
   const updateUser = async (name, email, avatar) => {
     if (!currentUser) return { success: false, message: 'Bạn chưa đăng nhập!' };
 
@@ -92,7 +99,6 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        // GỬI AVATAR LÊN BACKEND:
         body: JSON.stringify({ id: currentUser.id, name, email, avatar }),
       });
 
@@ -102,14 +108,13 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: data.message || 'Cập nhật thất bại!' };
       }
 
-      // CẬP NHẬT AVATAR VÀO STATE CỦA REACT:
       const updatedUser = { ...currentUser, name, email, avatar };
       setCurrentUser(updatedUser);
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
       return { success: true, message: 'Cập nhật thông tin thành công!' };
     } catch (error) {
-      console.error(error); // In ra console để biết bị lỗi gì
+      console.error(error);
       return { success: false, message: 'Lỗi kết nối Backend!' };
     }
   };

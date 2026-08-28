@@ -684,3 +684,56 @@
         width: 280px;
     }
 }
+/* =========================================
+   GIAO DIỆN HEADER CHO TRANG CON (LIGHT MODE)
+   ========================================= */
+
+/* Trạng thái trên cùng: Trong suốt, bỏ bóng mờ */
+.site-header.light-mode {
+    background: transparent !important;
+    box-shadow: none;
+    position: absolute;
+}
+
+/* Tùy chọn: Khi cuộn chuột xuống thì cho nền Trắng để dễ đọc */
+.site-header.light-mode.scrolled {
+    background: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: fixed;
+}
+
+/* 1. Đổi màu chữ Menu sang Đen */
+.site-header.light-mode .main-nav a {
+    color: #111;
+}
+
+/* 2. Đổi màu các Icon (User, Tim, Giỏ hàng, Menu Mobile) sang Đen */
+.site-header.light-mode .icon-btn,
+.site-header.light-mode .user-btn,
+.site-header.light-mode .menu-toggle {
+    color: #111;
+}
+
+/* 3. Đổi màu tên User sang Đen */
+.site-header.light-mode .user-name {
+    color: #111;
+}
+
+/* 4. Ảo thuật CSS: Biến Logo trắng thành màu Đen */
+.site-header.light-mode .logo img {
+    filter: brightness(0);
+}
+
+/* 5. Cập nhật lại khung Tìm Kiếm sang Đen */
+.site-header.light-mode .search-form {
+    border-bottom-color: rgba(0, 0, 0, 0.25);
+}
+
+.site-header.light-mode .search-form input,
+.site-header.light-mode .search-form button {
+    color: #111;
+}
+
+.site-header.light-mode .search-form input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}

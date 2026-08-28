@@ -70,19 +70,26 @@ app.post('/api/register', (req, res) => {
   res.status(201).json({ success: true, message: 'Đăng ký thành công!', user: newUser });
 });
 
-// API: Đăng nhập thường
+// ==========================================
+// API MỚI: Đăng nhập thường (SMART LOGIN)
+// ==========================================
 app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
+  // 1. Nhận username thay vì email từ frontend
+  const { username, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'Vui lòng nhập email và mật khẩu!' });
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Vui lòng nhập Tên đăng nhập và mật khẩu!' });
   }
 
   const users = readUsers();
-  const user = users.find((u) => u.email === email && u.password === password);
+  
+  // 2. Tìm kiếm thông minh: Trùng Username HOẶC Email đều được
+  const user = users.find((u) => 
+    (u.username === username || u.email === username) && u.password === password
+  );
 
   if (!user) {
-    return res.status(401).json({ success: false, message: 'Email hoặc mật khẩu không đúng!' });
+    return res.status(401).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng!' });
   }
 
   res.status(200).json({
@@ -158,7 +165,7 @@ app.post('/api/google-login', (req, res) => {
 });
 
 // ==========================================
-// API MỚI: CẬP NHẬT THÔNG TIN VÀ AVATAR
+// API: CẬP NHẬT THÔNG TIN VÀ AVATAR
 // ==========================================
 app.put('/api/update-profile', (req, res) => {
   const { id, name, email, avatar } = req.body;
