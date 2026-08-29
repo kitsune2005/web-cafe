@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
+import { useCart } from '../../context/CartContext'; // 👉 KẾT NỐI BỘ NÃO GIỎ HÀNG
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
     const { products, formatPrice } = useProduct();
+    const { addToCart } = useCart(); // 👉 RÚT HÀM THÊM VÀO GIỎ HÀNG RA SỬ DỤNG
     
     const [product, setProduct] = useState(null);
     const [mainImage, setMainImage] = useState('');
@@ -21,7 +23,7 @@ const ProductDetailPage = () => {
         return (product.id * 37 % 87) + 12; 
     }, [product?.id]);
 
-    // 2. 👉 THUẬT TOÁN CAROUSEL RANDOM (CỐ ĐỊNH KHÔNG BỊ NHẢY)
+    // 2. THUẬT TOÁN CAROUSEL RANDOM (CỐ ĐỊNH KHÔNG BỊ NHẢY)
     const relatedProducts = useMemo(() => {
         if (!products || !product) return [];
         
@@ -33,7 +35,7 @@ const ProductDetailPage = () => {
         
         // Bước 3: Xáo bài ngẫu nhiên và lấy 8 món
         return [...sourcePool].sort(() => 0.5 - Math.random()).slice(0, 8);
-    }, [products, product?.id]); // Chỉ xáo bài lại khi Boss bấm sang xem trang sản phẩm khác!
+    }, [products, product?.id]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -65,17 +67,55 @@ const ProductDetailPage = () => {
         if (trackRef.current) trackRef.current.scrollBy({ left: -300, behavior: 'smooth' });
     };
 
+    // 👉 THAY THẾ TOÀN BỘ HÀM handleAddToCart CŨ BẰNG HÀM CÓ HIỆU ỨNG NÀY:
     const handleAddToCart = () => {
-        const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
-        const existingProduct = oldCart.find((item) => item.id === product.id);
-        let newCart;
-        if (existingProduct) {
-            newCart = oldCart.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
+        // 1. Tìm vị trí của ảnh sản phẩm và cái túi Giỏ hàng trên Header
+        const imgElement = document.querySelector('.main-image-wrap img');
+        const cartIcon = document.querySelector('.cart-btn i'); 
+
+        if (imgElement && cartIcon) {
+            const imgRect = imgElement.getBoundingClientRect();
+            const cartRect = cartIcon.getBoundingClientRect();
+
+            // 2. Tạo một ảnh ảo nhân bản để bay lên trời
+            const flyingImg = imgElement.cloneNode(true);
+            flyingImg.style.position = 'fixed';
+            flyingImg.style.zIndex = '999999';
+            flyingImg.style.top = `${imgRect.top}px`;
+            flyingImg.style.left = `${imgRect.left}px`;
+            flyingImg.style.width = `${imgRect.width}px`;
+            flyingImg.style.height = `${imgRect.height}px`;
+            flyingImg.style.objectFit = 'cover';
+            flyingImg.style.borderRadius = '50%';
+            flyingImg.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+            flyingImg.style.pointerEvents = 'none';
+
+            document.body.appendChild(flyingImg);
+
+            // 3. Cho ảnh bay về phía cái túi trên Header
+            requestAnimationFrame(() => {
+                flyingImg.style.top = `${cartRect.top - 15}px`;
+                flyingImg.style.left = `${cartRect.left - 15}px`;
+                flyingImg.style.width = '30px';
+                flyingImg.style.height = '30px';
+                flyingImg.style.opacity = '0.1';
+                flyingImg.style.transform = 'scale(0.2)';
+            });
+
+            // 4. Đợi ảnh bay tới nơi thì xóa ảnh đi, rung cái túi và lưu dữ liệu
+            setTimeout(() => {
+                flyingImg.remove();
+                addToCart(product, quantity); // Lưu vào Context + Gọi Toast xanh xanh
+                
+                // Hiệu ứng giỏ hàng rung lắc (Đã khai báo CSS bên kia)
+                cartIcon.classList.add('shake-cart-anim');
+                setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
+            }, 800);
+            
         } else {
-            newCart = [...oldCart, { ...product, quantity: quantity }];
+            // Đề phòng lỗi trình duyệt, lưu thẳng vào giỏ không cần bay
+            addToCart(product, quantity);
         }
-        localStorage.setItem("cart", JSON.stringify(newCart));
-        alert(`Đã thêm ${quantity} x ${product.name} vào giỏ hàng!`);
     };
 
     return (

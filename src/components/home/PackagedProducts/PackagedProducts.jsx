@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useProduct } from '../../../context/ProductContext'; 
+import { useCart } from '../../../context/CartContext'; // 👉 THÊM IMPORT
 import './PackagedProducts.css';
 
 const PackagedProducts = () => {
@@ -8,8 +9,8 @@ const PackagedProducts = () => {
     const [currentPage, setCurrentPage] = useState(1);
     
     const { products, formatPrice, loading } = useProduct();
+    const { addToCart } = useCart(); // 👉 KÉO HÀM TỪ CONTEXT
 
-    // BỘ LỌC THÔNG MINH: Lấy những sản phẩm được tick "Hiện ngoài Trang chủ" (hoặc thuộc Cà phê đóng gói)
     const displayProducts = products
         .filter(product => product.isFeatured !== false || product.category === 'Cà phê đóng gói')
         .slice(0, 8);
@@ -42,17 +43,52 @@ const PackagedProducts = () => {
         }
     };
 
-    const handleAddToCart = (product) => {
-        const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
-        const existingProduct = oldCart.find((item) => item.id === product.id);
-        let newCart;
-        if (existingProduct) {
-            newCart = oldCart.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+    // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
+    const handleAddFromCard = (e, item) => {
+        e.preventDefault(); 
+        e.stopPropagation(); 
+
+        const cardElement = e.currentTarget.closest('.product-card');
+        const imgElement = cardElement ? cardElement.querySelector('.img-main') : null;
+        const cartIcon = document.querySelector('.cart-btn i'); 
+
+        if (imgElement && cartIcon) {
+            const imgRect = imgElement.getBoundingClientRect();
+            const cartRect = cartIcon.getBoundingClientRect();
+
+            const flyingImg = imgElement.cloneNode(true);
+            flyingImg.style.position = 'fixed';
+            flyingImg.style.zIndex = '999999';
+            flyingImg.style.top = `${imgRect.top}px`;
+            flyingImg.style.left = `${imgRect.left}px`;
+            flyingImg.style.width = `${imgRect.width}px`;
+            flyingImg.style.height = `${imgRect.height}px`;
+            flyingImg.style.objectFit = 'cover';
+            flyingImg.style.borderRadius = '8px';
+            flyingImg.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+            flyingImg.style.pointerEvents = 'none';
+
+            document.body.appendChild(flyingImg);
+
+            requestAnimationFrame(() => {
+                flyingImg.style.top = `${cartRect.top - 15}px`;
+                flyingImg.style.left = `${cartRect.left - 15}px`;
+                flyingImg.style.width = '30px';
+                flyingImg.style.height = '30px';
+                flyingImg.style.opacity = '0.1';
+                flyingImg.style.transform = 'scale(0.2)';
+            });
+
+            setTimeout(() => {
+                flyingImg.remove();
+                addToCart(item, 1); 
+                
+                cartIcon.classList.add('shake-cart-anim');
+                setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
+            }, 800);
         } else {
-            newCart = [...oldCart, { ...product, quantity: 1 }];
+            addToCart(item, 1);
         }
-        localStorage.setItem("cart", JSON.stringify(newCart));
-        alert("Đã thêm sản phẩm vào giỏ hàng!");
     };
 
     return (
@@ -103,7 +139,8 @@ const PackagedProducts = () => {
                                                 <Link to={`/product/${product.id}`} className="action-btn" aria-label="Xem chi tiết">
                                                     <i className="fa-regular fa-eye"></i>
                                                 </Link>
-                                                <button className="action-btn" aria-label="Thêm vào giỏ" onClick={() => handleAddToCart(product)}>
+                                                {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
+                                                <button className="action-btn" aria-label="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
                                                     <i className="fa-solid fa-cart-shopping"></i>
                                                 </button>
                                             </div>

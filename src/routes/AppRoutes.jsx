@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 // NẠP BỘ NGUỒN CÀI ĐẶT VÀO ĐÂY
 import { SettingsProvider } from '../context/SettingsContext';
 import { ProductProvider } from '../context/ProductContext';
+import { CartProvider } from '../context/CartContext'; // 👉 THÊM BỘ NÃO GIỎ HÀNG
+import { Toaster } from 'react-hot-toast'; // 👉 THÊM THƯ VIỆN THÔNG BÁO
 
 // ================= LAYOUTS =================
 import MainLayouts from '../layouts/MainLayouts';
@@ -13,15 +15,20 @@ import AdminLayout from '../layouts/adminLayout/AdminLayout';
 // ================= CLIENT PAGES =================
 import HomePage from '../pages/HomePage';
 import ProductsPage from '../pages/ProductsPage/ProductsPage';
-import CategoryPage from '../pages/CategoryPage/CategoryPage'; 
+import CategoryPage from '../pages/CategoryPage/CategoryPage';
 
-// NHẬP TRANG CHI TIẾT SẢN PHẨM (ĐÃ BỎ TRANG ABOUT)
+// NHẬP TRANG CHI TIẾT SẢN PHẨM VÀ GIỎ HÀNG
 import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage';
+import CartPage from '../pages/CartPage/CartPage';
+
+// 👉 IMPORT TRANG THANH TOÁN VÀ ĐƠN HÀNG
+import CheckoutPage from '../pages/CheckoutPage/CheckoutPage';
+import MyOrdersPage from '../pages/MyOrdersPage/MyOrdersPage';
 
 // ================= ADMIN PAGES =================
 import ProductManage from '../pages/AdminPage/ProductManage/ProductManage';
 import Dashboard from '../pages/AdminPage/Dashboard/Dashboard';
-import OrderManage from '../pages/AdminPage/OrderManage/OrderManage'; 
+import OrderManage from '../pages/AdminPage/OrderManage/OrderManage';
 import AutoScrollToTop from './AutoScrollToTop';
 
 const AppRoutes = () => {
@@ -45,50 +52,61 @@ const AppRoutes = () => {
 
     return (
         <SettingsProvider>
-            <ProductProvider>
-                <AutoScrollToTop />
-                <Routes>
+            {/* 👉 BỌC THÊM CART PROVIDER Ở ĐÂY ĐỂ DÙNG CHUNG TOÀN WEB */}
+            <CartProvider>
+                <ProductProvider>
+                    <AutoScrollToTop />
+                    {/* 👉 ĐẶT MÁY PHÁT THÔNG BÁO Ở ĐÂY */}
+                    <Toaster position="top-center" reverseOrder={false} />
 
-                    {/* ==============================================
-                        PHE 1: KHÁCH HÀNG 
-                    ================================================ */}
-                    <Route element={<MainLayouts />}>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/products" element={<ProductsPage />} />
-                        <Route path="/category/:slug" element={<CategoryPage />} />
-                        
-                        {/* TUYỆT CHIÊU ĐỊNH TUYẾN ĐỘNG CHO 45+ SẢN PHẨM */}
-                        <Route path="/product/:id" element={<ProductDetailPage />} />
-                    </Route>
+                    <Routes>
 
-                    {/* ==============================================
-                        PHE 2: ADMIN 
-                    ================================================ */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedAdminRoute>
-                                <AdminLayout />
-                            </ProtectedAdminRoute>
-                        }
-                    >
-                        <Route index element={<Navigate to="dashboard" replace />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="products" element={<ProductManage />} />
-                        <Route path="orders" element={<OrderManage />} />
-                    </Route>
+                        {/* ==============================================
+                            PHE 1: KHÁCH HÀNG 
+                        ================================================ */}
+                        <Route element={<MainLayouts />}>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/products" element={<ProductsPage />} />
+                            <Route path="/category/:slug" element={<CategoryPage />} />
 
-                    {/* ==============================================
-                        BẮT LỖI 404 
-                    ================================================ */}
-                    <Route path="*" element={
-                        <div style={{ textAlign: 'center', padding: '100px 0' }}>
-                            <h1 style={{ color: '#6f4323' }}>404 - Lạc đường rồi 🦊</h1>
-                        </div>
-                    } />
+                            {/* TUYỆT CHIÊU ĐỊNH TUYẾN ĐỘNG CHO 45+ SẢN PHẨM */}
+                            <Route path="/product/:id" element={<ProductDetailPage />} />
 
-                </Routes>
-            </ProductProvider>
+                            {/* ĐƯỜNG DẪN TỚI TRANG GIỎ HÀNG, THANH TOÁN, ĐƠN HÀNG */}
+                            <Route path="/cart" element={<CartPage />} />
+                            <Route path="/checkout" element={<CheckoutPage />} />
+                            <Route path="/my-orders" element={<MyOrdersPage />} /> {/* 👉 ĐÃ SỬA CHUẨN CÚ PHÁP */}
+                        </Route>
+
+                        {/* ==============================================
+                            PHE 2: ADMIN 
+                        ================================================ */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <ProtectedAdminRoute>
+                                    <AdminLayout />
+                                </ProtectedAdminRoute>
+                            }
+                        >
+                            <Route index element={<Navigate to="dashboard" replace />} />
+                            <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="products" element={<ProductManage />} />
+                            <Route path="orders" element={<OrderManage />} />
+                        </Route>
+
+                        {/* ==============================================
+                            BẮT LỖI 404 
+                        ================================================ */}
+                        <Route path="*" element={
+                            <div style={{ textAlign: 'center', padding: '100px 0' }}>
+                                <h1 style={{ color: '#6f4323' }}>404 - Lạc đường rồi 🦊</h1>
+                            </div>
+                        } />
+
+                    </Routes>
+                </ProductProvider>
+            </CartProvider>
         </SettingsProvider>
     );
 };

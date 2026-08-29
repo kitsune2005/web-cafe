@@ -1,17 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
-// 1. CHUYỂN SANG DÙNG KHO TỔNG (Trí nhớ dài hạn) THAY VÌ FILE DATA CỨNG
 import { useProduct } from "../../context/ProductContext";
+import { useCart } from "../../context/CartContext"; // 👉 THÊM IMPORT GIỎ HÀNG
 import "./ProductsPage.css";
 
 const ProductsPage = () => {
-  // 2. Lấy danh sách sản phẩm ĐÃ ĐỒNG BỘ từ Admin
   const { products, formatPrice } = useProduct();
+  const { addToCart } = useCart(); // 👉 KÉO HÀM THÊM GIỎ HÀNG TỪ CONTEXT
 
-  // ==============================
-  // STATE
-  // ==============================
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortType, setSortType] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,17 +15,11 @@ const ProductsPage = () => {
   const [viewMode, setViewMode] = useState("grid-3");
   const itemsPerPage = 12;
 
-  // ==============================
-  // CHUYỂN GIÁ THÀNH NUMBER ĐỂ SẮP XẾP
-  // ==============================
   const getPriceNumber = (price) => {
     if (typeof price === "number") return price;
     return Number(String(price).replace(/[^\d]/g, ""));
   };
 
-  // ==============================
-  // TỰ ĐỘNG ĐẾM SỐ LƯỢNG SẢN PHẨM MỖI DANH MỤC
-  // ==============================
   const categoryCounts = useMemo(() => {
     const counts = {};
     products.forEach((product) => {
@@ -38,14 +28,8 @@ const ProductsPage = () => {
     return counts;
   }, [products]);
 
-  // ==============================
-  // 3 DANH MỤC CHUẨN CẦN HIỂN THỊ Ở CỘT TRÁI
-  // ==============================
   const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê phin'];
 
-  // ==============================
-  // LỌC DANH MỤC KHI TICK CHỌN
-  // ==============================
   const handleCategoryChange = (categoryName) => {
     setSelectedCategories((prev) => {
       if (prev.includes(categoryName)) {
@@ -56,9 +40,6 @@ const ProductsPage = () => {
     setCurrentPage(1);
   };
 
-  // ==============================
-  // LOGIC LỌC + SẮP XẾP SẢN PHẨM
-  // ==============================
   const filteredProducts = useMemo(() => {
     let result = [...products]; 
 
@@ -81,9 +62,6 @@ const ProductsPage = () => {
     return result;
   }, [products, selectedCategories, sortType]);
 
-  // ==============================
-  // PHÂN TRANG
-  // ==============================
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -92,23 +70,52 @@ const ProductsPage = () => {
   const displayStart = filteredProducts.length === 0 ? 0 : startIndex + 1;
   const displayEnd = Math.min(endIndex, filteredProducts.length);
 
-  // ==============================
-  // THÊM GIỎ HÀNG
-  // ==============================
-  const handleAddToCart = (product) => {
-    const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingProduct = oldCart.find((item) => item.id === product.id);
-    let newCart;
+  // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
+  const handleAddFromCard = (e, item) => {
+    e.preventDefault(); 
+    e.stopPropagation(); 
 
-    if (existingProduct) {
-      newCart = oldCart.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-      );
+    const cardElement = e.currentTarget.closest('.shop-product-card');
+    const imgElement = cardElement ? cardElement.querySelector('.front') : null;
+    const cartIcon = document.querySelector('.cart-btn i'); 
+
+    if (imgElement && cartIcon) {
+        const imgRect = imgElement.getBoundingClientRect();
+        const cartRect = cartIcon.getBoundingClientRect();
+
+        const flyingImg = imgElement.cloneNode(true);
+        flyingImg.style.position = 'fixed';
+        flyingImg.style.zIndex = '999999';
+        flyingImg.style.top = `${imgRect.top}px`;
+        flyingImg.style.left = `${imgRect.left}px`;
+        flyingImg.style.width = `${imgRect.width}px`;
+        flyingImg.style.height = `${imgRect.height}px`;
+        flyingImg.style.objectFit = 'cover';
+        flyingImg.style.borderRadius = '8px';
+        flyingImg.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+        flyingImg.style.pointerEvents = 'none';
+
+        document.body.appendChild(flyingImg);
+
+        requestAnimationFrame(() => {
+            flyingImg.style.top = `${cartRect.top - 15}px`;
+            flyingImg.style.left = `${cartRect.left - 15}px`;
+            flyingImg.style.width = '30px';
+            flyingImg.style.height = '30px';
+            flyingImg.style.opacity = '0.1';
+            flyingImg.style.transform = 'scale(0.2)';
+        });
+
+        setTimeout(() => {
+            flyingImg.remove();
+            addToCart(item, 1); 
+            
+            cartIcon.classList.add('shake-cart-anim');
+            setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
+        }, 800);
     } else {
-      newCart = [...oldCart, { ...product, quantity: 1 }];
+        addToCart(item, 1);
     }
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    alert("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
   const changePage = (page) => {
@@ -214,7 +221,8 @@ const ProductsPage = () => {
                           <Link to={`/product/${product.id}`} title="Xem chi tiết">
                             <i className="fa-regular fa-eye"></i>
                           </Link>
-                          <button type="button" title="Thêm vào giỏ" onClick={() => handleAddToCart(product)}>
+                          {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
+                          <button type="button" title="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
                             <i className="fa-solid fa-cart-shopping"></i>
                           </button>
                         </div>

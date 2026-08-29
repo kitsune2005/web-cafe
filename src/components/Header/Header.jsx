@@ -3,9 +3,12 @@ import { useHeaderLogic } from './useHeaderLogic.js';
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
 import SettingsModal from '../SettingsModal/SettingsModal'; 
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
+
+// 👉 THÊM: Import Giỏ Hàng từ Context
+import { useCart } from '../../context/CartContext';
 
 const Header = () => {
   const {
@@ -16,6 +19,10 @@ const Header = () => {
     handleLogout, menuItems
   } = useHeaderLogic();
 
+  // 👉 THÊM: Rút dữ liệu từ Giỏ hàng Context
+  const { cartItems, removeFromCart } = useCart();
+  const navigate = useNavigate();
+
   const [settingsOpen, setSettingsOpen] = useState(false);
   const location = useLocation();
   const navListRef = useRef(null);
@@ -23,10 +30,7 @@ const Header = () => {
 
   // ==============================================================
   // BÍ KÍP TẮC KÈ HOA Ở ĐÂY NÈ BOSS:
-  // 1. Liệt kê các trang có BANNER TỐI MÀU (Cần giữ nguyên chữ TRẮNG)
   const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category');
-
-  // 2. Những trang còn lại (như /products nền sáng) -> Bật chế độ chữ ĐEN
   const isLightMode = !isDarkBannerPage;
   // ==============================================================
 
@@ -54,11 +58,14 @@ const Header = () => {
     setTimeout(resetIndicator, 100);
   }, [location.pathname, menuItems]);
 
+  // 👉 TÍNH TOÁN GIỎ HÀNG: Tổng số lượng, Tổng tiền
+  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
   if (loading) return null;
 
   return (
     <>
-      {/* TRUYỀN BIẾN isLightMode VÀO HEADER */}
       <header className={`site-header ${scrolled ? 'scrolled' : ''} ${isLightMode ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
@@ -66,7 +73,6 @@ const Header = () => {
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
             <ul ref={navListRef} onMouseLeave={resetIndicator} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
-                // Sửa nhẹ để menu "SẢN PHẨM" vẫn sáng đèn khi ở trang category
                 const isActive = location.pathname === item.link || (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
                 return (
                   <li
@@ -115,6 +121,7 @@ const Header = () => {
 
           {/* Actions bên phải */}
           <div className="header-actions">
+            
             {/* Search */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
               <form className="search-form" role="search" onSubmit={(e) => e.preventDefault()}>
@@ -135,32 +142,9 @@ const Header = () => {
                     <h4>Sản phẩm bán chạy</h4>
                     <div className="search-tags">
                       <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Cà phê</Link>
-                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Nguyên chất</Link>
-                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Rang xay</Link>
+                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Đóng gói</Link>
+                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Phin</Link>
                     </div>
-                  </div>
-                  <div className="search-dropdown-block">
-                    <h4>Sản phẩm nổi bật</h4>
-                    <ul className="search-results-list">
-                      <li>
-                        <div className="search-result-thumb">
-                          <img src="https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3-191x300.png" alt="" />
-                        </div>
-                        <div className="search-result-info">
-                          <Link to="/product/1" className="search-result-name">Cà Phê Enchanted Espresso</Link>
-                          <span className="search-result-price">2,679,000₫</span>
-                        </div>
-                      </li>
-                      <li>
-                        <div className="search-result-thumb">
-                          <img src="https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2-191x300.png" alt="" />
-                        </div>
-                        <div className="search-result-info">
-                          <Link to="/product/2" className="search-result-name">Cà Phê Emerald Burst</Link>
-                          <span className="search-result-price">2,119,000₫</span>
-                        </div>
-                      </li>
-                    </ul>
                   </div>
                 </div>
               )}
@@ -192,7 +176,13 @@ const Header = () => {
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setProfileOpen(true); }}>
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
-                    <Link to="/admin/orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                    
+                    {/* 👉 ĐÃ THÊM: Link Giỏ hàng vào Menu User */}
+                    <Link to="/cart" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                      <i className="fa-solid fa-cart-shopping"></i> Giỏ hàng
+                    </Link>
+
+                    <Link to="/my-orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setSettingsOpen(true); }}>
@@ -211,9 +201,48 @@ const Header = () => {
               </button>
             )}
 
-            <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
-              <i className="fa-solid fa-cart-shopping"></i><span className="cart-count">2</span>
-            </Link>
+            {/* 👉 BẮT ĐẦU: MINI CART DROPDOWN */}
+            <div className="cart-wrap">
+                <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
+                  <i className="fa-solid fa-cart-shopping"></i>
+                  {totalQuantity > 0 && <span className="cart-count">{totalQuantity}</span>}
+                </Link>
+
+                <div className="mini-cart-dropdown">
+                    {cartItems.length === 0 ? (
+                        <div className="mini-cart-empty">
+                            <p>Không có sản phẩm trong giỏ hàng.</p>
+                        </div>
+                    ) : (
+                        <div className="mini-cart-has-items">
+                            <ul className="mini-cart-list">
+                                {cartItems.map((item, idx) => (
+                                    <li key={idx} className="mini-cart-item">
+                                        <img src={item.imageFront || item.img} alt={item.name} className="mc-img"/>
+                                        <div className="mc-info">
+                                            <Link className="mc-name" to={`/product/${item.id}`}>{item.name}</Link>
+                                            <span className="mc-price">{item.quantity} x {(item.price).toLocaleString('vi-VN')}₫</span>
+                                        </div>
+                                        <button className="mc-remove" onClick={() => removeFromCart(item.id)}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="mini-cart-total-wrap">
+                                <span>TỔNG SỐ PHỤ:</span>
+                                <span className="mc-total-price">{totalPrice.toLocaleString('vi-VN')}₫</span>
+                            </div>
+                            <div className="mini-cart-bottom">
+                                <Link className="btn-view-cart" to="/cart">XEM GIỎ HÀNG</Link>
+                                <Link className="btn-checkout" to="/checkout">THANH TOÁN</Link>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+            {/* 👉 KẾT THÚC: MINI CART DROPDOWN */}
+
           </div>
 
           <button className="menu-toggle" aria-label="Menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

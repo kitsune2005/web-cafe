@@ -1,19 +1,14 @@
 import React, { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-
-// 1. DÙNG KHO TỔNG THAY VÌ FILE DATA.JSON CỨNG
 import { useProduct } from '../../context/ProductContext';
-
-// Import CSS của ProductsPage để tái sử dụng giao diện
+import { useCart } from "../../context/CartContext"; // 👉 THÊM IMPORT
 import '../ProductsPage/ProductsPage.css';
 
 const CategoryPage = () => {
   const { slug } = useParams();
-  
-  // 2. Lấy dữ liệu ĐỘNG từ Context
   const { products, formatPrice } = useProduct();
+  const { addToCart } = useCart(); // 👉 KÉO HÀM TỪ CONTEXT
 
-  // TỪ ĐIỂN CẤU HÌNH DANH MỤC
   const categoryConfig = useMemo(() => ({
     'nguyen-chat': {
       title: 'Cà phê Nguyên Chất',
@@ -37,28 +32,58 @@ const CategoryPage = () => {
 
   const currentCategory = categoryConfig[slug];
 
-  // Nếu gõ link bậy bạ, đá về trang sản phẩm chung
   if (!currentCategory) {
     return <Navigate to="/products" replace />;
   }
 
-  // LỌC ĐÚNG SẢN PHẨM THUỘC DANH MỤC NÀY
   const filteredProducts = products.filter(product => product.category === currentCategory.dbCategoryName);
 
-  // Thêm vào giỏ hàng
-  const handleAddToCart = (product) => {
-    const oldCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingProduct = oldCart.find((item) => item.id === product.id);
-    let newCart;
-    if (existingProduct) {
-      newCart = oldCart.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-      );
+  // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
+  const handleAddFromCard = (e, item) => {
+    e.preventDefault(); 
+    e.stopPropagation(); 
+
+    const cardElement = e.currentTarget.closest('.shop-product-card');
+    const imgElement = cardElement ? cardElement.querySelector('.front') : null;
+    const cartIcon = document.querySelector('.cart-btn i'); 
+
+    if (imgElement && cartIcon) {
+        const imgRect = imgElement.getBoundingClientRect();
+        const cartRect = cartIcon.getBoundingClientRect();
+
+        const flyingImg = imgElement.cloneNode(true);
+        flyingImg.style.position = 'fixed';
+        flyingImg.style.zIndex = '999999';
+        flyingImg.style.top = `${imgRect.top}px`;
+        flyingImg.style.left = `${imgRect.left}px`;
+        flyingImg.style.width = `${imgRect.width}px`;
+        flyingImg.style.height = `${imgRect.height}px`;
+        flyingImg.style.objectFit = 'cover';
+        flyingImg.style.borderRadius = '8px';
+        flyingImg.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+        flyingImg.style.pointerEvents = 'none';
+
+        document.body.appendChild(flyingImg);
+
+        requestAnimationFrame(() => {
+            flyingImg.style.top = `${cartRect.top - 15}px`;
+            flyingImg.style.left = `${cartRect.left - 15}px`;
+            flyingImg.style.width = '30px';
+            flyingImg.style.height = '30px';
+            flyingImg.style.opacity = '0.1';
+            flyingImg.style.transform = 'scale(0.2)';
+        });
+
+        setTimeout(() => {
+            flyingImg.remove();
+            addToCart(item, 1); 
+            
+            cartIcon.classList.add('shake-cart-anim');
+            setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
+        }, 800);
     } else {
-      newCart = [...oldCart, { ...product, quantity: 1 }];
+        addToCart(item, 1);
     }
-    localStorage.setItem("cart", JSON.stringify(newCart));
-    alert("Đã thêm sản phẩm vào giỏ hàng!");
   };
 
   return (
@@ -134,7 +159,8 @@ const CategoryPage = () => {
                     <Link to={`/product/${product.id}`} title="Xem chi tiết">
                       <i className="fa-regular fa-eye"></i>
                     </Link>
-                    <button type="button" title="Thêm vào giỏ" onClick={() => handleAddToCart(product)}>
+                    {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
+                    <button type="button" title="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
                       <i className="fa-solid fa-cart-shopping"></i>
                     </button>
                   </div>
@@ -163,7 +189,6 @@ const CategoryPage = () => {
                     <span>{formatPrice(product.price)}</span>
                   </div>
 
-                  {/* THÊM LUÔN HIỆU ỨNG TÌNH TRẠNG KHO CHO TRANG NÀY */}
                   <div style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
                     {product.stock === 0 ? (
                       <span style={{ color: '#fa5252' }}>

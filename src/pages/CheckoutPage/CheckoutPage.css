@@ -1,0 +1,350 @@
+/* BREADCRUMB DÙNG CHUNG */
+.detail-breadcrumb {
+    background: url('https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg') center/cover no-repeat;
+    padding: 120px 0 50px;
+    position: relative;
+    border-bottom: 1px solid #eae5df;
+    margin-bottom: 60px !important;
+}
+
+.detail-breadcrumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.detail-breadcrumb .container {
+    position: relative;
+    z-index: 2;
+}
+
+.detail-breadcrumb h1 {
+    font-size: 32px;
+    color: #382212;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.detail-breadcrumb .bread-links {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-breadcrumb .bread-links a {
+    color: #888;
+    transition: 0.2s;
+}
+
+.detail-breadcrumb .bread-links a:hover,
+.detail-breadcrumb .bread-links strong {
+    color: #6f4323;
+    font-weight: 600;
+}
+
+/* 👉 TRỊ BỆNH KẸP GIỮA HEADER VÀ FOOTER */
+.checkout-content-wrapper {
+    padding: 0 24px 100px !important;
+    margin-bottom: 120px !important;
+    /* Đẩy mạnh Footer xuống dưới */
+    min-height: 50vh;
+}
+
+/* THÔNG BÁO MÃ ƯU ĐÃI */
+.coupon-notice {
+    background-color: #f7f6f5;
+    border-top: 3px solid #6f4323;
+    padding: 15px 25px;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.coupon-notice i {
+    color: #6f4323;
+    margin-right: 8px;
+}
+
+.btn-toggle-coupon {
+    background: none;
+    border: none;
+    color: #6f4323;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-toggle-coupon:hover {
+    text-decoration: underline;
+}
+
+/* BỐ CỤC 2 CỘT */
+.checkout-main-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 50px;
+}
+
+/* CỘT TRÁI: FORM */
+.checkout-form-section h3 {
+    font-size: 20px;
+    color: #382212;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eae5df;
+    padding-bottom: 10px;
+}
+
+.mt-4 {
+    margin-top: 40px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    border: 1px solid #eae5df;
+    padding: 12px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #6f4323;
+    box-shadow: 0 0 5px rgba(111, 67, 35, 0.2);
+}
+
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* CỘT PHẢI: TÓM TẮT ĐƠN HÀNG */
+.summary-box {
+    border: 2px solid #eae5df;
+    padding: 30px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.summary-box h3 {
+    font-size: 18px;
+    color: #382212;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.order-table {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.order-table-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    color: #382212;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eae5df;
+    font-size: 14px;
+}
+
+.order-table-body {
+    padding: 15px 0;
+    border-bottom: 1px solid #eae5df;
+}
+
+.order-item-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.order-item-row:last-child {
+    margin-bottom: 0;
+}
+
+.item-name strong {
+    color: #382212;
+    margin-left: 5px;
+}
+
+.order-table-footer {
+    padding-top: 15px;
+}
+
+.footer-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.footer-row strong {
+    color: #382212;
+}
+
+.total-row {
+    border-top: 1px solid #eae5df;
+    padding-top: 15px;
+    margin-bottom: 0;
+    align-items: center;
+}
+
+.final-price {
+    font-size: 20px !important;
+    color: #b23a2c !important;
+}
+
+/* PHƯƠNG THỨC THANH TOÁN */
+.payment-methods {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eae5df;
+    padding-bottom: 20px;
+}
+
+.payment-option {
+    margin-bottom: 15px;
+}
+
+.payment-option label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #382212;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.payment-desc {
+    background: #f7f6f5;
+    color: #666;
+    padding: 15px;
+    font-size: 13px;
+    line-height: 1.6;
+    border-radius: 4px;
+    margin-top: 10px;
+    position: relative;
+}
+
+.payment-desc::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 20px;
+    width: 10px;
+    height: 10px;
+    background: #f7f6f5;
+    transform: rotate(45deg);
+}
+
+.privacy-policy-text {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.btn-place-order {
+    width: 100%;
+    background: #6f4323;
+    color: #fff;
+    border: none;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-place-order:hover {
+    background: #55331a;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(111, 67, 35, 0.2);
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .checkout-main-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+/* =========================================
+   HIỆU ỨNG PROCESSING OVERLAY
+   ========================================= */
+   .order-processing-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 999999; /* Đè lên toàn bộ website */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.processing-content {
+    text-align: center;
+    color: #6f4323;
+}
+
+.processing-spinner {
+    font-size: 60px;
+    margin-bottom: 25px;
+    color: #6f4323;
+}
+
+.processing-content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.processing-content p {
+    color: #666;
+    font-size: 15px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
