@@ -9,10 +9,15 @@ const DB_FILE = path.join(__dirname, 'users.json');
 
 // Middleware cho phép frontend gọi API
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '50mb' })); // Cho phép gửi file ảnh Base64 lớn
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Hàm đọc dữ liệu từ file JSON
+// ==========================================
+// CHO PHÉP ĐỌC FILE TỪ FOLDER 'uploads'
+// ==========================================
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Hàm đọc dữ liệu từ file JSON (Users)
 const readUsers = () => {
   try {
     if (!fs.existsSync(DB_FILE)) {
@@ -26,7 +31,7 @@ const readUsers = () => {
   }
 };
 
-// Hàm ghi dữ liệu vào file JSON
+// Hàm ghi dữ liệu vào file JSON (Users)
 const writeUsers = (users) => {
   fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2), 'utf8');
 };
@@ -70,11 +75,8 @@ app.post('/api/register', (req, res) => {
   res.status(201).json({ success: true, message: 'Đăng ký thành công!', user: newUser });
 });
 
-// ==========================================
-// API MỚI: Đăng nhập thường (SMART LOGIN)
-// ==========================================
+// API: Đăng nhập thường (SMART LOGIN)
 app.post('/api/login', (req, res) => {
-  // 1. Nhận username thay vì email từ frontend
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -83,7 +85,6 @@ app.post('/api/login', (req, res) => {
 
   const users = readUsers();
   
-  // 2. Tìm kiếm thông minh: Trùng Username HOẶC Email đều được
   const user = users.find((u) => 
     (u.username === username || u.email === username) && u.password === password
   );
@@ -164,9 +165,7 @@ app.post('/api/google-login', (req, res) => {
   });
 });
 
-// ==========================================
-// API: CẬP NHẬT THÔNG TIN VÀ AVATAR
-// ==========================================
+// API: CẬP NHẬT THÔNG TIN VÀ RÚT GỌN LINK AVATAR
 app.put('/api/update-profile', (req, res) => {
   const { id, name, email, avatar } = req.body;
 
@@ -177,9 +176,40 @@ app.put('/api/update-profile', (req, res) => {
     return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng!' });
   }
 
-  // Cập nhật tên và avatar
-  users[userIndex].name = name || users[userIndex].name;
-  users[userIndex].avatar = avatar || users[userIndex].avatar;
+  // 1. Cập nhật tên và email nếu có
+  if (name) users[userIndex].name = name;
+  if (email) users[userIndex].email = email;
+
+  // 2. Xử lý Avatar nén thành file
+  if (avatar) {
+    if (avatar.startsWith('data:image')) {
+      try {
+        const matches = avatar.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+        if (matches && matches.length === 3) {
+          const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+          const base64Data = matches[2];
+          
+          const filename = `avatar_${id}_${Date.now()}.${ext}`;
+          const uploadPath = path.join(__dirname, 'uploads');
+          
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath);
+          }
+          
+          fs.writeFileSync(path.join(uploadPath, filename), base64Data, 'base64');
+          users[userIndex].avatar = `http://localhost:${PORT}/uploads/${filename}`;
+        }
+      } catch (err) {
+        console.error("Lỗi lưu ảnh:", err);
+      }
+    } 
+    else if (avatar.startsWith('http')) {
+      users[userIndex].avatar = avatar;
+    }
+  } 
+  else if (avatar === '') {
+    users[userIndex].avatar = '';
+  }
 
   try {
     writeUsers(users);
@@ -193,7 +223,105 @@ app.put('/api/update-profile', (req, res) => {
   }
 });
 
-// Khởi động server
+// =========================================================================
+// ==================== KHU VỰC API QUẢN LÝ SẢN PHẨM =======================
+// =========================================================================
+
+const PRODUCT_DB_FILE = path.join(__dirname, 'product.json');
+
+// Hàm đọc file product.json
+const readProducts = () => {
+  try {
+    if (!fs.existsSync(PRODUCT_DB_FILE)) {
+      fs.writeFileSync(PRODUCT_DB_FILE, '[]', 'utf8');
+      return [];
+    }
+    const data = fs.readFileSync(PRODUCT_DB_FILE, 'utf8');
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    return [];
+  }
+};
+
+// Hàm ghi file product.json
+const writeProducts = (products) => {
+  fs.writeFileSync(PRODUCT_DB_FILE, JSON.stringify(products, null, 2), 'utf8');
+};
+
+// Hàm xịn sò: Biến chuỗi Base64 thành ảnh vật lý lưu vào thư mục 'uploads'
+const saveProductImage = (base64String, prefix) => {
+  if (!base64String || !base64String.startsWith('data:image')) return base64String; 
+  try {
+    const matches = base64String.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+    if (matches && matches.length === 3) {
+      const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+      const base64Data = matches[2];
+      const filename = `${prefix}_${Date.now()}.${ext}`;
+      const uploadPath = path.join(__dirname, 'uploads');
+      
+      if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
+      fs.writeFileSync(path.join(uploadPath, filename), base64Data, 'base64');
+      
+      return `http://localhost:${PORT}/uploads/${filename}`;
+    }
+  } catch (err) {
+    console.error("Lỗi lưu ảnh sản phẩm:", err);
+  }
+  return base64String;
+};
+
+// 1. LẤY DANH SÁCH SẢN PHẨM (GET)
+app.get('/api/products', (req, res) => {
+  const products = readProducts();
+  res.status(200).json(products);
+});
+
+// 2. THÊM MỚI SẢN PHẨM (POST)
+app.post('/api/products', (req, res) => {
+  const products = readProducts();
+  let newProduct = req.body;
+
+  newProduct.imageFront = saveProductImage(newProduct.imageFront, 'sp_front');
+  newProduct.imageBack = saveProductImage(newProduct.imageBack, 'sp_back');
+
+  products.push(newProduct);
+  writeProducts(products);
+
+  res.status(201).json(newProduct);
+});
+
+// 3. CẬP NHẬT SẢN PHẨM (PUT)
+app.put('/api/products/:id', (req, res) => {
+  const products = readProducts();
+  const productId = Number(req.params.id);
+  const index = products.findIndex(p => p.id === productId);
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm!' });
+  }
+
+  let updatedProduct = req.body;
+  updatedProduct.imageFront = saveProductImage(updatedProduct.imageFront, 'sp_front');
+  updatedProduct.imageBack = saveProductImage(updatedProduct.imageBack, 'sp_back');
+
+  products[index] = updatedProduct;
+  writeProducts(products);
+
+  res.status(200).json(updatedProduct);
+});
+
+// 4. XÓA SẢN PHẨM (DELETE)
+app.delete('/api/products/:id', (req, res) => {
+  let products = readProducts();
+  const productId = Number(req.params.id);
+  
+  const filteredProducts = products.filter(p => p.id !== productId);
+  writeProducts(filteredProducts);
+
+  res.status(200).json({ success: true, message: 'Đã xóa thành công' });
+});
+
+// Khởi động server (Chỉ xuất hiện 1 lần duy nhất ở đây)
 app.listen(PORT, () => {
   console.log(`✅ Backend đang chạy tại: http://localhost:${PORT}`);
 });

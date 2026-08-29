@@ -6,11 +6,11 @@ import Footer from '../components/Footer/Footer';
 const MainLayouts = () => {
   return (
     <>
-    
+      <Header />
       <main>
         <Outlet /> {/* Nơi các trang HomePage, CartPage... sẽ xuất hiện */}
       </main>
-    
+      <Footer />
     </>
   );
 };

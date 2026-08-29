@@ -1,4 +1,16 @@
 /* =========================================
+   MỤC LỤC (dùng Ctrl+F để nhảy nhanh tới số mục)
+   1. SITE HEADER & STICKY
+   2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
+   3. LOGO
+   4. HEADER ACTIONS & ICONS
+   5. SEARCH BAR & DROPDOWN
+   6. USER MENU & DROPDOWN
+   7. RESPONSIVE & MOBILE
+   8. LIGHT MODE (HEADER CHO TRANG CON)
+   ========================================= */
+
+/* =========================================
    1. SITE HEADER & STICKY
    ========================================= */
 .site-header {
@@ -82,7 +94,7 @@
     /* Không che mất khả năng click */
 }
 
-/* ================== THIẾT KẾ LẠI KHUNG DROPDOWN SIÊU ĐẸP ================== */
+/* ================== KHUNG DROPDOWN CỦA MENU CHÍNH ================== */
 .main-nav .nav-dropdown {
     position: absolute;
     top: 130%;
@@ -105,7 +117,7 @@
     z-index: 999;
 }
 
-/* Thêm "mũi tên" tam giác nhọn trỏ lên trên cho Dropdown */
+/* Mũi tên tam giác nhọn trỏ lên trên cho Dropdown */
 .main-nav .nav-dropdown::before {
     content: '';
     position: absolute;
@@ -146,10 +158,10 @@
     transition: all 0.25s ease;
 }
 
-/* Hiệu ứng hover siêu xịn bên trong Dropdown */
+/* Hiệu ứng hover bên trong Dropdown */
 .main-nav .nav-dropdown a:hover {
     background: rgba(111, 67, 35, 0.06);
-    /* Nền xám cà phê rất nhạt */
+    /* Nền cà phê rất nhạt */
     color: var(--color-primary, #6f4323);
     padding-left: 22px;
     /* Chữ trượt nhẹ sang phải */
@@ -367,6 +379,8 @@
 
 /* =========================================
    6. USER MENU & DROPDOWN
+   (Đã gộp phần khai báo bị lặp lại 2 lần ở bản gốc
+   thành 1 khối duy nhất — không đổi hiệu ứng)
    ========================================= */
 .user-menu {
     position: relative;
@@ -381,6 +395,9 @@
     background: none;
     border: none;
     cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .user-name {
@@ -445,6 +462,19 @@
     justify-content: center;
     font-weight: 700;
     font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* Hiển thị ảnh Avatar thật trong Dropdown Header (thay cho chữ cái) */
+.user-avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid #6f4323;
+    /* Viền nâu cà phê cho đồng bộ */
+    box-shadow: 0 2px 6px rgba(111, 67, 35, 0.2);
 }
 
 .user-email {
@@ -487,16 +517,7 @@
 .user-dropdown-item.logout-btn:hover {
     background: #fdecea;
 }
-/* Hiển thị ảnh Avatar trong Dropdown Header */
-.user-avatar-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 2px solid #6f4323; /* Viền nâu cà phê cho đồng bộ */
-    box-shadow: 0 2px 6px rgba(111, 67, 35, 0.2);
-}
+
 /* =========================================
    7. RESPONSIVE & MOBILE
    ========================================= */
@@ -556,121 +577,6 @@
     }
 }
 
-/* USER MENU */
-.user-menu {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.user-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.user-btn .fa-chevron-down {
-    font-size: 12px;
-    transition: transform 0.2s;
-}
-
-.user-menu.open .fa-chevron-down {
-    transform: rotate(180deg);
-}
-
-.user-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    width: 260px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    padding: 0;
-    z-index: 100;
-    overflow: hidden;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(8px);
-    transition: all 0.25s ease;
-}
-
-.user-menu.open .user-dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.user-dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    background: #f4f1ec;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #6f4323;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.user-email {
-    font-size: 13px;
-    color: #666;
-    margin: 0;
-}
-
-.user-dropdown-divider {
-    height: 1px;
-    background: #e0e0e0;
-    margin: 8px 0;
-}
-
-.user-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    font-size: 14px;
-    color: #333;
-    transition: background 0.2s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.user-dropdown-item:hover {
-    background: #f5f5f5;
-}
-
-.user-dropdown-item.logout-btn {
-    color: #e74c3c;
-    font-weight: 600;
-}
-
-.user-dropdown-item.logout-btn:hover {
-    background: #fdecea;
-}
-
 @media (max-width: 768px) {
     .search-form {
         display: none;
@@ -684,8 +590,9 @@
         width: 280px;
     }
 }
+
 /* =========================================
-   GIAO DIỆN HEADER CHO TRANG CON (LIGHT MODE)
+   8. LIGHT MODE (HEADER CHO TRANG CON)
    ========================================= */
 
 /* Trạng thái trên cùng: Trong suốt, bỏ bóng mờ */
@@ -695,7 +602,7 @@
     position: absolute;
 }
 
-/* Tùy chọn: Khi cuộn chuột xuống thì cho nền Trắng để dễ đọc */
+/* Khi cuộn chuột xuống thì cho nền Trắng để dễ đọc */
 .site-header.light-mode.scrolled {
     background: #ffffff !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -719,7 +626,7 @@
     color: #111;
 }
 
-/* 4. Ảo thuật CSS: Biến Logo trắng thành màu Đen */
+/* 4. Biến Logo trắng thành màu Đen bằng filter */
 .site-header.light-mode .logo img {
     filter: brightness(0);
 }

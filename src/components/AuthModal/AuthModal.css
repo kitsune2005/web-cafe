@@ -1,5 +1,16 @@
 /* =========================================
-   AUTH MODAL OVERLAY & CARD
+   MỤC LỤC
+   1. AUTH MODAL OVERLAY & CARD
+   2. HEADER & ICON
+   3. GOOGLE BUTTON & DIVIDER
+   4. FORM FIELDS & INPUTS
+   5. SUBMIT BUTTON & SPINNER
+   6. FOOTER SWITCH
+   7. ANIMATIONS
+   ========================================= */
+
+/* =========================================
+   1. AUTH MODAL OVERLAY & CARD
    ========================================= */
    .auth-modal-overlay {
     position: fixed;
@@ -53,7 +64,7 @@
 }
 
 /* =========================================
-   HEADER & ICON
+   2. HEADER & ICON
    ========================================= */
 .auth-header {
     text-align: center;
@@ -89,7 +100,7 @@
 }
 
 /* =========================================
-   GOOGLE BUTTON & DIVIDER
+   3. GOOGLE BUTTON & DIVIDER
    ========================================= */
 .google-auth-wrapper {
     display: flex;
@@ -128,7 +139,7 @@
 }
 
 /* =========================================
-   FORM FIELDS & INPUTS
+   4. FORM FIELDS & INPUTS
    ========================================= */
 .auth-form {
     display: flex;
@@ -184,7 +195,7 @@
 }
 
 /* =========================================
-   SUBMIT BUTTON & SPINNER
+   5. SUBMIT BUTTON & SPINNER
    ========================================= */
 .auth-submit-btn {
     width: 100%;
@@ -230,7 +241,7 @@
 }
 
 /* =========================================
-   FOOTER SWITCH
+   6. FOOTER SWITCH
    ========================================= */
 .auth-footer-switch {
     margin-top: 18px;
@@ -254,7 +265,7 @@
 }
 
 /* =========================================
-   ANIMATIONS
+   7. ANIMATIONS
    ========================================= */
 @keyframes authFadeIn {
     from { opacity: 0; }

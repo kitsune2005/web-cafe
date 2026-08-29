@@ -1,7 +1,7 @@
 /* =========================================
    USER PROFILE MODAL OVERLAY & CARD
    ========================================= */
-   .profile-modal-overlay {
+.profile-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(13, 13, 13, 0.78);
@@ -52,7 +52,7 @@
 /* =========================================
    HEADER, AVATAR & CAMERA UPLOAD
    ========================================= */
-   .profile-header {
+.profile-header {
     text-align: center;
     margin-bottom: 22px;
 }
@@ -77,11 +77,13 @@
 }
 
 .avatar-clickable-wrap:hover {
-    transform: scale(1.05); /* Phóng to nhẹ khi rê chuột */
+    transform: scale(1.05);
+    /* Phóng to nhẹ khi rê chuột */
 }
 
 /* Hình ảnh/Chữ cái hiển thị full khung tròn */
-.profile-avatar-char, .profile-avatar-img {
+.profile-avatar-char,
+.profile-avatar-img {
     width: 100%;
     height: 100%;
     border: none;
@@ -250,8 +252,13 @@
 }
 
 @keyframes profileFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes profileSlideUp {
@@ -259,8 +266,80 @@
         opacity: 0;
         transform: translateY(16px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* =========================================
+   MENU CHỌN ẢNH (NẰM DƯỚI AVATAR)
+========================================= */
+.profile-avatar-container {
+    position: relative;
+    /* Đặt làm gốc để thẻ con có thể căn vị trí tuyệt đối (absolute) */
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.avatar-action-menu {
+    position: absolute;
+    top: 100%;
+    /* Đẩy menu xuống dưới cùng của thẻ ảnh */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Căn giữa menu theo ảnh */
+    margin-top: 10px;
+    background: #ffffff;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    width: 170px;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Thêm hình mũi tên nhỏ chỉ lên trên cho đẹp */
+.avatar-action-menu::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+.avatar-action-menu button {
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    transition: background-color 0.2s ease;
+}
+
+.avatar-action-menu button:hover {
+    background-color: #f8f9fa;
+}
+
+/* Nút xóa ảnh có màu đỏ */
+.avatar-action-menu button.btn-delete-avatar {
+    color: #ff4d4f;
+}
+
+.avatar-action-menu button.btn-delete-avatar:hover {
+    background-color: #fff1f0;
 }

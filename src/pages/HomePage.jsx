@@ -2,12 +2,11 @@ import React from 'react';
 // 1. Dữ liệu tĩnh
 import data from '../data/data.json';
 
-// 2. Components dùng chung (nằm trực tiếp trong components)
-import Header from '../components/Header/Header.jsx';
-import Footer from '../components/Footer/Footer.jsx';
+// 2. Components dùng chung
+// ❌ ĐÃ XÓA IMPORT HEADER & FOOTER VÌ MAINLAYOUTS SẼ LO VIỆC ĐÓ
 import ScrollTop from '../ScrollTop/ScrollTop.jsx';
 
-// 3. Components Trang chủ (nằm trong components/home)
+// 3. Components Trang chủ
 import Hero from '../components/home/Hero/Hero.jsx';
 import Feature from '../components/home/Feature/Feature.jsx';
 import BrandsStrip from '../components/home/BrandsStrip/BrandsStrip.jsx';
@@ -21,7 +20,8 @@ import Testimonials from '../components/home/Testimonials/Testimonials.jsx';
 const HomePage = () => {
   return (
     <div className="home-page">
-      <Header />
+      {/* ❌ ĐÃ XÓA <Header /> Ở ĐÂY */}
+      
       <Hero />
       <PureCoffee categories={data.categories} />
       <PackagedProducts products={data.products} />
@@ -31,7 +31,8 @@ const HomePage = () => {
       <Testimonials testimonials={data.testimonials} />
       <Instagram images={data.instagram} />
       <BrandsStrip brands={data.brands} />
-      <Footer />
+      
+      {/* ❌ ĐÃ XÓA <Footer /> Ở ĐÂY */}
       <ScrollTop />
     </div>
   );

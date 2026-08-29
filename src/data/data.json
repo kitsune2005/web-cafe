@@ -56,173 +56,6 @@
     }
   ],
 
-  "products": [
-    {
-      "id": 1,
-      "name": "Cà Phê Enchanted Espresso",
-      "category": "espresso",
-      "price": "1,280,000₫",
-      "oldPrice": "1,579,000₫",
-      "discount": 19,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 2,
-      "name": "Cà Phê Emerald Burst",
-      "category": "arabica",
-      "price": "1,579,000₫",
-      "oldPrice": "2,139,000₫",
-      "discount": 26,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 5
-    },
-    {
-      "id": 3,
-      "name": "Cà Phê Dreamy",
-      "category": "excelsa",
-      "price": "1,435,000₫",
-      "oldPrice": "1,690,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 4,
-      "name": "Cà Phê Golden Liberica",
-      "category": "liberica",
-      "price": "1,320,000₫",
-      "oldPrice": "1,550,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 4
-    },
-    {
-      "id": 5,
-      "name": "Cà Phê Pure Morning",
-      "category": "nguyen-chat",
-      "price": "1,150,000₫",
-      "oldPrice": "1,350,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 6,
-      "name": "Cà Phê Highland Robusta",
-      "category": "robusta",
-      "price": "980,000₫",
-      "oldPrice": "1,150,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 4
-    },
-    {
-      "id": 7,
-      "name": "Cà Phê Signature Blend",
-      "category": "blend",
-      "price": "1,250,000₫",
-      "oldPrice": "1,490,000₫",
-      "discount": 16,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 8,
-      "name": "Cà Phê Velvet Espresso",
-      "category": "espresso",
-      "price": "1,690,000₫",
-      "oldPrice": "1,950,000₫",
-      "discount": 13,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 5
-    },
-    {
-      "id": 9,
-      "name": "Cà Phê Premium Arabica",
-      "category": "arabica",
-      "price": "1,390,000₫",
-      "oldPrice": "1,650,000₫",
-      "discount": 16,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 10,
-      "name": "Cà Phê Excelsa Bloom",
-      "category": "excelsa",
-      "price": "1,420,000₫",
-      "oldPrice": "1,680,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 4
-    },
-    {
-      "id": 11,
-      "name": "Cà Phê Tropical Liberica",
-      "category": "liberica",
-      "price": "1,510,000₫",
-      "oldPrice": "1,790,000₫",
-      "discount": 16,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    },
-    {
-      "id": 12,
-      "name": "Cà Phê Nguyên Chất Premium",
-      "category": "nguyen-chat",
-      "price": "1,090,000₫",
-      "oldPrice": "1,290,000₫",
-      "discount": 16,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 5
-    },
-    {
-      "id": 13,
-      "name": "Cà Phê Dark Roast Robusta",
-      "category": "robusta",
-      "price": "890,000₫",
-      "oldPrice": "1,050,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 4
-    },
-    {
-      "id": 14,
-      "name": "Cà Phê Morning Blend",
-      "category": "blend",
-      "price": "1,180,000₫",
-      "oldPrice": "1,390,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "rating": 5
-    },
-    {
-      "id": 15,
-      "name": "Cà Phê Classic Espresso",
-      "category": "espresso",
-      "price": "1,350,000₫",
-      "oldPrice": "1,590,000₫",
-      "discount": 15,
-      "imageFront": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-3.png",
-      "imageBack": "https://cafengon.monamedia.net/wp-content/uploads/2024/12/san-pham-2.png",
-      "rating": 5
-    }
-  ],
 
   "journey": [
     {
@@ -238,6 +71,11 @@
       "description": "Hạt cà phê sau khi được xử lý sẽ được rang để tạo ra hương vị đặc trưng."
     }
   ],
+
+
+
+
+
 
   "brews": [
     {
@@ -301,7 +139,6 @@
       "image": "https://cafengon.monamedia.net/wp-content/uploads/2025/01/galaxy-4.png"
     }
   ],
-
   "testimonials": [
     {
       "id": 1,
@@ -325,7 +162,6 @@
       "author": "Bạch Ngân"
     }
   ],
-
   "instagram": [
     "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg",
     "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta2.jpg",
@@ -333,7 +169,6 @@
     "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta4.jpg",
     "https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta5.jpg"
   ],
-
   "brands": [
     "DALGONA COFFEE",
     "La Croissanterie",
@@ -348,6 +183,5 @@
     "Coffeep",
     "Roses Coffee"
   ],
-
   "product-cart": []
 }

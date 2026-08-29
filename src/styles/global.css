@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* =========================================
+   1. VARIABLES & RESET CƠ BẢN
+========================================= */
 :root {
     --color-primary: #6f4323;
     --color-primary-dark: #382212;
@@ -30,7 +33,7 @@ html {
 }
 
 body {
-    font-family: var(--font-body);
+    font-family: var(--font-main);
     color: var(--color-text);
     line-height: 1.7;
     background: var(--color-white);
@@ -51,56 +54,46 @@ button {
 }
 
 /* =========================================
-   CUSTOM SCROLLBAR UI/UX (Chuẩn Webkit & Firefox)
+   2. CUSTOM SCROLLBAR (THANH CUỘN UI/UX)
 ========================================= */
-
-/* 1. Chiều rộng thanh cuộn mảnh mai, hiện đại (8px) */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    /* Dành cho thanh cuộn ngang nếu có */
 }
 
-/* 2. Rãnh trượt (Track nền bên dưới) */
 ::-webkit-scrollbar-track {
     background: #f7f3ed;
-    /* Tone kem sáng đồng bộ nền website */
     border-radius: 10px;
 }
 
-/* 3. Con trượt (Thumb - cục kéo) */
 ::-webkit-scrollbar-thumb {
     background: #c5a880;
-    /* Màu caramel nhẹ nhàng, tinh tế */
     border-radius: 10px;
     border: 2px solid #f7f3ed;
-    /* Tạo viền đệm tạo khoảng hở nổi khối */
     transition: background-color 0.3s ease;
 }
 
-/* 4. Hiệu ứng khi rê chuột vào thanh cuộn (Hover) */
 ::-webkit-scrollbar-thumb:hover {
     background: #6a391e;
-    /* Đổi sang màu nâu cà phê đậm sang trọng */
 }
 
-/* 5. Hiệu ứng khi đang nhấn giữ kéo chuột (Active) */
 ::-webkit-scrollbar-thumb:active {
     background: #3b1708;
 }
 
-/* Hỗ trợ Firefox */
 * {
     scrollbar-width: thin;
     scrollbar-color: #c5a880 #f7f3ed;
 }
 
+/* =========================================
+   3. LAYOUT CHUNG & COMPONENT (Khung, Nút, Hiệu ứng)
+========================================= */
 .container {
     max-width: var(--container-width);
     margin: 0 auto;
     padding: 0 24px;
     width: 100%;
-    max-width: 1100px;
 }
 
 .section {
@@ -140,7 +133,7 @@ button {
     color: var(--color-primary-dark);
 }
 
-/* Reveal animations */
+/* Hiệu ứng trượt lên (Reveal) */
 .reveal {
     opacity: 0;
     transform: translateY(42px);
@@ -153,7 +146,58 @@ button {
     transform: translateY(0);
 }
 
-/* Carousel styles */
+/* Nút bấm (Button) */
+.btn-primary {
+    background-color: #6d422a;
+    color: #fff;
+    padding: 12px 35px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid #6d422a;
+    transition: background var(--transition);
+}
+
+.btn-primary:hover {
+    background: transparent;
+    color: #6d422a;
+}
+
+.btn-small {
+    padding: 8px 20px;
+    font-size: 13px;
+}
+
+/* Sóng trang trí (Waves) */
+.wave-section {
+    position: relative;
+    background: var(--color-cream);
+    padding: 110px 0;
+    overflow: hidden;
+}
+
+.wave {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    fill: var(--color-white);
+    z-index: 1;
+}
+
+.wave-top {
+    top: -1px;
+}
+
+.wave-bottom {
+    bottom: -1px;
+    transform: scaleY(-1);
+}
+
+/* =========================================
+   4. CAROUSEL & SCROLL TOP (Tiện ích)
+========================================= */
 .carousel {
     margin-top: 10px;
 }
@@ -209,7 +253,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background var(--transition), color var(--transition), border-color var(--transition);
+    transition: all var(--transition);
 }
 
 .carousel-prev:hover,
@@ -237,7 +281,7 @@ button {
     border-radius: 50%;
     background: #d6cfc7;
     cursor: pointer;
-    transition: background var(--transition), transform var(--transition);
+    transition: all var(--transition);
 }
 
 .carousel-dots span.active {
@@ -245,56 +289,6 @@ button {
     transform: scale(1.2);
 }
 
-/* Button */
-.btn-primary {
-    background-color: #6d422a;
-    color: #fff;
-    padding: 12px 35px;
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    display: inline-block;
-    border: 1px solid #6d422a;
-    transition: background var(--transition);
-}
-
-.btn-primary:hover {
-    background: transparent;
-    color: #6d422a;
-}
-
-.btn-small {
-    padding: 8px 20px;
-    font-size: 13px;
-}
-
-/* Other common classes */
-.wave-section {
-    position: relative;
-    background: var(--color-cream);
-    padding: 110px 0;
-    overflow: hidden;
-}
-
-.wave {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    fill: var(--color-white);
-    z-index: 1;
-}
-
-.wave-top {
-    top: -1px;
-}
-
-.wave-bottom {
-    bottom: -1px;
-    transform: scaleY(-1);
-}
-
-/* Scroll top button */
 .scroll-top {
     position: fixed;
     right: 26px;
@@ -310,7 +304,7 @@ button {
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: opacity var(--transition), visibility var(--transition), transform var(--transition);
+    transition: all var(--transition);
     z-index: 200;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
@@ -321,7 +315,7 @@ button {
     transform: translateY(0);
 }
 
-/* Buộc chuột luôn hiển thị trên toàn trang */
+/* Force UI Cursors & Swal2 */
 *,
 *::before,
 *::after {
@@ -343,7 +337,6 @@ textarea {
     cursor: text !important;
 }
 
-/* Ưu tiên hiển thị SweetAlert2 trên toàn bộ Modal */
 .swal2-container {
     z-index: 100000 !important;
 }

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useHeaderLogic } from './useHeaderLogic.js';
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
+import SettingsModal from '../SettingsModal/SettingsModal'; 
 import { Link, useLocation } from 'react-router-dom';
 import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
@@ -30,13 +31,20 @@ const Header = () => {
     menuItems
   } = useHeaderLogic();
 
+  // ----- THÊM STATE QUẢN LÝ ĐÓNG/MỞ BẢNG CÀI ĐẶT -----
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   // ----- LOGIC CHO HIỆU ỨNG GẠCH CHÂN (MAGIC LINE) -----
   const location = useLocation();
   const navListRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
-  // Kiểm tra trang chủ
-  const isHomePage = location.pathname === '/';
+  // ==============================================================
+  // ĐÃ SỬA Ở ĐÂY: Khai báo các trang có Banner tối màu (cần chữ trắng)
+  // ==============================================================
+  const hasDarkBanner = location.pathname === '/' || 
+                        location.pathname === '/products' || 
+                        location.pathname.startsWith('/category');
 
   const updateIndicator = (el) => {
     if (!el || !navListRef.current) return;
@@ -66,7 +74,10 @@ const Header = () => {
 
   return (
     <>
-      <header className={`site-header ${scrolled ? 'scrolled' : ''} ${!isHomePage ? 'light-mode' : ''}`}>
+      {/* ==============================================================
+          ĐÃ SỬA Ở ĐÂY: Áp dụng điều kiện hasDarkBanner vào class
+      ============================================================== */}
+      <header className={`site-header ${scrolled ? 'scrolled' : ''} ${!hasDarkBanner ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
           {/* Menu Desktop */}
@@ -96,11 +107,34 @@ const Header = () => {
 
                     {item.dropdown && (
                       <ul className={`nav-dropdown ${navDropdown === item.label ? 'force-show' : ''}`}>
-                        {item.dropdown.map((sub, subIndex) => (
-                          <li key={subIndex}>
-                            <Link to={sub.link || '#'}>{sub.label}</Link>
-                          </li>
-                        ))}
+                        
+                        {/* ===============================================================
+                            ĐÃ GẮN CỨNG LINK CATEGORY CHO MENU "SẢN PHẨM" Ở ĐÂY NÈ BOSS
+                        =============================================================== */}
+                        {item.label.toLowerCase() === 'sản phẩm' ? (
+                          <>
+                            <li>
+                              <Link to="/category/nguyen-chat" onClick={() => setNavDropdown(null)}>Cà phê nguyên chất</Link>
+                            </li>
+                            <li>
+                              <Link to="/category/dong-goi" onClick={() => setNavDropdown(null)}>Cà phê đóng gói</Link>
+                            </li>
+                            <li>
+                              <Link to="/category/hat" onClick={() => setNavDropdown(null)}>Cà phê hạt</Link>
+                            </li>
+                          </>
+                        ) : (
+                          /* Render các menu con khác (nếu có) bình thường */
+                          item.dropdown.map((sub, subIndex) => (
+                            <li key={subIndex}>
+                              <Link to={sub.link || '#'} onClick={() => setNavDropdown(null)}>
+                                {sub.label}
+                              </Link>
+                            </li>
+                          ))
+                        )}
+                        {/* =============================================================== */}
+
                       </ul>
                     )}
                   </li>
@@ -207,12 +241,21 @@ const Header = () => {
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
 
-                    <Link to="/orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                    <Link to="/admin/orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
-                    <Link to="/setting" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+
+                    {/* Button gọi Settings Modal */}
+                    <button 
+                      className="user-dropdown-item" 
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        setSettingsOpen(true);
+                      }}
+                    >
                       <i className="fa-solid fa-gear"></i> Cài đặt
-                    </Link>
+                    </button>
+
                     <div className="user-dropdown-divider"></div>
                     <button onClick={handleLogout} className="user-dropdown-item logout-btn">
                       <i className="fa-solid fa-right-from-bracket"></i> Đăng xuất
@@ -246,6 +289,7 @@ const Header = () => {
       {/* Modals */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       <UserProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
   );
 };

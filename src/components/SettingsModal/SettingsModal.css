@@ -1,0 +1,266 @@
+/* =========================================
+   PHỦ NỀN ĐEN MỜ TOÀN MÀN HÌNH
+========================================= */
+.settings-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease;
+}
+
+/* =========================================
+   KHUNG POPUP Ở GIỮA - MÀU NỀN KEM CAFE
+========================================= */
+.settings-modal-container {
+    background: #f6f4ef;
+    /* Màu nền kem đồng bộ với ảnh */
+    width: 750px;
+    height: 500px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #462916;
+    /* Màu nâu đậm espresso */
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.settings-close-btn:hover {
+    color: #ff4d4f;
+}
+
+/* Chia layout Cột trái - Cột phải */
+.settings-layout {
+    display: flex;
+    height: 100%;
+}
+
+/* =========================================
+   MENU BÊN TRÁI
+========================================= */
+.settings-sidebar {
+    width: 240px;
+    background: #ede8dc;
+    /* Nền menu đậm hơn nền chính 1 tông */
+    border-right: 1px solid #dfd6c5;
+    padding: 30px 0;
+}
+
+.settings-title {
+    padding: 0 24px;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #462916;
+    /* Nâu đậm */
+    font-weight: 800;
+}
+
+.settings-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-menu li {
+    padding: 14px 24px;
+    cursor: pointer;
+    color: #6e4e37;
+    /* Nâu vừa */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.settings-menu li:hover {
+    background: #e2dacc;
+}
+
+/* Trạng thái tab đang được chọn */
+.settings-menu li.active {
+    background: #f6f4ef;
+    /* Trùng màu nền bên phải để tạo sự liền mạch */
+    color: #6f4323;
+    /* Nâu thương hiệu Fox Coffee */
+    border-right: 3px solid #6f4323;
+}
+
+/* =========================================
+   NỘI DUNG BÊN PHẢI
+========================================= */
+.settings-content {
+    flex: 1;
+    padding: 40px;
+    background: #f6f4ef;
+    /* Màu nền kem */
+    overflow-y: auto;
+}
+
+.settings-pane h4 {
+    font-size: 20px;
+    color: #462916;
+    /* Nâu đậm */
+    margin-bottom: 5px;
+    font-weight: 800;
+}
+
+.settings-desc {
+    color: #8c715e;
+    /* Nâu xám nhạt */
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e8dfcd;
+    /* Đường gạch ngang nâu nhạt */
+}
+
+.setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setting-name {
+    font-weight: 700;
+    color: #462916;
+    /* Nâu đậm */
+}
+
+.setting-sub {
+    font-size: 13px;
+    color: #9c8370;
+}
+
+/* =========================================
+   CÔNG TẮC BẬT TẮT (TOGGLE SWITCH)
+========================================= */
+.settings-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+
+.settings-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1c7b8;
+    /* Xám nâu khi TẮT */
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.settings-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #ffffff;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* Khi BẬT công tắc -> Chuyển màu nâu thương hiệu */
+.settings-switch input:checked+.settings-slider {
+    background-color: #6f4323;
+}
+
+.settings-switch input:checked+.settings-slider:before {
+    transform: translateX(20px);
+}
+
+/* =========================================
+   NÚT BẤM BẢO MẬT
+========================================= */
+.security-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.security-actions button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+/* Nút đổi mật khẩu */
+.btn-change-password {
+    background: #eae3d5;
+    color: #462916;
+    border: 1px solid #dfd6c5;
+}
+
+.btn-change-password:hover {
+    background: #dfd6c5;
+}
+
+/* Nút bật 2FA */
+.btn-enable-2fa {
+    background: #6f4323;
+    color: #ffffff;
+}
+
+.btn-enable-2fa:hover {
+    background: #553218;
+}
+
+/* Hiệu ứng mượt mà khi đổi tab */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Cà phê test",
+    "category": "Cà phê nguyên chất",
+    "oldPrice": 250000,
+    "price": 200000,
+    "discount": 20,
+    "stock": 20,
+    "imageFront": "http://localhost:5000/uploads/sp_front_1788004267609.png",
+    "imageBack": "http://localhost:5000/uploads/sp_back_1788004267610.png",
+    "isFeatured": true,
+    "rating": 5,
+    "status": "Còn hàng",
+    "id": 1
+  }
+]

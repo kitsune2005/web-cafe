@@ -8,10 +8,16 @@ const UserProfileModal = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   
-  // State mới cho Ảnh đại diện
+  // State quản lý Ảnh đại diện
   const [avatar, setAvatar] = useState('');
   const [previewAvatar, setPreviewAvatar] = useState('');
+  
+  // State quản lý việc hiển thị menu chọn ảnh (Popup Menu)
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  
+  // Ref cho các thẻ input ẩn
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
   
   const [loading, setLoading] = useState(false);
 
@@ -21,10 +27,10 @@ const UserProfileModal = ({ isOpen, onClose }) => {
       if (currentUser) {
         setName(currentUser.name || '');
         setEmail(currentUser.email || '');
-        // Load avatar từ user lên form
         setAvatar(currentUser.avatar || '');
         setPreviewAvatar(currentUser.avatar || '');
       }
+      setShowAvatarMenu(false); // Reset menu khi mở lại modal
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -35,11 +41,10 @@ const UserProfileModal = ({ isOpen, onClose }) => {
 
   if (!isOpen || !currentUser) return null;
 
-  // HÀM XỬ LÝ KHI CHỌN ẢNH TỪ MÁY
+  // HÀM XỬ LÝ KHI CHỌN ẢNH (Dùng chung cho cả Tải lên & Chụp hình)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Giới hạn ảnh 5MB
       if (file.size > 5 * 1024 * 1024) {
         Swal.fire({
           icon: 'error',
@@ -50,14 +55,21 @@ const UserProfileModal = ({ isOpen, onClose }) => {
         return;
       }
 
-      // Đọc file thành chuỗi Base64 để hiển thị & lưu DB
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewAvatar(reader.result); // Hiển thị lập tức
-        setAvatar(reader.result);        // Lưu vào state để chờ bấm "Lưu"
+        setPreviewAvatar(reader.result); 
+        setAvatar(reader.result);        
+        setShowAvatarMenu(false); // Ẩn menu sau khi chọn xong
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // HÀM XÓA ẢNH ĐẠI DIỆN
+  const handleDeleteAvatar = () => {
+    setPreviewAvatar('');
+    setAvatar('');
+    setShowAvatarMenu(false);
   };
 
   const handleSave = async (e) => {
@@ -73,7 +85,6 @@ const UserProfileModal = ({ isOpen, onClose }) => {
     }
 
     setLoading(true);
-    // TRUYỀN THÊM AVATAR VÀO HÀM UPDATE
     const result = await updateUser(name.trim(), email.trim(), avatar);
     setLoading(false);
 
@@ -92,7 +103,7 @@ const UserProfileModal = ({ isOpen, onClose }) => {
       Swal.fire({
         icon: 'error',
         title: 'Thất bại',
-        text: result?.message || 'Không thể lưu thay đổi vào cơ sở dữ liệu.',
+        text: result?.message || 'Không thể lưu thay đổi.',
         confirmButtonColor: '#6f4323',
       });
     }
@@ -100,6 +111,7 @@ const UserProfileModal = ({ isOpen, onClose }) => {
 
   const handleLogout = () => {
     onClose();
+    // ... logic đăng xuất giữ nguyên
     Swal.fire({
       title: 'Đăng xuất tài khoản?',
       text: 'Bạn có chắc chắn muốn đăng xuất không?',
@@ -143,11 +155,14 @@ const UserProfileModal = ({ isOpen, onClose }) => {
           <i className="fa-solid fa-xmark"></i>
         </button>
 
-        {/* Avatar Header */}
         <div className="profile-header">
+          {/* ========================================== */}
+          {/* BỘ PHẬN XỬ LÝ ẢNH ĐẠI DIỆN CÓ MENU POPUP   */}
+          {/* ========================================== */}
           <div className="profile-avatar-container">
-            {/* Vùng Bấm Thay Đổi Ảnh */}
-            <div className="avatar-clickable-wrap" onClick={() => fileInputRef.current.click()}>
+            
+            {/* Vùng ảnh chính: Click vào sẽ bật/tắt Menu */}
+            <div className="avatar-clickable-wrap" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>
               {previewAvatar ? (
                 <img src={previewAvatar} alt={name} className="profile-avatar-img" />
               ) : (
@@ -156,13 +171,31 @@ const UserProfileModal = ({ isOpen, onClose }) => {
                 </div>
               )}
               
-              {/* Lớp phủ chứa icon máy ảnh */}
               <div className="camera-overlay">
                 <i className="fa-solid fa-camera"></i>
               </div>
             </div>
 
-            {/* Input file ẩn đi (hỗ trợ cả chọn file & chụp camera trên đt) */}
+            {/* Khung Menu nhỏ hiện ra khi click vào ảnh */}
+            {showAvatarMenu && (
+              <div className="avatar-action-menu">
+                <button type="button" onClick={() => { fileInputRef.current.click(); setShowAvatarMenu(false); }}>
+                  <i className="fa-regular fa-image"></i> Tải ảnh lên
+                </button>
+                <button type="button" onClick={() => { cameraInputRef.current.click(); setShowAvatarMenu(false); }}>
+                  <i className="fa-solid fa-camera"></i> Chụp ảnh
+                </button>
+                {/* Nút xóa chỉ hiện khi người dùng ĐANG CÓ ẢNH */}
+                {previewAvatar && (
+                  <button type="button" className="btn-delete-avatar" onClick={handleDeleteAvatar}>
+                    <i className="fa-regular fa-trash-can"></i> Gỡ ảnh hiện tại
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* CÁC THẺ INPUT ẨN */}
+            {/* Dành cho Tải File (Chọn ảnh từ thư viện) */}
             <input 
               type="file" 
               accept="image/*" 
@@ -170,7 +203,18 @@ const UserProfileModal = ({ isOpen, onClose }) => {
               ref={fileInputRef} 
               onChange={handleImageChange} 
             />
+            {/* Dành cho Mở Camera (Thiết bị di động sẽ bật máy ảnh) */}
+            <input 
+              type="file" 
+              accept="image/*" 
+              capture="user" 
+              hidden 
+              ref={cameraInputRef} 
+              onChange={handleImageChange} 
+            />
           </div>
+          {/* ========================================== */}
+
           <h2>Thông Tin Tài Khoản</h2>
           <p className="profile-user-role">Thành viên Fox Coffee</p>
         </div>
