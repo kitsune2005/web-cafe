@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 
 // NẠP BỘ NGUỒN CÀI ĐẶT VÀO ĐÂY
 import { SettingsProvider } from '../context/SettingsContext';
-// 1. NHẬP KHO DỮ LIỆU SẢN PHẨM VÀO ĐÂY
 import { ProductProvider } from '../context/ProductContext';
 
 // ================= LAYOUTS =================
@@ -14,8 +13,10 @@ import AdminLayout from '../layouts/adminLayout/AdminLayout';
 // ================= CLIENT PAGES =================
 import HomePage from '../pages/HomePage';
 import ProductsPage from '../pages/ProductsPage/ProductsPage';
-// 2. NHẬP TRANG DANH MỤC ĐỘNG VÀO ĐÂY BOSS NHÉ
 import CategoryPage from '../pages/CategoryPage/CategoryPage'; 
+
+// NHẬP TRANG CHI TIẾT SẢN PHẨM (ĐÃ BỎ TRANG ABOUT)
+import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage';
 
 // ================= ADMIN PAGES =================
 import ProductManage from '../pages/AdminPage/ProductManage/ProductManage';
@@ -44,25 +45,25 @@ const AppRoutes = () => {
 
     return (
         <SettingsProvider>
-            {/* BỌC PRODUCT PROVIDER VÀO ĐỂ CẤP PHÉP TRUYỀN DỮ LIỆU TOÀN CỤC */}
             <ProductProvider>
                 <AutoScrollToTop />
                 <Routes>
 
                     {/* ==============================================
-              PHE 1: KHÁCH HÀNG 
-          ================================================ */}
+                        PHE 1: KHÁCH HÀNG 
+                    ================================================ */}
                     <Route element={<MainLayouts />}>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/products" element={<ProductsPage />} />
-                        
-                        {/* 3. TUYỆT CHIÊU ĐỊNH TUYẾN ĐỘNG CHO 3 TRANG NẰM Ở ĐÂY */}
                         <Route path="/category/:slug" element={<CategoryPage />} />
+                        
+                        {/* TUYỆT CHIÊU ĐỊNH TUYẾN ĐỘNG CHO 45+ SẢN PHẨM */}
+                        <Route path="/product/:id" element={<ProductDetailPage />} />
                     </Route>
 
                     {/* ==============================================
-              PHE 2: ADMIN 
-          ================================================ */}
+                        PHE 2: ADMIN 
+                    ================================================ */}
                     <Route
                         path="/admin"
                         element={
@@ -78,11 +79,11 @@ const AppRoutes = () => {
                     </Route>
 
                     {/* ==============================================
-              BẮT LỖI 404 
-          ================================================ */}
+                        BẮT LỖI 404 
+                    ================================================ */}
                     <Route path="*" element={
                         <div style={{ textAlign: 'center', padding: '100px 0' }}>
-                            <h1>404 - Lạc đường rồi </h1>
+                            <h1 style={{ color: '#6f4323' }}>404 - Lạc đường rồi 🦊</h1>
                         </div>
                     } />
 
