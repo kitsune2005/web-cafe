@@ -9,42 +9,26 @@ import './Header.css';
 
 const Header = () => {
   const {
-    currentUser,
-    loading,
-    scrolled,
-    searchOpen,
-    setSearchOpen,
-    mobileMenuOpen,
-    setMobileMenuOpen,
-    authModalOpen,
-    setAuthModalOpen,
-    userDropdownOpen,
-    setUserDropdownOpen,
-    navDropdown,
-    setNavDropdown,
-    profileOpen,
-    setProfileOpen,
-    searchRef,
-    userMenuRef,
-    navRef,
-    handleLogout,
-    menuItems
+    currentUser, loading, scrolled, searchOpen, setSearchOpen,
+    mobileMenuOpen, setMobileMenuOpen, authModalOpen, setAuthModalOpen,
+    userDropdownOpen, setUserDropdownOpen, navDropdown, setNavDropdown,
+    profileOpen, setProfileOpen, searchRef, userMenuRef, navRef,
+    handleLogout, menuItems
   } = useHeaderLogic();
 
-  // ----- THÊM STATE QUẢN LÝ ĐÓNG/MỞ BẢNG CÀI ĐẶT -----
   const [settingsOpen, setSettingsOpen] = useState(false);
-
-  // ----- LOGIC CHO HIỆU ỨNG GẠCH CHÂN (MAGIC LINE) -----
   const location = useLocation();
   const navListRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
   // ==============================================================
-  // ĐÃ SỬA Ở ĐÂY: Khai báo các trang có Banner tối màu (cần chữ trắng)
+  // BÍ KÍP TẮC KÈ HOA Ở ĐÂY NÈ BOSS:
+  // 1. Liệt kê các trang có BANNER TỐI MÀU (Cần giữ nguyên chữ TRẮNG)
+  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category');
+
+  // 2. Những trang còn lại (như /products nền sáng) -> Bật chế độ chữ ĐEN
+  const isLightMode = !isDarkBannerPage;
   // ==============================================================
-  const hasDarkBanner = location.pathname === '/' || 
-                        location.pathname === '/products' || 
-                        location.pathname.startsWith('/category');
 
   const updateIndicator = (el) => {
     if (!el || !navListRef.current) return;
@@ -74,17 +58,16 @@ const Header = () => {
 
   return (
     <>
-      {/* ==============================================================
-          ĐÃ SỬA Ở ĐÂY: Áp dụng điều kiện hasDarkBanner vào class
-      ============================================================== */}
-      <header className={`site-header ${scrolled ? 'scrolled' : ''} ${!hasDarkBanner ? 'light-mode' : ''}`}>
+      {/* TRUYỀN BIẾN isLightMode VÀO HEADER */}
+      <header className={`site-header ${scrolled ? 'scrolled' : ''} ${isLightMode ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
           {/* Menu Desktop */}
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
             <ul ref={navListRef} onMouseLeave={resetIndicator} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
-                const isActive = location.pathname === item.link;
+                // Sửa nhẹ để menu "SẢN PHẨM" vẫn sáng đèn khi ở trang category
+                const isActive = location.pathname === item.link || (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
                 return (
                   <li
                     key={index}
@@ -94,12 +77,8 @@ const Header = () => {
                     <Link
                       to={item.link || '#'}
                       onClick={() => {
-                        if (item.label.toLowerCase() === 'giới thiệu') {
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-                        if (item.dropdown) {
-                          setNavDropdown(navDropdown === item.label ? null : item.label);
-                        }
+                        if (item.label.toLowerCase() === 'giới thiệu') window.scrollTo({ top: 0, behavior: 'smooth' });
+                        if (item.dropdown) setNavDropdown(navDropdown === item.label ? null : item.label);
                       }}
                     >
                       {item.label}
@@ -107,40 +86,24 @@ const Header = () => {
 
                     {item.dropdown && (
                       <ul className={`nav-dropdown ${navDropdown === item.label ? 'force-show' : ''}`}>
-                        
-                        {/* ===============================================================
-                            ĐÃ GẮN CỨNG LINK CATEGORY CHO MENU "SẢN PHẨM" Ở ĐÂY NÈ BOSS
-                        =============================================================== */}
                         {item.label.toLowerCase() === 'sản phẩm' ? (
                           <>
-                            <li>
-                              <Link to="/category/nguyen-chat" onClick={() => setNavDropdown(null)}>Cà phê nguyên chất</Link>
-                            </li>
-                            <li>
-                              <Link to="/category/dong-goi" onClick={() => setNavDropdown(null)}>Cà phê đóng gói</Link>
-                            </li>
-                            <li>
-                              <Link to="/category/hat" onClick={() => setNavDropdown(null)}>Cà phê hạt</Link>
-                            </li>
+                            <li><Link to="/category/nguyen-chat" onClick={() => setNavDropdown(null)}>Cà phê nguyên chất</Link></li>
+                            <li><Link to="/category/dong-goi" onClick={() => setNavDropdown(null)}>Cà phê đóng gói</Link></li>
+                            <li><Link to="/category/hat" onClick={() => setNavDropdown(null)}>Cà phê hạt</Link></li>
                           </>
                         ) : (
-                          /* Render các menu con khác (nếu có) bình thường */
                           item.dropdown.map((sub, subIndex) => (
                             <li key={subIndex}>
-                              <Link to={sub.link || '#'} onClick={() => setNavDropdown(null)}>
-                                {sub.label}
-                              </Link>
+                              <Link to={sub.link || '#'} onClick={() => setNavDropdown(null)}>{sub.label}</Link>
                             </li>
                           ))
                         )}
-                        {/* =============================================================== */}
-
                       </ul>
                     )}
                   </li>
                 );
               })}
-
               <div className="nav-indicator" style={indicatorStyle}></div>
             </ul>
           </nav>
@@ -203,16 +166,12 @@ const Header = () => {
               )}
             </div>
 
-            {/* Yêu thích */}
             <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
 
             {/* User Dropdown */}
             {currentUser ? (
               <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
-                <button
-                  className="icon-btn user-btn"
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                >
+                <button className="icon-btn user-btn" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
                   <i className="fa-regular fa-user"></i>
                   <span className="user-name">{currentUser.name}</span>
                   <i className="fa-solid fa-chevron-down"></i>
@@ -230,32 +189,15 @@ const Header = () => {
                       </div>
                     </div>
                     <div className="user-dropdown-divider"></div>
-
-                    <button
-                      className="user-dropdown-item"
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        setProfileOpen(true);
-                      }}
-                    >
+                    <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setProfileOpen(true); }}>
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
-
                     <Link to="/admin/orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
-
-                    {/* Button gọi Settings Modal */}
-                    <button 
-                      className="user-dropdown-item" 
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        setSettingsOpen(true);
-                      }}
-                    >
+                    <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setSettingsOpen(true); }}>
                       <i className="fa-solid fa-gear"></i> Cài đặt
                     </button>
-
                     <div className="user-dropdown-divider"></div>
                     <button onClick={handleLogout} className="user-dropdown-item logout-btn">
                       <i className="fa-solid fa-right-from-bracket"></i> Đăng xuất
@@ -264,29 +206,22 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <button
-                className="icon-btn"
-                aria-label="Đăng nhập"
-                onClick={() => setAuthModalOpen(true)}
-              >
+              <button className="icon-btn" aria-label="Đăng nhập" onClick={() => setAuthModalOpen(true)}>
                 <i className="fa-regular fa-user"></i>
               </button>
             )}
 
-            {/* Giỏ hàng */}
             <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
               <i className="fa-solid fa-cart-shopping"></i><span className="cart-count">2</span>
             </Link>
           </div>
 
-          {/* Toggle Menu Mobile */}
           <button className="menu-toggle" aria-label="Menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             <i className="fa-solid fa-bars"></i>
           </button>
         </div>
       </header>
 
-      {/* Modals */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       <UserProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />

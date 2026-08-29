@@ -314,8 +314,7 @@
 }
 
 .shop-products.list .shop-product-image {
-  height: 270px;
-
+  height: auto; /* Bỏ height cứng để thuận theo aspect-ratio 1:1 */
   border-right: 1px solid #eee;
 }
 
@@ -386,34 +385,30 @@
 
 
 /* =================================
-   IMAGE
+   IMAGE (ĐÃ SỬA CỐ ĐỊNH 1:1 FULL VIỀN)
 ================================= */
 
 .shop-product-image {
   position: relative;
-
-  height: 270px;
-
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  padding: 15px;
-
+  padding: 0;
   overflow: hidden;
+  background: #f8f9fa;
 }
 
 .shop-product-image img {
   position: absolute;
-
-  max-width: 82%;
-
-  max-height: 90%;
-
-  object-fit: contain;
-
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   transition:
     opacity 0.35s ease,
     transform 0.35s ease;
@@ -442,8 +437,7 @@
 
 .shop-product-card:hover .back {
   opacity: 1;
-
-  transform: scale(1.03);
+  transform: scale(1.05); /* Zoom nhẹ khi hover nhìn cho ảo diệu */
 }
 
 
@@ -555,7 +549,7 @@
 ================================= */
 
 .shop-product-info {
-  padding: 4px 15px 18px;
+  padding: 15px 15px 18px; /* Thêm padding top 15px vì ảnh đã tràn viền */
 
   text-align: center;
 }
@@ -776,11 +770,6 @@
   }
 
   .shop-products.list
-  .shop-product-image {
-    height: 220px;
-  }
-
-  .shop-products.list
   .shop-product-info {
     padding: 20px;
   }
@@ -809,8 +798,6 @@
 
   .shop-products.list
   .shop-product-image {
-    height: 260px;
-
     border-right: none;
   }
 
@@ -841,4 +828,77 @@
       1px solid #ddd;
   }
 
+}
+
+/* =================================
+   MA THUẬT CSS: ĐẨY NÚT ACTION SANG PHẢI Ở CHẾ ĐỘ LIST
+================================= */
+
+@media (min-width: 521px) {
+  /* 1. Đổi Card từ 2 cột thành 3 cột (Ảnh | Thông tin | Nút bấm) */
+  .shop-products.list .shop-product-card {
+    display: grid !important;
+    grid-template-columns: 260px 1fr 80px !important; 
+    align-items: stretch !important; /* Kéo dãn bằng nhau để đường viền đẹp */
+    padding-right: 15px; 
+  }
+
+  /* 2. "Phá vỏ" div bọc ảnh, thả tự do cho các thành phần bên trong lọt vào Grid 3 cột */
+  .shop-products.list .shop-product-image {
+    display: contents !important; 
+  }
+
+  /* 3. Giam 2 tấm ảnh vào Cột 1 và xếp chồng lên nhau */
+  .shop-products.list .shop-product-image img {
+    position: relative !important; /* Gỡ absolute mặc định */
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    align-self: center; /* Giữ ảnh luôn ở giữa, không bị kéo méo */
+    background: #f8f9fa; /* Bù lại nền xám bị mất do phá vỏ */
+  }
+
+  /* 4. Đẩy Thông tin vào Cột 2, vẽ lại đường viền phân cách */
+  .shop-products.list .shop-product-info {
+    grid-column: 2;
+    grid-row: 1;
+    border-left: 1px solid #eee; /* Viền ngăn cách với Cột 1 (Ảnh) */
+  }
+
+  /* 5. Ép 3 nút bấm bay sang Cột 3 (Bên phải cùng) */
+  .shop-products.list .product-hover-actions {
+    position: static !important; /* Hủy bám dính vào ảnh */
+    grid-column: 3;
+    grid-row: 1;
+    transform: none !important; /* Hủy hiệu ứng trượt */
+    opacity: 1 !important; /* Ở chế độ List thì luôn hiện nút cho khách dễ bấm */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  /* Tắt tạm hiệu ứng zoom ảnh khi hover ở chế độ List để tránh lẹm viền */
+  .shop-products.list .shop-product-card:hover .back {
+    transform: none !important;
+  }
+}
+
+/* =================================
+   TỰ ĐỘNG THU GỌN CHO TABLET & MOBILE
+================================= */
+@media (max-width: 992px) and (min-width: 521px) {
+  .shop-products.list .shop-product-card {
+    grid-template-columns: 220px 1fr 70px !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 521px) {
+  .shop-products.list .shop-product-card {
+    grid-template-columns: 180px 1fr 60px !important;
+  }
 }

@@ -1,13 +1,13 @@
 /* =========================================
-   MỤC LỤC (dùng Ctrl+F để nhảy nhanh tới số mục)
+   MỤC LỤC
    1. SITE HEADER & STICKY
    2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
    3. LOGO
    4. HEADER ACTIONS & ICONS
-   5. SEARCH BAR & DROPDOWN
+   5. SEARCH BAR & DROPDOWN (ĐÃ KHÔI PHỤC FULL)
    6. USER MENU & DROPDOWN
    7. RESPONSIVE & MOBILE
-   8. LIGHT MODE (HEADER CHO TRANG CON)
+   8. LIGHT MODE (TẮC KÈ HOA)
    ========================================= */
 
 /* =========================================
@@ -56,7 +56,7 @@
 
 .main-nav ul li {
     padding: 8px 0;
-    /* Tạo vùng đệm để rê chuột dễ hơn */
+    position: relative;
 }
 
 .main-nav a {
@@ -72,33 +72,21 @@
 .main-nav ul li:hover>a,
 .main-nav ul li.active>a {
     color: #c99a6b;
-    /* Đổi màu chữ khi hover hoặc đang ở trang đó */
 }
 
-.main-nav ul li.has-dropdown {
-    position: relative;
-}
-
-/* TẠO THANH GẠCH CHÂN CHẠY NGANG (MAGIC LINE) */
 .nav-indicator {
     position: absolute;
     bottom: -2px;
-    /* Cách mép dưới một chút */
     height: 3px;
     background: #c99a6b;
-    /* Màu vàng sang trọng */
     border-radius: 4px;
     transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-    /* Hiệu ứng trượt có độ nảy nhẹ */
     pointer-events: none;
-    /* Không che mất khả năng click */
 }
 
-/* ================== KHUNG DROPDOWN CỦA MENU CHÍNH ================== */
 .main-nav .nav-dropdown {
     position: absolute;
     top: 130%;
-    /* Lùi xuống một chút cho thoáng */
     left: 50%;
     transform: translateX(-50%) translateY(15px);
     background: #ffffff;
@@ -108,7 +96,6 @@
     min-width: 220px;
     display: flex;
     flex-direction: column;
-    /* Xếp dọc thẳng hàng cho dễ đọc */
     gap: 4px;
     opacity: 0;
     visibility: hidden;
@@ -117,7 +104,6 @@
     z-index: 999;
 }
 
-/* Mũi tên tam giác nhọn trỏ lên trên cho Dropdown */
 .main-nav .nav-dropdown::before {
     content: '';
     position: absolute;
@@ -140,17 +126,15 @@
 
 .main-nav .nav-dropdown li {
     padding: 0;
-    /* Xóa padding mặc định của li cha */
 }
 
 .main-nav .nav-dropdown a {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: #333333;
+    color: #333333 !important;
     font-size: 14px;
     text-transform: none;
-    /* Bỏ in hoa cho dễ đọc */
     font-weight: 600;
     border-radius: 8px;
     position: relative;
@@ -158,13 +142,10 @@
     transition: all 0.25s ease;
 }
 
-/* Hiệu ứng hover bên trong Dropdown */
 .main-nav .nav-dropdown a:hover {
     background: rgba(111, 67, 35, 0.06);
-    /* Nền cà phê rất nhạt */
-    color: var(--color-primary, #6f4323);
+    color: var(--color-primary, #6f4323) !important;
     padding-left: 22px;
-    /* Chữ trượt nhẹ sang phải */
 }
 
 /* =========================================
@@ -175,6 +156,7 @@
     height: 80px;
     object-fit: contain;
     display: block;
+    transition: filter 0.3s ease;
 }
 
 /* =========================================
@@ -191,12 +173,11 @@
 .icon-btn {
     position: relative;
     font-size: 17px;
-    color: #fff;
-    transition: color var(--transition, 0.25s ease);
+    color: inherit;
+    transition: color 0.25s ease;
     cursor: pointer;
     background: none;
     border: none;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
 }
@@ -210,7 +191,7 @@
     top: -8px;
     right: -10px;
     background: var(--color-primary, #6f4323);
-    color: #fff;
+    color: #fff !important;
     font-size: 10px;
     font-weight: 700;
     border-radius: 50%;
@@ -222,7 +203,7 @@
 }
 
 /* =========================================
-   5. SEARCH BAR & DROPDOWN
+   5. SEARCH BAR & DROPDOWN (ĐÃ KHÔI PHỤC)
    ========================================= */
 .search-wrap {
     position: relative;
@@ -241,7 +222,7 @@
 .search-form input {
     background: transparent;
     border: none;
-    color: #fff;
+    color: inherit;
     font-size: 13px;
     width: 100px;
     outline: none;
@@ -255,7 +236,7 @@
 .search-form button {
     background: none;
     border: none;
-    color: #fff;
+    color: inherit;
     cursor: pointer;
     display: flex;
     padding: 0;
@@ -379,8 +360,6 @@
 
 /* =========================================
    6. USER MENU & DROPDOWN
-   (Đã gộp phần khai báo bị lặp lại 2 lần ở bản gốc
-   thành 1 khối duy nhất — không đổi hiệu ứng)
    ========================================= */
 .user-menu {
     position: relative;
@@ -395,7 +374,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #fff;
+    color: inherit;
     font-size: 14px;
     font-weight: 600;
 }
@@ -403,7 +382,7 @@
 .user-name {
     font-size: 14px;
     font-weight: 600;
-    color: #fff;
+    color: inherit;
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -465,7 +444,6 @@
     flex-shrink: 0;
 }
 
-/* Hiển thị ảnh Avatar thật trong Dropdown Header (thay cho chữ cái) */
 .user-avatar-img {
     width: 40px;
     height: 40px;
@@ -473,7 +451,6 @@
     object-fit: cover;
     flex-shrink: 0;
     border: 2px solid #6f4323;
-    /* Viền nâu cà phê cho đồng bộ */
     box-shadow: 0 2px 6px rgba(111, 67, 35, 0.2);
 }
 
@@ -525,7 +502,7 @@
     display: none;
     background: none;
     border: none;
-    color: #fff;
+    color: inherit;
     font-size: 22px;
     cursor: pointer;
 }
@@ -555,6 +532,14 @@
         gap: 15px;
     }
 
+    .main-nav.open a {
+        color: #ffffff !important;
+    }
+
+    .main-nav.open a:hover {
+        color: #c99a6b !important;
+    }
+
     .main-nav .nav-dropdown {
         position: static;
         box-shadow: none;
@@ -564,16 +549,6 @@
         background: transparent;
         padding-left: 20px;
         border-left: 2px solid #c99a6b;
-    }
-
-    .main-nav .nav-dropdown a {
-        color: #fff;
-        padding: 8px 0;
-    }
-
-    .main-nav .nav-dropdown a:hover {
-        background: transparent;
-        color: #c99a6b;
     }
 }
 
@@ -592,55 +567,51 @@
 }
 
 /* =========================================
-   8. LIGHT MODE (HEADER CHO TRANG CON)
+   8. LIGHT MODE (TRANG SẢN PHẨM)
    ========================================= */
-
-/* Trạng thái trên cùng: Trong suốt, bỏ bóng mờ */
 .site-header.light-mode {
-    background: transparent !important;
-    box-shadow: none;
-    position: absolute;
+    color: #2b1a10 !important;
 }
 
-/* Khi cuộn chuột xuống thì cho nền Trắng để dễ đọc */
 .site-header.light-mode.scrolled {
     background: #ffffff !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    position: fixed;
 }
 
-/* 1. Đổi màu chữ Menu sang Đen */
 .site-header.light-mode .main-nav a {
-    color: #111;
+    color: #2b1a10 !important;
 }
 
-/* 2. Đổi màu các Icon (User, Tim, Giỏ hàng, Menu Mobile) sang Đen */
+.site-header.light-mode .main-nav a:hover,
+.site-header.light-mode .main-nav li.active>a {
+    color: #c99a6b !important;
+}
+
+/* Đen hóa Logo & Icon */
+.site-header.light-mode .logo img {
+    filter: brightness(0) !important;
+}
+
 .site-header.light-mode .icon-btn,
 .site-header.light-mode .user-btn,
 .site-header.light-mode .menu-toggle {
-    color: #111;
+    color: #2b1a10 !important;
 }
 
-/* 3. Đổi màu tên User sang Đen */
 .site-header.light-mode .user-name {
-    color: #111;
+    color: #2b1a10 !important;
 }
 
-/* 4. Biến Logo trắng thành màu Đen bằng filter */
-.site-header.light-mode .logo img {
-    filter: brightness(0);
-}
-
-/* 5. Cập nhật lại khung Tìm Kiếm sang Đen */
+/* Đen hóa Search Bar */
 .site-header.light-mode .search-form {
-    border-bottom-color: rgba(0, 0, 0, 0.25);
+    border-bottom-color: rgba(43, 26, 16, 0.35) !important;
 }
 
 .site-header.light-mode .search-form input,
 .site-header.light-mode .search-form button {
-    color: #111;
+    color: #2b1a10 !important;
 }
 
 .site-header.light-mode .search-form input::placeholder {
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(43, 26, 16, 0.55) !important;
 }

@@ -93,11 +93,13 @@
 
 .product-img {
     position: relative;
-    height: 240px;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* CỐ ĐỊNH TỈ LỆ 1:1 */
+    height: auto;
     margin-bottom: 16px;
     overflow: hidden;
     perspective: 800px;
-    background: transparent;
+    background: transparent; /* ĐÃ XÓA NỀN XÁM, TRONG SUỐT HOÀN TOÀN */
     border-radius: 8px;
 }
 
@@ -107,7 +109,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover; /* TỰ ĐỘNG CẮT CÚP VỪA KHUNG */
+    object-position: center;
     backface-visibility: hidden;
     transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
