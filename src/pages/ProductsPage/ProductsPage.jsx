@@ -41,7 +41,7 @@ const ProductsPage = () => {
   // ==============================
   // 3 DANH MỤC CHUẨN CẦN HIỂN THỊ Ở CỘT TRÁI
   // ==============================
-  const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê Hạt'];
+  const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê phin'];
 
   // ==============================
   // LỌC DANH MỤC KHI TICK CHỌN

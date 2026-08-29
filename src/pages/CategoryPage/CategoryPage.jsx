@@ -27,7 +27,7 @@ const CategoryPage = () => {
       bannerImg: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=1600&h=400&fit=crop',
       dbCategoryName: 'Cà phê đóng gói'
     },
-    'hat': {
+    'phin': {
       title: 'Cà phê Hạt',
       subtitle: 'Tuyển chọn từ những nông trại tốt nhất, hoàn hảo cho máy pha Espresso.',
       bannerImg: 'https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?w=1600&h=400&fit=crop',

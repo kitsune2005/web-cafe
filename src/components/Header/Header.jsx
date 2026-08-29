@@ -90,7 +90,7 @@ const Header = () => {
                           <>
                             <li><Link to="/category/nguyen-chat" onClick={() => setNavDropdown(null)}>Cà phê nguyên chất</Link></li>
                             <li><Link to="/category/dong-goi" onClick={() => setNavDropdown(null)}>Cà phê đóng gói</Link></li>
-                            <li><Link to="/category/hat" onClick={() => setNavDropdown(null)}>Cà phê hạt</Link></li>
+                            <li><Link to="/category/phin" onClick={() => setNavDropdown(null)}>Cà phê phin</Link></li>
                           </>
                         ) : (
                           item.dropdown.map((sub, subIndex) => (

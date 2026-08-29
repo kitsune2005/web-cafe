@@ -217,7 +217,7 @@ const ProductManage = () => {
               <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={inputStyle}>
                 <option>Cà phê nguyên chất</option>
                 <option>Cà phê đóng gói</option>
-                <option>Cà phê Hạt</option>
+                <option>Cà phê phin</option>
               </select>
 
               {/* Ô TICK BÁO HIỆN TRANG CHỦ */}

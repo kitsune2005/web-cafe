@@ -221,7 +221,7 @@ export const useHeaderLogic = () => {
         },
 
         {
-          label: "Cà phê hạt",
+          label: "Cà phê phin",
           link: "/products",
         },
       ],
