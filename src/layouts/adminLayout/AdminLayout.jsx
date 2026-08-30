@@ -45,15 +45,16 @@ const AdminLayout = () => {
           </NavLink>
           
           <NavLink to="/admin/products" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
-            <i className="fa-solid fa-utensils"></i> Menus (Sản phẩm)
+            <i className="fa-solid fa-utensils"></i> Menus
           </NavLink>
           
           <NavLink to="/admin/customers" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
             <i className="fa-solid fa-users"></i> Customer
           </NavLink>
           
-          <NavLink to="/admin/analysis" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
-            <i className="fa-solid fa-chart-line"></i> Analysis
+          {/* 👉 ĐÃ SỬA: Đổi link thành /admin/product-story và icon quyển sách */}
+          <NavLink to="/admin/product-story" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
+            <i className="fa-solid fa-book-open"></i> Tiểu sử sản phẩm
           </NavLink>
         </nav>
 

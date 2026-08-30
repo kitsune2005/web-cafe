@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext'; // 👉 BƯỚC 1: KÉO BỘ NÃO BẢO VỆ VÀO
 import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
     const { cartItems, setCartItems } = useCart();
+    const { currentUser, loading } = useAuth(); // 👉 BƯỚC 2: LẤY THÔNG TIN USER HIỆN TẠI
     const navigate = useNavigate();
 
-    // State quản lý màn hình loading
     const [isProcessing, setIsProcessing] = useState(false);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        // Nếu giỏ hàng trống thì đá về trang sản phẩm
-        if (cartItems.length === 0) {
-            toast.error("Giỏ hàng của bạn đang trống!");
-            navigate('/products');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); 
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -32,6 +23,42 @@ const CheckoutPage = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('bank');
 
+    // 👉 BƯỚC 3: NẾU CÓ USER, TỰ ĐỘNG ĐIỀN SẴN HỌ TÊN VÀ EMAIL CHO NHANH
+    useEffect(() => {
+        if (currentUser) {
+            const nameParts = currentUser.name ? currentUser.name.split(' ') : [];
+            const ten = nameParts.length > 0 ? nameParts.pop() : '';
+            const ho = nameParts.join(' ');
+            
+            setFormData(prev => ({
+                ...prev,
+                firstName: prev.firstName || ten,
+                lastName: prev.lastName || ho,
+                email: prev.email || currentUser.email || ''
+            }));
+        }
+    }, [currentUser]);
+
+    // 👉 BƯỚC 4: "BẢO VỆ CỬA" CHẶN KHÁCH VÃNG LAI
+    useEffect(() => {
+        if (loading) return; // Đang tải dữ liệu thì đứng chờ 1 giây
+
+        window.scrollTo(0, 0);
+
+        // KIỂM TRA ĐĂNG NHẬP: CHƯA ĐĂNG NHẬP LÀ ĐÁ VỀ TRANG CHỦ
+        if (!currentUser) {
+            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé! 🦊", { duration: 4000 });
+            navigate('/'); // Đá về trang chủ (Hoặc đổi thành '/login' nếu Boss có trang Login riêng)
+            return;
+        }
+
+        // Nếu giỏ hàng trống thì đá về trang sản phẩm
+        if (cartItems.length === 0) {
+            toast.error("Giỏ hàng của bạn đang trống!");
+            navigate('/products');
+        }
+    }, [currentUser, loading, cartItems.length, navigate]); 
+
     const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     const shippingFee = subtotal > 500000 ? 0 : 30000;
     const total = subtotal + shippingFee;
@@ -43,45 +70,44 @@ const CheckoutPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Hàm xử lý đặt hàng ĐÃ NÂNG CẤP
     const handlePlaceOrder = (e) => {
         e.preventDefault();
         
-        // 1. Kiểm tra thông tin
         if (!formData.firstName || !formData.phone || !formData.address) {
             toast.error("Vui lòng điền đầy đủ thông tin bắt buộc (*)");
             return;
         }
 
-        // 2. Bật màn hình Loading lên
         setIsProcessing(true);
 
-        // 3. Chờ 2.5 giây rồi xử lý logic
         setTimeout(() => {
             setIsProcessing(false);
             toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { duration: 4000 });
             
-            // 👉 LƯU ĐƠN HÀNG VÀO LỊCH SỬ ĐỂ ĐẾM NGƯỢC 60 GIÂY
             const newOrder = {
                 id: 'FOX-' + Math.floor(100000 + Math.random() * 900000),
                 createdAt: Date.now(),
+                customerId: currentUser.id, // 👉 Lưu luôn ID của khách để sau này làm lịch sử mua hàng
+                customerName: `${formData.lastName} ${formData.firstName}`.trim(),
+                phone: formData.phone,
+                address: formData.address,
+                paymentMethod: paymentMethod === 'bank' ? 'Chuyển khoản' : 'Tiền mặt',
                 items: cartItems,
                 total: total,
-                status: 'delivering' // Bắt đầu trạng thái đang giao
+                status: 'delivering' 
             };
             const existingOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
             localStorage.setItem('my_orders', JSON.stringify([newOrder, ...existingOrders]));
 
-            // Xóa giỏ hàng
             setCartItems([]);
             localStorage.removeItem('cart');
             
-            // 👉 CHỞ BOSS TỚI TRANG ĐƠN HÀNG ĐỂ XEM ĐẾM NGƯỢC LUÔN
             navigate('/my-orders');
         }, 2500);
     };
 
-    if (cartItems.length === 0) return null; 
+    // Chặn render giao diện nếu chưa có User hoặc giỏ hàng trống để tránh lỗi nhấp nháy
+    if (loading || !currentUser || cartItems.length === 0) return null; 
 
     return (
         <div className="checkout-page">
@@ -97,10 +123,9 @@ const CheckoutPage = () => {
 
             <div className="container checkout-content-wrapper">
                 <div className="coupon-notice">
-                    <i className="fa-solid fa-tag"></i> Bạn có mã ưu đãi? <button className="btn-toggle-coupon">Ấn vào đây để nhập mã</button>
+                    <i className="fa-solid fa-tag"></i> Bạn có mã ưu đãi? <button className="btn-toggle-coupon" type="button">Ấn vào đây để nhập mã</button>
                 </div>
 
-                {/* 👉 ĐÃ THÊM noValidate VÀO FORM ĐỂ TỰ BẮT LỖI BẰNG TOAST */}
                 <form className="checkout-main-layout" onSubmit={handlePlaceOrder} noValidate>
                     
                     {/* CỘT TRÁI: FORM ĐIỀN THÔNG TIN */}

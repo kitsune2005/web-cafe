@@ -223,6 +223,37 @@ app.put('/api/update-profile', (req, res) => {
   }
 });
 
+
+// =========================================================================
+// ==================== KHU VỰC API QUẢN LÝ KHÁCH HÀNG (MỚI THÊM) ==========
+// =========================================================================
+
+// LẤY DANH SÁCH TOÀN BỘ NGƯỜI DÙNG (Cho Admin)
+app.get('/api/users', (req, res) => {
+  const users = readUsers();
+  // Giấu password đi trước khi gửi về frontend cho bảo mật
+  const safeUsers = users.map(({ password, ...rest }) => rest);
+  res.status(200).json(safeUsers);
+});
+
+// XÓA NGƯỜI DÙNG
+app.delete('/api/users/:id', (req, res) => {
+  let users = readUsers();
+  const userId = Number(req.params.id);
+  
+  // Chống tự hủy: Không cho xóa Admin đầu tiên
+  const userToDelete = users.find(u => u.id === userId);
+  if (userToDelete && userToDelete.role === 'admin' && users.filter(u => u.role === 'admin').length === 1) {
+      return res.status(400).json({ success: false, message: 'Không thể xóa Admin duy nhất của hệ thống!' });
+  }
+
+  const filteredUsers = users.filter(u => u.id !== userId);
+  writeUsers(filteredUsers);
+
+  res.status(200).json({ success: true, message: 'Đã tiễn khách hàng lên đường!' });
+});
+
+
 // =========================================================================
 // ==================== KHU VỰC API QUẢN LÝ SẢN PHẨM =======================
 // =========================================================================
@@ -319,6 +350,31 @@ app.delete('/api/products/:id', (req, res) => {
   writeProducts(filteredProducts);
 
   res.status(200).json({ success: true, message: 'Đã xóa thành công' });
+});
+
+// 5. CẬP NHẬT MỘT PHẦN SẢN PHẨM (PATCH) - Dành riêng cho Tiểu sử
+app.patch('/api/products/:id', (req, res) => {
+  const products = readProducts();
+  const productId = Number(req.params.id);
+  const index = products.findIndex(p => p.id === productId);
+
+  if (index === -1) {
+    return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm!' });
+  }
+
+  // Lấy dữ liệu gửi lên và chỉ cập nhật 2 trường mô tả
+  const { shortDesc, longDesc } = req.body;
+  
+  if (shortDesc !== undefined) products[index].shortDesc = shortDesc;
+  if (longDesc !== undefined) products[index].longDesc = longDesc;
+
+  writeProducts(products);
+
+  res.status(200).json({ 
+      success: true, 
+      message: 'Cập nhật tiểu sử thành công', 
+      product: products[index] 
+  });
 });
 
 // Khởi động server (Chỉ xuất hiện 1 lần duy nhất ở đây)

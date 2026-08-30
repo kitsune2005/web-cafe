@@ -12,10 +12,12 @@
 }
 
 .dashboard-title {
-    font-size: 26px;
-    font-weight: 800;
+    font-size: 3rem; 
+    font-weight: 700; 
     color: #382212;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    letter-spacing: -0.5px;
 }
 
 .dashboard-subtitle {
@@ -238,4 +240,127 @@
     .dashboard-charts-grid {
         grid-template-columns: 1fr;
     }
+}
+/* =========================================
+   THÊM TRẠNG THÁI LỖI (DANGER) CHO BADGE
+========================================= */
+.status-badge.danger { background: #ffe3e3; color: #fa5252; }
+
+/* =========================================
+   BIỂU ĐỒ CỘT (BAR CHART) BẰNG CSS
+========================================= */
+.bar-chart-wrapper {
+    display: flex;
+    height: 250px;
+    padding-top: 10px;
+    gap: 15px;
+}
+
+.y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #888;
+    font-size: 12px;
+    padding-bottom: 25px; /* Ép bằng với chữ trục x */
+    text-align: right;
+}
+
+.bars-container {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+    align-items: flex-end;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+/* Các đường kẻ ngang mờ mờ */
+.bars-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 25px;
+    background: repeating-linear-gradient(to bottom, transparent, transparent 24.5%, #f1f1f1 24.5%, #f1f1f1 25%);
+    z-index: 1;
+}
+
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    width: 35px;
+    z-index: 2;
+    gap: 10px;
+}
+
+.bar {
+    width: 28px;
+    background-color: #6f4323;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.8s ease-out;
+}
+
+.bar-group span {
+    font-size: 12px;
+    color: #555;
+    font-weight: 600;
+}
+
+/* =========================================
+   BIỂU ĐỒ TRÒN (DONUT CHART) BẰNG CSS
+========================================= */
+.donut-chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+}
+
+.donut-chart {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    /* Vẽ biểu đồ bằng màu gradient */
+    background: conic-gradient(
+        #d5c8b8 0deg 110deg, 
+        #fff 110deg 115deg, /* Đường viền trắng tạo độ đứt đoạn */
+        #6f4323 115deg 260deg, 
+        #fff 260deg 265deg, 
+        #b23a2c 265deg 300deg, 
+        #fff 300deg 305deg, 
+        #e0e0e0 305deg 355deg,
+        #fff 355deg 360deg
+    );
+    position: relative;
+    margin-bottom: 30px;
+}
+
+/* Khoét lỗ tròn màu trắng ở giữa để tạo thành cái bánh Donut */
+.donut-chart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.donut-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+}
+
+.donut-legend i {
+    margin-right: 5px;
+    font-size: 10px;
 }

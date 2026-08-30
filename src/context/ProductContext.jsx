@@ -73,6 +73,31 @@ export const ProductProvider = ({ children }) => {
     ));
   };
 
+  // 👉 THÊM MỚI: CẬP NHẬT TIỂU SỬ SẢN PHẨM (PATCH)
+  const updateProductStory = async (id, shortDesc, longDesc) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shortDesc, longDesc })
+      });
+
+      if (!response.ok) {
+        throw new Error("Lỗi cập nhật tiểu sử từ Backend");
+      }
+
+      // Cập nhật State nội bộ cho mượt, không cần fetch lại nguyên list
+      setProducts(prev => prev.map(product => 
+        product.id === id ? { ...product, shortDesc, longDesc } : product
+      ));
+
+      return true; // Báo về Admin là đã lưu thành công
+    } catch (error) {
+      console.error("Lỗi khi lưu tiểu sử API:", error);
+      return false; // Báo lỗi
+    }
+  };
+
   const formatPrice = (price) => {
     if (price === undefined || price === null || price === '') return "0đ";
     return new Intl.NumberFormat('vi-VN').format(Number(price)) + 'đ';
@@ -80,7 +105,14 @@ export const ProductProvider = ({ children }) => {
 
   return (
     <ProductContext.Provider value={{ 
-      products, loading, addProduct, deleteProduct, updateProduct, formatPrice, refreshData: fetchProducts 
+      products, 
+      loading, 
+      addProduct, 
+      deleteProduct, 
+      updateProduct, 
+      updateProductStory, /* 👉 ĐÃ XUẤT KHẨU HÀM Ở ĐÂY */
+      formatPrice, 
+      refreshData: fetchProducts 
     }}>
       {children}
     </ProductContext.Provider>

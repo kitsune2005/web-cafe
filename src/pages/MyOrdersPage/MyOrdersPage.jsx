@@ -1,30 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // 👉 KÉO BỘ NÃO USER VÀO
+import toast from 'react-hot-toast';
 import './MyOrdersPage.css';
 
 const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [currentTime, setCurrentTime] = useState(Date.now());
+    
+    // 👉 LẤY THÔNG TIN NGƯỜI ĐANG ĐĂNG NHẬP
+    const { currentUser, loading } = useAuth(); 
+    const navigate = useNavigate();
 
     // 1. Tải đơn hàng từ LocalStorage khi vào trang
     useEffect(() => {
-        window.scrollTo(0, 0);
-        const savedOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
-        
-        // NẾU CHƯA CÓ ĐƠN NÀO, TỰ ĐỘNG TẠO 1 ĐƠN ẢO ĐỂ BOSS TEST HIỆU ỨNG
-        if (savedOrders.length === 0) {
-            const mockOrder = {
-                id: 'FOX-' + Math.floor(100000 + Math.random() * 900000),
-                createdAt: Date.now(),
-                items: [{ name: 'Cà phê nguyên chất Dreamy', quantity: 2, price: 150000 }],
-                total: 330000, // Đã cộng 30k ship
-                status: 'delivering' 
-            };
-            savedOrders.push(mockOrder);
-            localStorage.setItem('my_orders', JSON.stringify(savedOrders));
+        if (loading) return;
+
+        // Nếu chưa đăng nhập thì đuổi ra ngoài
+        if (!currentUser) {
+            toast.error("Boss ơi, phải đăng nhập mới xem được đơn hàng nhé! 🦊");
+            navigate('/');
+            return;
         }
-        setOrders(savedOrders);
-    }, []);
+
+        window.scrollTo(0, 0);
+        const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
+        
+        // 👉 BỘ LỌC MA THUẬT: Chỉ lấy đúng đơn của tài khoản hiện tại
+        const myOwnOrders = allOrders.filter(order => order.customerId === currentUser.id);
+        
+        // Sắp xếp đơn mới lên đầu
+        const sortedOrders = myOwnOrders.sort((a, b) => b.createdAt - a.createdAt);
+        
+        setOrders(sortedOrders);
+    }, [currentUser, loading, navigate]);
 
     // 2. Vòng lặp đếm ngược thời gian thực (Mỗi giây cập nhật 1 lần)
     useEffect(() => {
@@ -44,7 +53,15 @@ const MyOrdersPage = () => {
                     return order;
                 });
                 
-                if (hasChanges) localStorage.setItem('my_orders', JSON.stringify(updated));
+                // CẬP NHẬT KHO TỔNG: Chỉ cập nhật đơn của mình, giữ nguyên đơn người khác
+                if (hasChanges) {
+                    const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
+                    const newAllOrders = allOrders.map(sysOrder => {
+                        const matched = updated.find(o => o.id === sysOrder.id);
+                        return matched ? matched : sysOrder;
+                    });
+                    localStorage.setItem('my_orders', JSON.stringify(newAllOrders));
+                }
                 return updated;
             });
         }, 1000);
@@ -53,9 +70,16 @@ const MyOrdersPage = () => {
 
     // 3. Hàm xử lý khi bấm nút "Đã nhận" hoặc "Chưa nhận"
     const handleConfirmStatus = (orderId, newStatus) => {
+        // Cập nhật giao diện nội bộ
         const updatedOrders = orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
         setOrders(updatedOrders);
-        localStorage.setItem('my_orders', JSON.stringify(updatedOrders));
+        
+        // CẬP NHẬT KHO TỔNG
+        const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
+        const newAllOrders = allOrders.map(sysOrder => 
+            sysOrder.id === orderId ? { ...sysOrder, status: newStatus } : sysOrder
+        );
+        localStorage.setItem('my_orders', JSON.stringify(newAllOrders));
     };
 
     const formatPrice = (price) => price.toLocaleString('vi-VN') + '₫';
@@ -64,6 +88,9 @@ const MyOrdersPage = () => {
         const d = new Date(timestamp);
         return d.toLocaleTimeString('vi-VN') + ' - ' + d.toLocaleDateString('vi-VN');
     };
+
+    // Chặn hiển thị giao diện khi chưa load xong user
+    if (loading || !currentUser) return null;
 
     return (
         <div className="my-orders-page">
@@ -100,6 +127,7 @@ const MyOrdersPage = () => {
                                             {order.status === 'arrived' && <span className="badge info"><i className="fa-solid fa-location-dot"></i> Shipper đã tới!</span>}
                                             {order.status === 'received' && <span className="badge success"><i className="fa-solid fa-check-double"></i> Đã nhận hàng</span>}
                                             {order.status === 'not_received' && <span className="badge danger"><i className="fa-solid fa-triangle-exclamation"></i> Báo cáo chưa nhận</span>}
+                                            {order.status === 'cancelled' && <span className="badge danger"><i className="fa-solid fa-ban"></i> Đã hủy</span>}
                                         </div>
                                     </div>
 
@@ -111,7 +139,7 @@ const MyOrdersPage = () => {
                                     {/* BIÊN LAI (HÓA ĐƠN) */}
                                     <div className="order-receipt">
                                         <ul className="receipt-items">
-                                            {order.items.map((item, idx) => (
+                                            {order.items?.map((item, idx) => (
                                                 <li key={idx}>
                                                     <span className="item-name">{item.name} <strong>x{item.quantity}</strong></span>
                                                     <span className="item-price">{formatPrice(item.price * item.quantity)}</span>

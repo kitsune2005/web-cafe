@@ -11,7 +11,9 @@
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 2
+    "id": 2,
+    "shortDesc": "test",
+    "longDesc": "test"
   },
   {
     "name": "Cà Phê Decaf ",

@@ -5,8 +5,8 @@ import { useAuth } from '../context/AuthContext';
 // NẠP BỘ NGUỒN CÀI ĐẶT VÀO ĐÂY
 import { SettingsProvider } from '../context/SettingsContext';
 import { ProductProvider } from '../context/ProductContext';
-import { CartProvider } from '../context/CartContext'; // 👉 THÊM BỘ NÃO GIỎ HÀNG
-import { Toaster } from 'react-hot-toast'; // 👉 THÊM THƯ VIỆN THÔNG BÁO
+import { CartProvider } from '../context/CartContext'; 
+import { Toaster } from 'react-hot-toast'; 
 
 // ================= LAYOUTS =================
 import MainLayouts from '../layouts/MainLayouts';
@@ -21,7 +21,7 @@ import CategoryPage from '../pages/CategoryPage/CategoryPage';
 import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage';
 import CartPage from '../pages/CartPage/CartPage';
 
-// 👉 IMPORT TRANG THANH TOÁN VÀ ĐƠN HÀNG
+// IMPORT TRANG THANH TOÁN VÀ ĐƠN HÀNG
 import CheckoutPage from '../pages/CheckoutPage/CheckoutPage';
 import MyOrdersPage from '../pages/MyOrdersPage/MyOrdersPage';
 
@@ -30,6 +30,8 @@ import ProductManage from '../pages/AdminPage/ProductManage/ProductManage';
 import Dashboard from '../pages/AdminPage/Dashboard/Dashboard';
 import OrderManage from '../pages/AdminPage/OrderManage/OrderManage';
 import AutoScrollToTop from './AutoScrollToTop';
+import ProductStoryManage from '../pages/AdminPage/ProductStoryManage/ProductStoryManage';
+import CustomerManage from '../pages/AdminPage/CustomerManage/CustomerManage';
 
 const AppRoutes = () => {
     const { currentUser, loading } = useAuth();
@@ -52,11 +54,9 @@ const AppRoutes = () => {
 
     return (
         <SettingsProvider>
-            {/* 👉 BỌC THÊM CART PROVIDER Ở ĐÂY ĐỂ DÙNG CHUNG TOÀN WEB */}
             <CartProvider>
                 <ProductProvider>
                     <AutoScrollToTop />
-                    {/* 👉 ĐẶT MÁY PHÁT THÔNG BÁO Ở ĐÂY */}
                     <Toaster position="top-center" reverseOrder={false} />
 
                     <Routes>
@@ -75,7 +75,7 @@ const AppRoutes = () => {
                             {/* ĐƯỜNG DẪN TỚI TRANG GIỎ HÀNG, THANH TOÁN, ĐƠN HÀNG */}
                             <Route path="/cart" element={<CartPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/my-orders" element={<MyOrdersPage />} /> {/* 👉 ĐÃ SỬA CHUẨN CÚ PHÁP */}
+                            <Route path="/my-orders" element={<MyOrdersPage />} /> 
                         </Route>
 
                         {/* ==============================================
@@ -93,6 +93,8 @@ const AppRoutes = () => {
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="products" element={<ProductManage />} />
                             <Route path="orders" element={<OrderManage />} />
+                            <Route path="customers" element={<CustomerManage />} />
+                            <Route path="product-story" element={<ProductStoryManage />} />
                         </Route>
 
                         {/* ==============================================
