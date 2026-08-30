@@ -47,7 +47,12 @@ const AdminLayout = () => {
           <NavLink to="/admin/products" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
             <i className="fa-solid fa-utensils"></i> Menus
           </NavLink>
-          
+          <NavLink to="/admin/news" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
+            <i className="fa-regular fa-newspaper"></i>Tin tức
+          </NavLink>
+          <NavLink to="/admin/contacts" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
+            <i className="fa-regular fa-envelope"></i>Liên hệ
+          </NavLink>
           <NavLink to="/admin/customers" className={({isActive}) => `admin-menu-item ${isActive ? 'active' : ''}`}>
             <i className="fa-solid fa-users"></i> Customer
           </NavLink>

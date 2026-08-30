@@ -28,9 +28,8 @@ const Header = () => {
   const navListRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
-  // ==============================================================
-  // BÍ KÍP TẮC KÈ HOA Ở ĐÂY NÈ BOSS:
-  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category');
+
+  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact");
   const isLightMode = !isDarkBannerPage;
   // ==============================================================
 

@@ -35,20 +35,15 @@ export const useHeaderLogic = () => {
     const handleScroll = () => {
       let threshold;
 
-      // Trang sản phẩm
       if (location.pathname === "/products") {
-        // Banner product khoảng 420px
-        // Header cao khoảng 84px
-        threshold = 336;
+      threshold = 106;
+      } else if (location.pathname === "/news") {
+      threshold = 236;
       } else {
-        // Trang chủ
-        const heroHeight = window.innerHeight;
-        const headerHeight = 84;
-
-        threshold = Math.max(
-          heroHeight - headerHeight,
-          40
-        );
+      threshold = Math.max(
+        window.innerHeight - 84,
+        40
+      );
       }
 
       setScrolled(window.scrollY > threshold);
@@ -229,13 +224,13 @@ export const useHeaderLogic = () => {
 
     {
       label: "Tin tức",
-      link: "#",
+      link: "/news",
       dropdown: null,
     },
 
     {
       label: "Liên hệ",
-      link: "#",
+      link: "/contact ",
       dropdown: null,
     },
   ];

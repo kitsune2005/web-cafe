@@ -381,3 +381,363 @@ app.patch('/api/products/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Backend đang chạy tại: http://localhost:${PORT}`);
 });
+
+// =========================================================================
+// ======================= API QUẢN LÝ TIN TỨC =============================
+// =========================================================================
+
+const NEWS_DB_FILE = path.join(__dirname, 'news.json');
+
+// Đọc tin tức
+const readNews = () => {
+  try {
+    if (!fs.existsSync(NEWS_DB_FILE)) {
+      fs.writeFileSync(NEWS_DB_FILE, '[]', 'utf8');
+      return [];
+    }
+
+    const data = fs.readFileSync(NEWS_DB_FILE, 'utf8');
+
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Lỗi đọc news.json:', error);
+    return [];
+  }
+};
+
+// Ghi tin tức
+const writeNews = (newsList) => {
+  fs.writeFileSync(
+    NEWS_DB_FILE,
+    JSON.stringify(newsList, null, 2),
+    'utf8'
+  );
+};
+
+
+// =============================
+// 1. GET TẤT CẢ TIN TỨC
+// =============================
+
+app.get('/api/news', (req, res) => {
+  const newsList = readNews();
+
+  res.status(200).json(newsList);
+});
+
+
+// =============================
+// 2. GET CHI TIẾT TIN
+// =============================
+
+app.get('/api/news/:id', (req, res) => {
+  const newsList = readNews();
+
+  const id = Number(req.params.id);
+
+  const news = newsList.find(
+    item => item.id === id
+  );
+
+  if (!news) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy bài viết!'
+    });
+  }
+
+  res.status(200).json(news);
+});
+
+
+// =============================
+// 3. THÊM TIN TỨC
+// =============================
+
+app.post('/api/news', (req, res) => {
+  const {
+    title,
+    excerpt,
+    content,
+    image,
+    author,
+    status,
+    isFeatured
+  } = req.body;
+
+  if (!title || !content) {
+    return res.status(400).json({
+      success: false,
+      message: 'Vui lòng nhập tiêu đề và nội dung!'
+    });
+  }
+
+  const newsList = readNews();
+
+  const savedImage = image
+    ? saveProductImage(image, 'news')
+    : '';
+
+  const newNews = {
+    id: Date.now(),
+
+    title,
+
+    excerpt: excerpt || '',
+
+    content,
+
+    image: savedImage,
+
+    author: author || 'Admin',
+
+    status: status || 'published',
+
+    isFeatured: Boolean(isFeatured),
+
+    createdAt: new Date().toISOString(),
+
+    updatedAt: new Date().toISOString()
+  };
+
+  newsList.push(newNews);
+
+  writeNews(newsList);
+
+  res.status(201).json({
+    success: true,
+    message: 'Thêm bài viết thành công!',
+    news: newNews
+  });
+});
+
+
+// =============================
+// 4. SỬA TIN TỨC
+// =============================
+
+app.put('/api/news/:id', (req, res) => {
+  const newsList = readNews();
+
+  const id = Number(req.params.id);
+
+  const index = newsList.findIndex(
+    item => item.id === id
+  );
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy bài viết!'
+    });
+  }
+
+  const oldNews = newsList[index];
+
+  let image = req.body.image;
+
+  // Nếu ảnh mới là Base64 thì lưu thành file
+  if (
+    image &&
+    image.startsWith('data:image')
+  ) {
+    image = saveProductImage(
+      image,
+      'news'
+    );
+  }
+
+  newsList[index] = {
+    ...oldNews,
+    ...req.body,
+
+    id: oldNews.id,
+
+    image:
+      image !== undefined
+        ? image
+        : oldNews.image,
+
+    updatedAt: new Date().toISOString()
+  };
+
+  writeNews(newsList);
+
+  res.status(200).json({
+    success: true,
+    message: 'Cập nhật bài viết thành công!',
+    news: newsList[index]
+  });
+});
+
+
+// =============================
+// 5. XÓA TIN TỨC
+// =============================
+
+app.delete('/api/news/:id', (req, res) => {
+  let newsList = readNews();
+
+  const id = Number(req.params.id);
+
+  const exists = newsList.some(
+    item => item.id === id
+  );
+
+  if (!exists) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy bài viết!'
+    });
+  }
+
+  newsList = newsList.filter(
+    item => item.id !== id
+  );
+
+  writeNews(newsList);
+
+  res.status(200).json({
+    success: true,
+    message: 'Xóa bài viết thành công!'
+  });
+});
+
+// =========================================================================
+// ===================== API QUẢN LÝ LIÊN HỆ ================================
+// =========================================================================
+
+const CONTACT_DB_FILE = path.join(__dirname, 'contact.json');
+
+const readContacts = () => {
+  try {
+    if (!fs.existsSync(CONTACT_DB_FILE)) {
+      fs.writeFileSync(CONTACT_DB_FILE, '[]', 'utf8');
+      return [];
+    }
+
+    const data = fs.readFileSync(CONTACT_DB_FILE, 'utf8');
+
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Lỗi đọc contact.json:", error);
+    return [];
+  }
+};
+
+const writeContacts = (contacts) => {
+  fs.writeFileSync(
+    CONTACT_DB_FILE,
+    JSON.stringify(contacts, null, 2),
+    'utf8'
+  );
+};
+
+
+// 1. KHÁCH GỬI LIÊN HỆ
+app.post('/api/contacts', (req, res) => {
+  const {
+    name,
+    phone,
+    email,
+    message
+  } = req.body;
+
+  if (!name || !phone || !email || !message) {
+    return res.status(400).json({
+      success: false,
+      message: 'Vui lòng nhập đầy đủ thông tin!'
+    });
+  }
+
+  const contacts = readContacts();
+
+  const newContact = {
+    id: Date.now(),
+
+    name,
+    phone,
+    email,
+    message,
+
+    status: 'unread',
+
+    createdAt: new Date().toISOString()
+  };
+
+  contacts.unshift(newContact);
+
+  writeContacts(contacts);
+
+  res.status(201).json({
+    success: true,
+    message: 'Gửi liên hệ thành công!',
+    contact: newContact
+  });
+});
+
+
+// 2. ADMIN LẤY DANH SÁCH LIÊN HỆ
+app.get('/api/contacts', (req, res) => {
+  const contacts = readContacts();
+
+  res.status(200).json(contacts);
+});
+
+
+// 3. ADMIN ĐÁNH DẤU ĐÃ XEM
+app.put('/api/contacts/:id/read', (req, res) => {
+  const contacts = readContacts();
+
+  const id = Number(req.params.id);
+
+  const index = contacts.findIndex(
+    item => item.id === id
+  );
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy liên hệ!'
+    });
+  }
+
+  contacts[index].status = 'read';
+
+  writeContacts(contacts);
+
+  res.status(200).json({
+    success: true,
+    contact: contacts[index]
+  });
+});
+
+
+// 4. ADMIN XÓA LIÊN HỆ
+app.delete('/api/contacts/:id', (req, res) => {
+  let contacts = readContacts();
+
+  const id = Number(req.params.id);
+
+  const exists = contacts.some(
+    item => item.id === id
+  );
+
+  if (!exists) {
+    return res.status(404).json({
+      success: false,
+      message: 'Không tìm thấy liên hệ!'
+    });
+  }
+
+  contacts = contacts.filter(
+    item => item.id !== id
+  );
+
+  writeContacts(contacts);
+
+  res.status(200).json({
+    success: true,
+    message: 'Đã xóa liên hệ!'
+  });
+});

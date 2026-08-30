@@ -1,0 +1,261 @@
+.contact-page {
+  background: #fff;
+}
+
+
+/* =============================
+   HERO
+============================= */
+
+.contact-hero {
+  min-height: 300px;
+
+  padding-top: 85px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      rgba(0, 0, 0, 0.58),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url("https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta3.jpg")
+      center / cover no-repeat;
+
+  color: white;
+}
+
+.contact-hero-content h1 {
+  color: white;
+
+  font-size: 42px;
+
+  margin-bottom: 15px;
+}
+
+.contact-hero-content p {
+  color:
+    rgba(255,255,255,.85);
+
+  margin-bottom: 20px;
+}
+
+.contact-breadcrumb {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  font-size: 12px;
+}
+
+.contact-breadcrumb a {
+  color:
+    rgba(255,255,255,.65);
+
+  text-decoration: none;
+}
+
+.contact-breadcrumb .current {
+  color: #c99a6b;
+}
+
+
+/* =============================
+   CONTENT
+============================= */
+
+.contact-section {
+  padding: 65px 0;
+}
+
+.contact-layout {
+  display: grid;
+
+  grid-template-columns:
+    220px 1fr;
+
+  gap: 80px;
+}
+
+
+/* INFO */
+
+.contact-info-item {
+  padding:
+    0 0 24px;
+
+  margin-bottom: 24px;
+
+  border-bottom:
+    1px solid #ddd;
+}
+
+.contact-info-item:last-child {
+  border-bottom: none;
+}
+
+.contact-info-item h3 {
+  margin-bottom: 7px;
+
+  font-size: 15px;
+
+  color: #111;
+}
+
+.contact-info-item p {
+  margin: 0;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+  color: #333;
+}
+
+
+/* FORM */
+
+.contact-form-wrapper h2 {
+  margin:
+    0 0 20px;
+
+  font-size: 25px;
+
+  color: #111;
+}
+
+.contact-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 22px;
+}
+
+.contact-form-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 22px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    13px 15px;
+
+  border:
+    1px solid #d7d7d7;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  transition: .2s;
+}
+
+.contact-form textarea {
+  resize: vertical;
+
+  min-height: 120px;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #6f4323;
+}
+
+.contact-form button {
+  width: 225px;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 3px;
+
+  background: #7b4725;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 700;
+}
+
+.contact-form button:hover {
+  background: #5e341d;
+}
+
+.contact-form button:disabled {
+  opacity: .6;
+
+  cursor: not-allowed;
+}
+
+
+/* =============================
+   MAP
+============================= */
+
+.contact-map {
+  width: 100%;
+
+  height: 350px;
+}
+
+.contact-map iframe {
+  width: 100%;
+
+  height: 100%;
+
+  border: none;
+}
+
+
+/* =============================
+   RESPONSIVE
+============================= */
+
+@media (max-width: 900px) {
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+
+    gap: 35px;
+  }
+
+  .contact-form-row {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 500px) {
+
+  .contact-section {
+    padding:
+      40px 20px;
+  }
+
+  .contact-form button {
+    width: 100%;
+  }
+
+}
