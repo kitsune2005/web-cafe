@@ -91,7 +91,7 @@
     "oldPrice": 200000,
     "price": 200000,
     "discount": 0,
-    "stock": 60,
+    "stock": 2,
     "imageFront": "http://localhost:5000/uploads/sp_front_1788019586570.png",
     "imageBack": "http://localhost:5000/uploads/sp_back_1788019586571.png",
     "isFeatured": false,
