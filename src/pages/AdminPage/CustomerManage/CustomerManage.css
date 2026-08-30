@@ -1,3 +1,8 @@
+.modal-header{
+    padding: 25px 15px 10px 25px;
+    margin: 0;
+}
+
 /* Nút Tạo tài khoản mới */
 .btn-add-customer {
     background: #6f4323;

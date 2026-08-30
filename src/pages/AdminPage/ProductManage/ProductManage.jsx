@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProduct } from '../../../context/ProductContext';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -6,19 +6,105 @@ import '../Dashboard/Dashboard.css';
 import './ProductManage.css'; 
 
 const ProductManage = () => {
-    const { products, deleteProduct, formatPrice } = useProduct();
+    const { products, deleteProduct, formatPrice, addProduct, updateProduct } = useProduct();
     const [searchTerm, setSearchTerm] = useState('');
     
+    // State bộ lọc trạng thái kho
+    const [stockFilter, setStockFilter] = useState('all'); 
+
     // STATE CHO PHÂN TRANG (PAGINATION)
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 16; 
 
-    // 👉 TÍNH TOÁN DỮ LIỆU KHO CHO CỘT BÊN PHẢI
+    // STATE CHO MODAL THÊM / SỬA SẢN PHẨM
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState(null); 
+    
+    const [formData, setFormData] = useState({
+        name: '', category: 'Cà phê nguyên chất', price: '', oldPrice: '', stock: '', imageFront: '', imageBack: '', discount: 0, isFeatured: false
+    });
+
+    // TÍNH TOÁN DỮ LIỆU KHO CHO CỘT BÊN PHẢI
     const totalProducts = products.length;
-    // Hết hàng: Tồn kho = 0 hoặc undefined
     const outOfStockCount = products.filter(p => !p.stock || p.stock === 0).length;
-    // Sắp hết hàng: Tồn kho từ 1 đến dưới 10
     const lowStockCount = products.filter(p => p.stock > 0 && p.stock < 10).length;
+
+    // THUẬT TOÁN TỰ ĐỘNG TÍNH "GIÁ BÁN THỰC TẾ"
+    useEffect(() => {
+        if (isModalOpen) {
+            const oldP = Number(formData.oldPrice) || 0;
+            const disc = Number(formData.discount) || 0;
+            let calculatedPrice = oldP;
+            
+            if (oldP > 0 && disc > 0) {
+                calculatedPrice = oldP - (oldP * disc / 100);
+            }
+            
+            if (formData.price !== calculatedPrice) {
+                setFormData(prev => ({ ...prev, price: calculatedPrice }));
+            }
+        }
+    }, [formData.oldPrice, formData.discount, isModalOpen]);
+
+    const handleOpenAdd = () => {
+        setEditingProduct(null);
+        setFormData({ name: '', category: 'Cà phê nguyên chất', price: '', oldPrice: '', stock: '', imageFront: '', imageBack: '', discount: 0, isFeatured: false });
+        setIsModalOpen(true);
+    };
+
+    const handleOpenEdit = (product) => {
+        setEditingProduct(product);
+        setFormData({ 
+            name: product.name, 
+            category: product.category, 
+            price: product.price, 
+            oldPrice: product.oldPrice || product.price || '', 
+            stock: product.stock || 0, 
+            imageFront: product.imageFront || product.img || '', 
+            imageBack: product.imageBack || '', 
+            discount: product.discount || 0,
+            isFeatured: product.isFeatured || false 
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleImageUpload = (e, fieldName) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, [fieldName]: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        if (!formData.imageFront) {
+            toast.error("Boss quên tải ảnh mặt trước kìa! 🦊");
+            return;
+        }
+
+        const payload = {
+            ...formData,
+            price: Number(formData.price),
+            oldPrice: formData.oldPrice ? Number(formData.oldPrice) : 0,
+            stock: Number(formData.stock),
+            discount: formData.discount ? Number(formData.discount) : 0,
+            img: formData.imageFront, 
+        };
+
+        if (editingProduct) {
+            if (updateProduct) updateProduct(editingProduct.id, payload);
+            toast.success("Cập nhật sản phẩm thành công! 🦊", { id: 'update-prod-success' });
+        } else {
+            if (addProduct) addProduct({ ...payload, id: Date.now() }); 
+            toast.success("Thêm sản phẩm mới thành công! 🦊", { id: 'add-prod-success' });
+        }
+        setIsModalOpen(false);
+    };
 
     const handleDelete = (id, name) => {
         Swal.fire({
@@ -32,16 +118,31 @@ const ProductManage = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteProduct(id);
-                toast.success("Đã xóa thành công!");
+                toast.success("Đã xóa thành công!", { id: 'delete-prod-success' });
             }
         });
     };
 
-    const filteredProducts = products.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({ 
+            ...prev, 
+            [name]: type === 'checkbox' ? checked : value 
+        }));
+    };
 
-    // LOGIC TÍNH TOÁN PHÂN TRANG
+    // Lọc theo Tên kết hợp với Trạng thái kho
+    const filteredProducts = products.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+        let matchStock = true;
+        if (stockFilter === 'low') {
+            matchStock = p.stock > 0 && p.stock < 10;
+        } else if (stockFilter === 'out') {
+            matchStock = !p.stock || p.stock === 0;
+        }
+        return matchSearch && matchStock;
+    });
+
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -56,32 +157,47 @@ const ProductManage = () => {
                 <p className="dashboard-subtitle">Quản lý danh sách sản phẩm, giá bán và tồn kho.</p>
             </div>
 
-            {/* 👉 BỐ CỤC 2 CỘT CHÍNH */}
             <div className="product-manage-layout">
                 
-                {/* CỘT TRÁI: TÌM KIẾM, LƯỚI SẢN PHẨM & PHÂN TRANG */}
+                {/* CỘT TRÁI */}
                 <div className="product-main-area dashboard-recent-orders">
                     <div className="section-header" style={{ marginBottom: '25px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '15px' }}>
-                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, maxWidth: '400px' }}>
-                            <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
-                            <input 
-                                type="text" 
-                                placeholder="Tìm kiếm tên sản phẩm..." 
-                                value={searchTerm}
+                        
+                        <div style={{ display: 'flex', gap: '15px', flex: 1, flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, minWidth: '200px', maxWidth: '400px' }}>
+                                <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
+                                <input 
+                                    type="text" 
+                                    placeholder="Tìm kiếm tên sản phẩm..." 
+                                    value={searchTerm}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                        setCurrentPage(1); 
+                                    }}
+                                    style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
+                                />
+                            </div>
+
+                            {/* 👉 DROPDOWN LỌC TRẠNG THÁI KHO ĐÃ CẬP NHẬT GIAO DIỆN */}
+                            <select 
+                                value={stockFilter}
                                 onChange={(e) => {
-                                    setSearchTerm(e.target.value);
+                                    setStockFilter(e.target.value);
                                     setCurrentPage(1); 
                                 }}
-                                style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
-                            />
+                                style={{ padding: '8px 15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', fontSize: '14px', background: '#fff', color: '#333', cursor: 'pointer', minWidth: '180px', fontWeight: '500' }}
+                            >
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="low">Gần hết hàng (&lt;10)</option>
+                                <option value="out">Đã hết hàng (0)</option>
+                            </select>
                         </div>
                         
-                        <button className="btn-add-product" onClick={() => toast("Tính năng thêm đang mở form!")}>
+                        <button className="btn-add-product" onClick={handleOpenAdd}>
                             <i className="fa-solid fa-plus"></i> Thêm Sản Phẩm
                         </button>
                     </div>
 
-                    {/* LƯỚI HIỂN THỊ SẢN PHẨM */}
                     <div className="admin-product-grid">
                         {currentProducts.length === 0 ? (
                             <div style={{gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#888'}}>Không tìm thấy món nào!</div>
@@ -102,11 +218,14 @@ const ProductManage = () => {
                                     </div>
 
                                     <div className="card-actions">
-                                        {/* Hiển thị màu kho bãi: Đỏ nếu hết, Vàng nếu sắp hết */}
                                         <div className={`stock-badge ${(!product.stock || product.stock === 0) ? 'danger' : (product.stock < 10 ? 'warning' : 'success')}`}>
                                             <i className="fa-solid fa-box"></i> {product.stock || 0}
                                         </div>
-                                        <button className="action-btn edit" title="Sửa"><i className="fa-solid fa-pen-to-square"></i></button>
+                                        
+                                        <button className="action-btn edit" title="Sửa" onClick={() => handleOpenEdit(product)}>
+                                            <i className="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        
                                         <button className="action-btn delete" title="Xóa" onClick={() => handleDelete(product.id, product.name)}>
                                             <i className="fa-solid fa-trash-can"></i>
                                         </button>
@@ -116,7 +235,6 @@ const ProductManage = () => {
                         )}
                     </div>
 
-                    {/* BỘ PHÂN TRANG (PAGINATION) */}
                     {totalPages > 1 && (
                         <div className="admin-pagination">
                             <button className="page-btn" disabled={currentPage === 1} onClick={() => paginate(currentPage - 1)}>
@@ -136,7 +254,7 @@ const ProductManage = () => {
                     )}
                 </div>
 
-                {/* 👉 CỘT PHẢI: THỐNG KÊ KHO (Dính chặt khi cuộn trang) */}
+                {/* CỘT PHẢI */}
                 <aside className="product-stats-sidebar">
                     <div className="stat-card-right">
                         <p>TỔNG SẢN PHẨM</p>
@@ -153,6 +271,105 @@ const ProductManage = () => {
                 </aside>
 
             </div>
+
+            {/* BẢNG MODAL THÊM / SỬA SẢN PHẨM */}
+            {isModalOpen && (
+                <div className="product-modal-overlay">
+                    <div className="product-modal-box">
+                        <div className="modal-header-1">
+                            <h3>{editingProduct ? 'Sửa Sản Phẩm' : 'Thêm Món Mới'}</h3>
+                            <button className="close-btn" onClick={() => setIsModalOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="modal-form">
+                            <div className="form-group">
+                                <label>Tên sản phẩm *</label>
+                                <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Danh mục *</label>
+                                <select name="category" value={formData.category} onChange={handleInputChange}>
+                                    <option value="Cà phê nguyên chất">Cà phê nguyên chất</option>
+                                    <option value="Cà phê đóng gói">Cà phê đóng gói</option>
+                                    <option value="Cà phê phin">Cà phê phin</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group featured-checkbox-group">
+                                <label className="featured-label">
+                                    <input 
+                                        type="checkbox" 
+                                        name="isFeatured" 
+                                        checked={formData.isFeatured} 
+                                        onChange={handleInputChange} 
+                                    />
+                                    <span><i className="fa-solid fa-thumbtack" style={{color: '#fa5252', transform: 'rotate(-45deg)'}}></i> Hiển thị sản phẩm này ngoài Trang chủ</span>
+                                </label>
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Giá gốc (VNĐ) *</label>
+                                    <input type="number" name="oldPrice" placeholder="Ví dụ: 250000" value={formData.oldPrice} onChange={handleInputChange} required min="0" />
+                                </div>
+                                <div className="form-group">
+                                    <label>% Giảm giá</label>
+                                    <input type="number" name="discount" placeholder="Ví dụ: 15" value={formData.discount} onChange={handleInputChange} min="0" max="100" />
+                                </div>
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Giá bán thực tế (Tính tự động)</label>
+                                <div className="auto-price-display">
+                                    {formatPrice ? formatPrice(formData.price || 0) : `${(formData.price || 0).toLocaleString('vi-VN')}₫`}
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Số lượng kho *</label>
+                                <input type="number" name="stock" placeholder="Số lượng" value={formData.stock} onChange={handleInputChange} required min="0" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Hình ảnh sản phẩm *</label>
+                                <div className="image-upload-row">
+                                    <div className="upload-box">
+                                        <label>
+                                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageFront')} hidden />
+                                            {formData.imageFront ? (
+                                                <img src={formData.imageFront} alt="Mặt trước" className="preview-img" />
+                                            ) : (
+                                                <div className="upload-placeholder">
+                                                    <i className="fa-solid fa-cloud-arrow-up"></i>
+                                                    <span>Tải ảnh lên<br/>(Ảnh mặt trước)</span>
+                                                </div>
+                                            )}
+                                        </label>
+                                    </div>
+                                    <div className="upload-box">
+                                        <label>
+                                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageBack')} hidden />
+                                            {formData.imageBack ? (
+                                                <img src={formData.imageBack} alt="Mặt sau" className="preview-img" />
+                                            ) : (
+                                                <div className="upload-placeholder">
+                                                    <i className="fa-solid fa-cloud-arrow-up"></i>
+                                                    <span>Tải ảnh lên<br/>(Ảnh mặt sau - Hover)</span>
+                                                </div>
+                                            )}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-actions">
+                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy bỏ</button>
+                                <button type="submit" className="btn-save">{editingProduct ? 'Cập Nhật' : 'Tạo Sản Phẩm'}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

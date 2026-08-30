@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useProduct } from "../../context/ProductContext";
 import { useCart } from "../../context/CartContext";
+import toast from 'react-hot-toast'; // 👉 IMPORT THÊM TOAST ĐỂ BÁO LỖI
 import "./ProductsPage.css";
 
 const ProductsPage = () => {
@@ -15,7 +16,7 @@ const ProductsPage = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [viewMode, setViewMode] = useState("grid-3");
   
-  // 👉 STATE MỚI: LƯU TRỮ CÁC MỐC GIÁ ĐƯỢC CHỌN (Mảng)
+  // LƯU TRỮ CÁC MỐC GIÁ ĐƯỢC CHỌN (Mảng)
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]); 
 
   const itemsPerPage = 12;
@@ -35,7 +36,7 @@ const ProductsPage = () => {
 
   const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê phin'];
 
-  // 👉 ĐỊNH NGHĨA CÁC MỐC LỌC GIÁ
+  // ĐỊNH NGHĨA CÁC MỐC LỌC GIÁ
   const priceRanges = [
     { id: 'under-100', label: 'Dưới 100.000đ', min: 0, max: 100000 },
     { id: '100-300', label: '100.000đ - 300.000đ', min: 100000, max: 300000 },
@@ -53,7 +54,6 @@ const ProductsPage = () => {
     setCurrentPage(1);
   };
 
-  // 👉 HÀM XỬ LÝ KHI TÍCH VÀO CHECKBOX GIÁ
   const handlePriceChange = (rangeId) => {
     setSelectedPriceRanges((prev) => {
       if (prev.includes(rangeId)) {
@@ -65,6 +65,7 @@ const ProductsPage = () => {
   };
 
   const filteredProducts = useMemo(() => {
+    // 👉 ĐÃ SỬA LẠI: Lấy tất cả sản phẩm (Không lọc ẩn đồ hết hàng nữa)
     let result = [...products]; 
 
     // 1. Lọc theo danh mục
@@ -74,11 +75,10 @@ const ProductsPage = () => {
       );
     }
 
-    // 2. 👉 LỌC THEO CÁC MỐC GIÁ ĐÃ TÍCH CHỌN
+    // 2. LỌC THEO CÁC MỐC GIÁ ĐÃ TÍCH CHỌN
     if (selectedPriceRanges.length > 0) {
         result = result.filter((product) => {
             const pPrice = getPriceNumber(product.price);
-            // Sản phẩm chỉ cần thỏa mãn 1 trong các mốc giá đã chọn là được hiển thị
             return selectedPriceRanges.some(rangeId => {
                 const range = priceRanges.find(r => r.id === rangeId);
                 return pPrice >= range.min && pPrice <= range.max;
@@ -98,8 +98,9 @@ const ProductsPage = () => {
     }
 
     return result;
-  }, [products, selectedCategories, sortType, selectedPriceRanges]); // Nhớ đưa selectedPriceRanges vào để render lại
+  }, [products, selectedCategories, sortType, selectedPriceRanges]);
 
+  // Cập nhật Sản phẩm mới nhất (Cũng hiển thị cả đồ hết hàng)
   const newestProducts = useMemo(() => {
       return [...products].reverse().slice(0, 3);
   }, [products]);
@@ -116,6 +117,12 @@ const ProductsPage = () => {
   const handleAddFromCard = (e, item) => {
     e.preventDefault(); 
     e.stopPropagation(); 
+
+    // 👉 CHẶN KHÔNG CHO MUA NẾU HẾT HÀNG VÀ BÁO LỖI
+    if ((item.stock || 0) <= 0) {
+        toast.error("Món này đang cháy hàng mất rồi Boss ơi! 🦊");
+        return;
+    }
 
     const cardElement = e.currentTarget.closest('.shop-product-card');
     const imgElement = cardElement ? cardElement.querySelector('.front') : null;
@@ -233,7 +240,7 @@ const ProductsPage = () => {
                     ))}
                   </div>
 
-                  {/* 👉 BỘ LỌC MỨC GIÁ BẰNG CHECKBOX */}
+                  {/* BỘ LỌC MỨC GIÁ BẰNG CHECKBOX */}
                   <div className="sidebar-block">
                       <h3>MỨC GIÁ</h3>
                       <ul className="filter-list">
@@ -286,12 +293,14 @@ const ProductsPage = () => {
                           className="front"
                           src={product.imageFront || product.img}
                           alt={product.name}
+                          style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }} // Làm mờ ảnh nhẹ nếu hết hàng
                         />
 
                         <img
                           className="back"
                           src={product.imageBack || product.imageFront || product.img}
                           alt={`${product.name} mặt sau`}
+                          style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }}
                         />
 
                         <div className="product-hover-actions">
@@ -301,7 +310,16 @@ const ProductsPage = () => {
                           <Link to={`/product/${product.id}`} title="Xem chi tiết">
                             <i className="fa-regular fa-eye"></i>
                           </Link>
-                          <button type="button" title="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
+                          {/* Khóa mờ nút Add To Cart nếu hết hàng */}
+                          <button 
+                            type="button" 
+                            title={(product.stock || 0) <= 0 ? "Hết hàng" : "Thêm vào giỏ"} 
+                            onClick={(e) => handleAddFromCard(e, product)}
+                            style={{ 
+                                opacity: (product.stock || 0) <= 0 ? 0.5 : 1, 
+                                cursor: (product.stock || 0) <= 0 ? 'not-allowed' : 'pointer' 
+                            }}
+                          >
                             <i className="fa-solid fa-cart-shopping"></i>
                           </button>
                         </div>
@@ -330,14 +348,15 @@ const ProductsPage = () => {
                           <span>{formatPrice(product.price)}</span>
                         </div>
 
+                        {/* 👉 BẢNG BÁO TÌNH TRẠNG KHO HÀNG */}
                         <div style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
-                          {product.stock === 0 ? (
+                          {(product.stock || 0) <= 0 ? (
                             <span style={{ color: '#fa5252' }}>
-                              <i className="fa-solid fa-xmark"></i> Hết hàng
+                              <i className="fa-solid fa-xmark"></i> Đã hết hàng
                             </span>
-                          ) : product.stock <= 5 ? (
+                          ) : (product.stock || 0) <= 5 ? (
                             <span style={{ color: '#fd7e14' }}>
-                              <i className="fa-solid fa-triangle-exclamation"></i> Gần hết hàng (còn {product.stock})
+                              <i className="fa-solid fa-triangle-exclamation"></i> Sắp hết (còn {product.stock})
                             </span>
                           ) : (
                             <span style={{ color: '#0ca678' }}>

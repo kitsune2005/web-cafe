@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useProduct } from '../../context/ProductContext'; // 👉 IMPORT THÊM CONTEXT SẢN PHẨM
 import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
     const { cartItems, setCartItems } = useCart();
     const { currentUser, loading } = useAuth();
+    const { deductStock } = useProduct(); // 👉 KÉO HÀM TRỪ KHO RA SỬ DỤNG
     const navigate = useNavigate();
 
     const [isProcessing, setIsProcessing] = useState(false);
     
-    // 👉 BÍ KÍP CHỐNG LỖI KÉP: Cờ hiệu báo đơn hàng đã chốt xong
+    // BÍ KÍP CHỐNG LỖI KÉP: Cờ hiệu báo đơn hàng đã chốt xong
     const isOrderSuccess = useRef(false); 
 
     const [formData, setFormData] = useState({
@@ -56,7 +58,7 @@ const CheckoutPage = () => {
             return;
         }
 
-        // 👉 ĐÃ SỬA: Nếu cờ "Chốt đơn" bật lên rồi thì kệ xác giỏ hàng trống, KHÔNG báo lỗi nữa!
+        // Nếu cờ "Chốt đơn" bật lên rồi thì kệ xác giỏ hàng trống, KHÔNG báo lỗi nữa!
         if (cartItems.length === 0 && !isOrderSuccess.current) {
             toast.error("Giỏ hàng của bạn đang trống!", { id: 'empty-cart-error' });
             navigate('/products');
@@ -89,6 +91,9 @@ const CheckoutPage = () => {
             
             // 👉 Bật cờ "Đã chốt đơn" lên trước khi xóa giỏ hàng
             isOrderSuccess.current = true; 
+
+            // 👉 GỌI HÀM TRỪ KHO VÀ TĂNG ĐÃ BÁN TRÊN DATABASE
+            deductStock(cartItems);
 
             toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { 
                 id: 'order-success', 

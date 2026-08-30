@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext'; 
+import toast from 'react-hot-toast';
 import './ProductDetailPage.css';
 
 // 👉 KẾT NỐI FILE SVG TỪ THƯ MỤC ICON CỦA BOSS
@@ -22,19 +23,16 @@ const ProductDetailPage = () => {
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const trackRef = useRef(null);
 
-    const soldCount = useMemo(() => {
-        if (!product) return 0;
-        return (product.id * 37 % 87) + 12; 
-    }, [product?.id]);
-
+    // 👉 ĐÃ SỬA: Lọc Sản phẩm liên quan (Chỉ hiện những món CÒN HÀNG)
     const relatedProducts = useMemo(() => {
         if (!products || !product) return [];
         
-        const sameCategory = products.filter(p => p.category === product.category && p.id !== product.id);
-        const sourcePool = sameCategory.length >= 4 ? sameCategory : products.filter(p => p.id !== product.id);
+        const availableProducts = products.filter(p => (p.stock || 0) > 0);
+        const sameCategory = availableProducts.filter(p => p.category === product.category && p.id !== product.id);
+        const sourcePool = sameCategory.length >= 4 ? sameCategory : availableProducts.filter(p => p.id !== product.id);
         
         return [...sourcePool].sort(() => 0.5 - Math.random()).slice(0, 8);
-    }, [products, product?.id]);
+    }, [products, product]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -43,7 +41,8 @@ const ProductDetailPage = () => {
             if (foundProduct) {
                 setProduct(foundProduct);
                 setMainImage(foundProduct.imageFront || foundProduct.img);
-                setQuantity(1);
+                // 👉 ĐÃ SỬA: Nếu hết hàng thì ô số lượng hiển thị 0, còn hàng thì mặc định là 1
+                setQuantity((foundProduct.stock || 0) > 0 ? 1 : 0);
                 setActiveTab('description');
             }
         }
@@ -66,6 +65,12 @@ const ProductDetailPage = () => {
     };
 
     const handleAddToCart = () => {
+        // Chặn luồng nếu sản phẩm đã hết hàng
+        if (product.stock <= 0) {
+            toast.error("Sản phẩm này đã hết hàng rồi Boss ơi! 🦊");
+            return;
+        }
+
         const imgElement = document.querySelector('.main-image-wrap img');
         const cartIcon = document.querySelector('.cart-btn i'); 
 
@@ -172,7 +177,7 @@ const ProductDetailPage = () => {
                             <div className="quantity-selector">
                                 <button 
                                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                    disabled={quantity <= 1 || product.stock === 0}
+                                    disabled={quantity <= 1 || product.stock <= 0}
                                 >-</button>
                                 
                                 <input 
@@ -182,22 +187,22 @@ const ProductDetailPage = () => {
                                     style={{ textAlign: 'center', fontWeight: 'bold' }} 
                                 />
                                 
+                                {/* 👉 ĐÃ SỬA: Khóa nút + khi quantity đã chạm mốc tồn kho */}
                                 <button 
                                     onClick={() => setQuantity(q => q < product.stock ? q + 1 : q)}
-                                    disabled={quantity >= product.stock || product.stock === 0}
+                                    disabled={quantity >= product.stock || product.stock <= 0}
                                 >+</button>
                             </div>
                             <button 
                                 className="btn-add-cart" 
                                 onClick={handleAddToCart}
-                                disabled={product.stock === 0}
-                                style={{ opacity: product.stock === 0 ? 0.5 : 1, cursor: product.stock === 0 ? 'not-allowed' : 'pointer' }}
+                                disabled={product.stock <= 0}
+                                style={{ opacity: product.stock <= 0 ? 0.5 : 1, cursor: product.stock <= 0 ? 'not-allowed' : 'pointer' }}
                             >
-                                {product.stock === 0 ? 'HẾT HÀNG' : 'Thêm Vào Giỏ Hàng'}
+                                {product.stock <= 0 ? 'HẾT HÀNG' : 'Thêm Vào Giỏ Hàng'}
                             </button>
                         </div>
 
-                        {/* 👉 ĐÃ PHÓNG TO SVG LÊN 36px ĐỂ RÕ NÉT HƠN */}
                         <div className="trust-badges" style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', padding: '15px 0', margin: '20px 0', textAlign: 'center' }}>
                             <div className="badge-item" style={{ flex: 1 }}>
                                 <img src={iconPayment} alt="Thanh toán an toàn" style={{ width: '36px', height: '36px', marginBottom: '8px', display: 'inline-block' }} />
@@ -214,7 +219,12 @@ const ProductDetailPage = () => {
                         </div>
 
                         <div className="product-meta">
-                            <p>Đã bán: <strong>{soldCount}</strong> <span className="divider">|</span> Còn hàng: <strong>{product.stock}</strong></p>
+                            {/* 👉 ĐÃ SỬA: Lấy dữ liệu Đã bán và Còn hàng thật từ CSDL, tô màu đỏ nếu hết hàng */}
+                            <p>
+                                Đã bán: <strong>{product.sold || 0}</strong> 
+                                <span className="divider" style={{ margin: '0 8px', color: '#ddd' }}>|</span> 
+                                Còn hàng: <strong style={{ color: product.stock > 0 ? '#0ca678' : '#fa5252' }}>{product.stock || 0}</strong>
+                            </p>
                             <div className="meta-grid">
                                 <div><span className="meta-label">Sku:</span> TOY05432-2-1-2-1-1-2-{product.id}</div>
                                 <div><span className="meta-label">Danh mục:</span> {product.category}</div>

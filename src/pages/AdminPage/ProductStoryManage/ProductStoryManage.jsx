@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
 import toast from 'react-hot-toast';
-import '../Dashboard/Dashboard.css'; // 👉 Kéo CSS chuẩn của Dashboard vào
-import './ProductStoryManage.css';   // CSS riêng cho Modal và Nút bấm
+import '../Dashboard/Dashboard.css'; 
+import './ProductStoryManage.css';  
 
 const ProductStoryManage = () => {
     const { products, formatPrice, updateProductStory } = useProduct();
     const [searchTerm, setSearchTerm] = useState('');
     
+    // 👉 ĐÃ THÊM: State quản lý trạng thái bộ lọc kho
+    const [stockFilter, setStockFilter] = useState('all'); 
+
     // State cho Modal Viết tiểu sử
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -18,10 +21,22 @@ const ProductStoryManage = () => {
 
     const [isSaving, setIsSaving] = useState(false);
 
-    // Lọc tìm kiếm
-    const filteredProducts = products.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // 👉 ĐÃ NÂNG CẤP: Lọc theo Tên kết hợp với Tình trạng kho
+    const filteredProducts = products.filter(p => {
+        // 1. Kiểm tra từ khóa tìm kiếm
+        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        // 2. Kiểm tra bộ lọc tình trạng kho
+        let matchStock = true;
+        if (stockFilter === 'low') {
+            matchStock = p.stock > 0 && p.stock < 10;
+        } else if (stockFilter === 'out') {
+            matchStock = !p.stock || p.stock === 0;
+        }
+
+        // 3. Phải thỏa mãn cả 2 mới hiển thị
+        return matchSearch && matchStock;
+    });
 
     const openEditModal = (product) => {
         setEditingProduct(product);
@@ -52,16 +67,17 @@ const ProductStoryManage = () => {
 
     return (
         <div className="admin-dashboard-container">
-            {/* 👉 HEADER CHUẨN DASHBOARD */}
+            {/* HEADER CHUẨN DASHBOARD */}
             <div className="dashboard-header">
                 <h2 className="dashboard-title">Quản lý Tiểu sử Sản phẩm</h2>
                 <p className="dashboard-subtitle">Thêm câu chuyện, nguồn gốc và hương vị chi tiết cho từng loại cà phê.</p>
             </div>
 
             <div className="dashboard-recent-orders">
-                {/* THANH TÌM KIẾM CHUẨN */}
-                <div className="section-header" style={{ marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', width: '100%', maxWidth: '400px' }}>
+                
+                {/* 👉 KHU VỰC TÌM KIẾM & LỌC KHO */}
+                <div className="section-header" style={{ marginBottom: '20px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, minWidth: '200px', maxWidth: '400px' }}>
                         <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
                         <input 
                             type="text" 
@@ -71,6 +87,17 @@ const ProductStoryManage = () => {
                             style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
                         />
                     </div>
+
+                    {/* Bộ Lọc Dropdown */}
+                    <select 
+                        value={stockFilter}
+                        onChange={(e) => setStockFilter(e.target.value)}
+                        style={{ padding: '8px 15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', fontSize: '14px', background: '#fff', color: '#555', cursor: 'pointer', minWidth: '160px' }}
+                    >
+                        <option value="all">Tất cả tình trạng</option>
+                        <option value="low">Sắp hết hàng (&lt;10)</option>
+                        <option value="out">Đã hết hàng (0)</option>
+                    </select>
                 </div>
 
                 <div className="table-responsive">
@@ -110,6 +137,13 @@ const ProductStoryManage = () => {
                                     </td>
                                 </tr>
                             ))}
+                            {filteredProducts.length === 0 && (
+                                <tr>
+                                    <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>
+                                        Không tìm thấy sản phẩm nào phù hợp!
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

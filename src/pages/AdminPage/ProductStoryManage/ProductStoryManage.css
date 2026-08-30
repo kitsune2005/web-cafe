@@ -59,8 +59,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 25px;
     border-bottom: 1px solid #eee;
+    padding: 20px 0; /* Thêm padding cho header */
 }
 
 .modal-header h3 {
