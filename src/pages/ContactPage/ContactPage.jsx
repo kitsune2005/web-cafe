@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { useParams, Link } from 'react-router-dom';
 import { useContact } from "../../context/ContactContext";
 
 import "./ContactPage.css";

@@ -39,6 +39,8 @@ export const useHeaderLogic = () => {
       threshold = 106;
       } else if (location.pathname === "/news") {
       threshold = 236;
+      } else if (location.pathname === "/contact") {
+      threshold = 436;
       } else {
       threshold = Math.max(
         window.innerHeight - 84,
@@ -230,7 +232,7 @@ export const useHeaderLogic = () => {
 
     {
       label: "Liên hệ",
-      link: "/contact ",
+      link: "/contact",
       dropdown: null,
     },
   ];
