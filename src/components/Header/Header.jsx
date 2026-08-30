@@ -60,8 +60,8 @@ const Header = () => {
     setTimeout(resetIndicator, 100);
   }, [location.pathname, menuItems]);
 
-  // TÍNH TOÁN GIỎ HÀNG
-  const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  // 👉 ĐÃ SỬA TẠI ĐÂY: Chỉ lấy độ dài của mảng để đếm số loại món ăn
+  const totalQuantity = cartItems.length; 
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   // BỘ LỌC TÌM KIẾM MA THUẬT (Giới hạn hiện 5 món)
@@ -83,13 +83,13 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchRef, setSearchOpen]);
 
-  // 👉 HÀM XỬ LÝ CHUYỂN TRANG KHI BẤM ENTER TÌM KIẾM
+  // HÀM XỬ LÝ CHUYỂN TRANG KHI BẤM ENTER TÌM KIẾM
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      setSearchOpen(false); // Đóng bảng
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`); // Bay sang trang kết quả
-      setSearchTerm(''); // Xóa ô tìm kiếm cho sạch
+      setSearchOpen(false); 
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`); 
+      setSearchTerm(''); 
     }
   };
 
@@ -153,7 +153,7 @@ const Header = () => {
           {/* Actions bên phải */}
           <div className="header-actions">
 
-            {/* 👉 BẮT ĐẦU: KHU VỰC SEARCH ĐÃ ĐƯỢC NÂNG CẤP */}
+            {/* KHU VỰC SEARCH ĐÃ ĐƯỢC NÂNG CẤP */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
 
               {/* Đã gắn hàm handleSearchSubmit vào Form */}
@@ -219,7 +219,7 @@ const Header = () => {
                 </div>
               )}
             </div>
-            {/* 👉 KẾT THÚC: KHU VỰC SEARCH */}
+            {/* KẾT THÚC: KHU VỰC SEARCH */}
 
             <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
 
@@ -256,7 +256,7 @@ const Header = () => {
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
 
-                    {/* 👉 CHỈ ADMIN MỚI ĐƯỢC VÀO TRANG QUẢN TRỊ */}
+                    {/* CHỈ ADMIN MỚI ĐƯỢC VÀO TRANG QUẢN TRỊ */}
                     {currentUser.role === 'admin' && (
                       <Link to="/admin" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                         <i className="fa-solid fa-chart-line"></i> Trang Quản Trị
