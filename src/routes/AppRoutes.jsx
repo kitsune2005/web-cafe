@@ -1,8 +1,8 @@
 import React from "react";
 import {
-  Routes,
-  Route,
-  Navigate
+    Routes,
+    Route,
+    Navigate
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
@@ -39,6 +39,9 @@ import CartPage from "../pages/CartPage/CartPage";
 import CheckoutPage from "../pages/CheckoutPage/CheckoutPage";
 import MyOrdersPage from "../pages/MyOrdersPage/MyOrdersPage";
 
+// 👉 THÊM: Import trang Tìm kiếm mới tạo
+import SearchPage from "../pages/SearchPage/SearchPage";
+
 // ================= ADMIN PAGES =================
 
 import Dashboard from "../pages/AdminPage/Dashboard/Dashboard";
@@ -62,280 +65,286 @@ import AutoScrollToTop from "./AutoScrollToTop";
 
 const AppRoutes = () => {
 
-  const {
-    currentUser,
-    loading
-  } = useAuth();
+    const {
+        currentUser,
+        loading
+    } = useAuth();
 
 
-  // =========================================
-  // BẢO VỆ ADMIN
-  // =========================================
+    // =========================================
+    // BẢO VỆ ADMIN
+    // =========================================
 
-  const ProtectedAdminRoute = ({
-    children
-  }) => {
+    const ProtectedAdminRoute = ({
+        children
+    }) => {
 
-    if (loading) {
+        if (loading) {
 
-      return (
-        <div
-          style={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
+            return (
+                <div
+                    style={{
+                        height: "100vh",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}
+                >
 
-          <h3
-            style={{
-              color: "#6f4323"
-            }}
-          >
-            <i className="fa-solid fa-spinner fa-spin"></i>
+                    <h3
+                        style={{
+                            color: "#6f4323"
+                        }}
+                    >
+                        <i className="fa-solid fa-spinner fa-spin"></i>
 
-            {" "}Đang tải dữ liệu Admin...
-          </h3>
+                        {" "}Đang tải dữ liệu Admin...
+                    </h3>
 
-        </div>
-      );
-    }
-
-
-    // Chưa login hoặc không phải admin
-    if (
-      !currentUser ||
-      currentUser.role !== "admin"
-    ) {
-
-      return (
-        <Navigate
-          to="/"
-          replace
-        />
-      );
-    }
+                </div>
+            );
+        }
 
 
-    return children;
-  };
+        // Chưa login hoặc không phải admin
+        if (
+            !currentUser ||
+            currentUser.role !== "admin"
+        ) {
+
+            return (
+                <Navigate
+                    to="/"
+                    replace
+                />
+            );
+        }
 
 
-  return (
-
-    <SettingsProvider>
-
-      <CartProvider>
-
-        <ProductProvider>
-
-          <ContactProvider>
-
-            <NewsProvider>
-
-              <AutoScrollToTop />
-
-              <Toaster
-                position="top-center"
-                reverseOrder={false}
-              />
+        return children;
+    };
 
 
-              <Routes>
+    return (
 
-                {/* =====================================
+        <SettingsProvider>
+
+            <CartProvider>
+
+                <ProductProvider>
+
+                    <ContactProvider>
+
+                        <NewsProvider>
+
+                            <AutoScrollToTop />
+
+                            <Toaster
+                                position="top-center"
+                                reverseOrder={false}
+                            />
+
+
+                            <Routes>
+
+                                {/* =====================================
                     CLIENT
                 ====================================== */}
 
-                <Route
-                  element={<MainLayouts />}
-                >
+                                <Route
+                                    element={<MainLayouts />}
+                                >
 
-                  {/* HOME */}
-                  <Route
-                    path="/"
-                    element={<HomePage />}
-                  />
-
-
-                  {/* PRODUCTS */}
-                  <Route
-                    path="/products"
-                    element={<ProductsPage />}
-                  />
-
-                  <Route
-                    path="/category/:slug"
-                    element={<CategoryPage />}
-                  />
-
-                  <Route
-                    path="/product/:id"
-                    element={<ProductDetailPage />}
-                  />
+                                    {/* HOME */}
+                                    <Route
+                                        path="/"
+                                        element={<HomePage />}
+                                    />
 
 
-                  {/* NEWS */}
-                  <Route
-                    path="/news"
-                    element={<NewsPage />}
-                  />
+                                    {/* PRODUCTS */}
+                                    <Route
+                                        path="/products"
+                                        element={<ProductsPage />}
+                                    />
 
-                  <Route
-                    path="/news/:id"
-                    element={<NewsDetailPage />}
-                  />
+                                    <Route
+                                        path="/category/:slug"
+                                        element={<CategoryPage />}
+                                    />
 
-
-                  {/* CONTACT */}
-                  <Route
-                    path="/contact"
-                    element={<ContactPage />}
-                  />
+                                    <Route
+                                        path="/product/:id"
+                                        element={<ProductDetailPage />}
+                                    />
 
 
-                  {/* CART */}
-                  <Route
-                    path="/cart"
-                    element={<CartPage />}
-                  />
+                                    {/* NEWS */}
+                                    <Route
+                                        path="/news"
+                                        element={<NewsPage />}
+                                    />
+
+                                    <Route
+                                        path="/news/:id"
+                                        element={<NewsDetailPage />}
+                                    />
 
 
-                  {/* CHECKOUT */}
-                  <Route
-                    path="/checkout"
-                    element={<CheckoutPage />}
-                  />
+                                    {/* CONTACT */}
+                                    <Route
+                                        path="/contact"
+                                        element={<ContactPage />}
+                                    />
 
 
-                  {/* MY ORDERS */}
-                  <Route
-                    path="/my-orders"
-                    element={<MyOrdersPage />}
-                  />
-
-                </Route>
+                                    {/* CART */}
+                                    <Route
+                                        path="/cart"
+                                        element={<CartPage />}
+                                    />
 
 
-                {/* =====================================
+                                    {/* CHECKOUT */}
+                                    <Route
+                                        path="/checkout"
+                                        element={<CheckoutPage />}
+                                    />
+
+
+                                    {/* MY ORDERS */}
+                                    <Route
+                                        path="/my-orders"
+                                        element={<MyOrdersPage />}
+                                    />
+
+                                    {/* 👉 THÊM: SEARCH PAGE */}
+                                    <Route
+                                        path="/search"
+                                        element={<SearchPage />}
+                                    />
+
+                                </Route>
+
+
+                                {/* =====================================
                     ADMIN
                 ====================================== */}
 
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedAdminRoute>
+                                <Route
+                                    path="/admin"
+                                    element={
+                                        <ProtectedAdminRoute>
 
-                      <AdminLayout />
+                                            <AdminLayout />
 
-                    </ProtectedAdminRoute>
-                  }
-                >
+                                        </ProtectedAdminRoute>
+                                    }
+                                >
 
-                  {/* /admin */}
-                  <Route
-                    index
-                    element={
-                      <Navigate
-                        to="dashboard"
-                        replace
-                      />
-                    }
-                  />
-
-
-                  {/* DASHBOARD */}
-                  <Route
-                    path="dashboard"
-                    element={<Dashboard />}
-                  />
+                                    {/* /admin */}
+                                    <Route
+                                        index
+                                        element={
+                                            <Navigate
+                                                to="dashboard"
+                                                replace
+                                            />
+                                        }
+                                    />
 
 
-                  {/* PRODUCTS */}
-                  <Route
-                    path="products"
-                    element={<ProductManage />}
-                  />
+                                    {/* DASHBOARD */}
+                                    <Route
+                                        path="dashboard"
+                                        element={<Dashboard />}
+                                    />
 
 
-                  {/* PRODUCT STORY */}
-                  <Route
-                    path="product-story"
-                    element={<ProductStoryManage />}
-                  />
+                                    {/* PRODUCTS */}
+                                    <Route
+                                        path="products"
+                                        element={<ProductManage />}
+                                    />
 
 
-                  {/* ORDERS */}
-                  <Route
-                    path="orders"
-                    element={<OrderManage />}
-                  />
+                                    {/* PRODUCT STORY */}
+                                    <Route
+                                        path="product-story"
+                                        element={<ProductStoryManage />}
+                                    />
 
 
-                  {/* CUSTOMERS */}
-                  <Route
-                    path="customers"
-                    element={<CustomerManage />}
-                  />
+                                    {/* ORDERS */}
+                                    <Route
+                                        path="orders"
+                                        element={<OrderManage />}
+                                    />
 
 
-                  {/* NEWS */}
-                  <Route
-                    path="news"
-                    element={<NewsManage />}
-                  />
+                                    {/* CUSTOMERS */}
+                                    <Route
+                                        path="customers"
+                                        element={<CustomerManage />}
+                                    />
 
 
-                  {/* CONTACT */}
-                  <Route
-                    path="contacts"
-                    element={<ContactManage />}
-                  />
-
-                </Route>
+                                    {/* NEWS */}
+                                    <Route
+                                        path="news"
+                                        element={<NewsManage />}
+                                    />
 
 
-                {/* =====================================
+                                    {/* CONTACT */}
+                                    <Route
+                                        path="contacts"
+                                        element={<ContactManage />}
+                                    />
+
+                                </Route>
+
+
+                                {/* =====================================
                     404
                 ====================================== */}
 
-                <Route
-                  path="*"
-                  element={
-                    <div
-                      style={{
-                        textAlign: "center",
-                        padding: "100px 0"
-                      }}
-                    >
+                                <Route
+                                    path="*"
+                                    element={
+                                        <div
+                                            style={{
+                                                textAlign: "center",
+                                                padding: "100px 0"
+                                            }}
+                                        >
 
-                      <h1
-                        style={{
-                          color: "#6f4323"
-                        }}
-                      >
-                        404 - Lạc đường rồi 🦊
-                      </h1>
+                                            <h1
+                                                style={{
+                                                    color: "#6f4323"
+                                                }}
+                                            >
+                                                404 - Lạc đường rồi 🦊
+                                            </h1>
 
-                    </div>
-                  }
-                />
+                                        </div>
+                                    }
+                                />
 
-              </Routes>
+                            </Routes>
 
 
-            </NewsProvider>
+                        </NewsProvider>
 
-          </ContactProvider>
+                    </ContactProvider>
 
-        </ProductProvider>
+                </ProductProvider>
 
-      </CartProvider>
+            </CartProvider>
 
-    </SettingsProvider>
+        </SettingsProvider>
 
-  );
+    );
 };
 
 

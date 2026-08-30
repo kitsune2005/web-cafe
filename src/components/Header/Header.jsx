@@ -2,13 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useHeaderLogic } from './useHeaderLogic.js';
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
-import SettingsModal from '../SettingsModal/SettingsModal'; 
+import SettingsModal from '../SettingsModal/SettingsModal';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
 
-// 👉 THÊM: Import Giỏ Hàng từ Context
+// Kéo kho Giỏ Hàng và Sản phẩm vào
 import { useCart } from '../../context/CartContext';
+import { useProduct } from '../../context/ProductContext';
 
 const Header = () => {
   const {
@@ -19,8 +20,8 @@ const Header = () => {
     handleLogout, menuItems
   } = useHeaderLogic();
 
-  // 👉 THÊM: Rút dữ liệu từ Giỏ hàng Context
   const { cartItems, removeFromCart } = useCart();
+  const { products, formatPrice } = useProduct();
   const navigate = useNavigate();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -28,8 +29,10 @@ const Header = () => {
   const navListRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
+  // STATE TÌM KIẾM MỚI
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact");
+  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact") || location.pathname.startsWith("/search");
   const isLightMode = !isDarkBannerPage;
   // ==============================================================
 
@@ -57,9 +60,38 @@ const Header = () => {
     setTimeout(resetIndicator, 100);
   }, [location.pathname, menuItems]);
 
-  // 👉 TÍNH TOÁN GIỎ HÀNG: Tổng số lượng, Tổng tiền
+  // TÍNH TOÁN GIỎ HÀNG
   const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+  // BỘ LỌC TÌM KIẾM MA THUẬT (Giới hạn hiện 5 món)
+  const searchResults = searchTerm.trim() === ''
+    ? []
+    : products.filter(p =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 5);
+
+  // Đóng Search khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [searchRef, setSearchOpen]);
+
+  // 👉 HÀM XỬ LÝ CHUYỂN TRANG KHI BẤM ENTER TÌM KIẾM
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      setSearchOpen(false); // Đóng bảng
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`); // Bay sang trang kết quả
+      setSearchTerm(''); // Xóa ô tìm kiếm cho sạch
+    }
+  };
 
   if (loading) return null;
 
@@ -120,14 +152,18 @@ const Header = () => {
 
           {/* Actions bên phải */}
           <div className="header-actions">
-            
-            {/* Search */}
+
+            {/* 👉 BẮT ĐẦU: KHU VỰC SEARCH ĐÃ ĐƯỢC NÂNG CẤP */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
-              <form className="search-form" role="search" onSubmit={(e) => e.preventDefault()}>
+
+              {/* Đã gắn hàm handleSearchSubmit vào Form */}
+              <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
                 <input
                   type="text"
                   placeholder="Tìm kiếm"
                   aria-label="Tìm kiếm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   onFocus={() => setSearchOpen(true)}
                 />
                 <button type="submit" aria-label="Tìm kiếm">
@@ -137,17 +173,53 @@ const Header = () => {
 
               {searchOpen && (
                 <div className="search-dropdown">
-                  <div className="search-dropdown-block">
-                    <h4>Sản phẩm bán chạy</h4>
-                    <div className="search-tags">
-                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Cà phê</Link>
-                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Đóng gói</Link>
-                      <Link to="/products"><span className="tag-icon"><i className="fa-solid fa-magnifying-glass"></i></span>Phin</Link>
+                  {searchTerm.trim() === '' ? (
+                    // TRẠNG THÁI 1: CHƯA GÕ (GỢI Ý)
+                    <div className="search-dropdown-block">
+                      <h4>Sản phẩm bán chạy</h4>
+                      <div className="search-tags">
+                        {/* Đã gắn sự kiện bấm vào tag là bay sang trang Search ngay lập tức */}
+                        <span className="tag-chip" onClick={() => { setSearchOpen(false); navigate('/search?q=Cà+phê'); }}>
+                          <i className="fa-solid fa-magnifying-glass"></i> Cà phê
+                        </span>
+                        <span className="tag-chip" onClick={() => { setSearchOpen(false); navigate('/search?q=Đóng+gói'); }}>
+                          <i className="fa-solid fa-magnifying-glass"></i> Đóng gói
+                        </span>
+                        <span className="tag-chip" onClick={() => { setSearchOpen(false); navigate('/search?q=Phin'); }}>
+                          <i className="fa-solid fa-magnifying-glass"></i> Phin
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    // TRẠNG THÁI 2: ĐANG GÕ (HIỂN THỊ KẾT QUẢ DROPDOWN)
+                    <div className="search-results">
+                      {searchResults.length > 0 ? (
+                        searchResults.map(product => (
+                          <div
+                            key={product.id}
+                            className="search-result-item"
+                            onClick={() => {
+                              setSearchOpen(false);
+                              setSearchTerm('');
+                              navigate(`/product/${product.id}`);
+                            }}
+                          >
+                            <img src={product.imageFront || product.img} alt={product.name} />
+                            <div className="search-result-info">
+                              <p className="search-result-name">{product.name}</p>
+                              <p className="search-result-price">{formatPrice(product.price)}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="no-result">Không tìm thấy "{searchTerm}"</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
+            {/* 👉 KẾT THÚC: KHU VỰC SEARCH */}
 
             <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
 
@@ -175,8 +247,7 @@ const Header = () => {
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setProfileOpen(true); }}>
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
-                    
-                    {/* 👉 ĐÃ THÊM: Link Giỏ hàng vào Menu User */}
+
                     <Link to="/cart" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-cart-shopping"></i> Giỏ hàng
                     </Link>
@@ -184,6 +255,14 @@ const Header = () => {
                     <Link to="/my-orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
+
+                    {/* 👉 CHỈ ADMIN MỚI ĐƯỢC VÀO TRANG QUẢN TRỊ */}
+                    {currentUser.role === 'admin' && (
+                      <Link to="/admin" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                        <i className="fa-solid fa-chart-line"></i> Trang Quản Trị
+                      </Link>
+                    )}
+
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setSettingsOpen(true); }}>
                       <i className="fa-solid fa-gear"></i> Cài đặt
                     </button>
@@ -200,47 +279,46 @@ const Header = () => {
               </button>
             )}
 
-            {/* 👉 BẮT ĐẦU: MINI CART DROPDOWN */}
+            {/* MINI CART DROPDOWN */}
             <div className="cart-wrap">
-                <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
-                  <i className="fa-solid fa-cart-shopping"></i>
-                  {totalQuantity > 0 && <span className="cart-count">{totalQuantity}</span>}
-                </Link>
+              <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
+                <i className="fa-solid fa-cart-shopping"></i>
+                {totalQuantity > 0 && <span className="cart-count">{totalQuantity}</span>}
+              </Link>
 
-                <div className="mini-cart-dropdown">
-                    {cartItems.length === 0 ? (
-                        <div className="mini-cart-empty">
-                            <p>Không có sản phẩm trong giỏ hàng.</p>
-                        </div>
-                    ) : (
-                        <div className="mini-cart-has-items">
-                            <ul className="mini-cart-list">
-                                {cartItems.map((item, idx) => (
-                                    <li key={idx} className="mini-cart-item">
-                                        <img src={item.imageFront || item.img} alt={item.name} className="mc-img"/>
-                                        <div className="mc-info">
-                                            <Link className="mc-name" to={`/product/${item.id}`}>{item.name}</Link>
-                                            <span className="mc-price">{item.quantity} x {(item.price).toLocaleString('vi-VN')}₫</span>
-                                        </div>
-                                        <button className="mc-remove" onClick={() => removeFromCart(item.id)}>
-                                            <i className="fa-solid fa-xmark"></i>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className="mini-cart-total-wrap">
-                                <span>TỔNG SỐ PHỤ:</span>
-                                <span className="mc-total-price">{totalPrice.toLocaleString('vi-VN')}₫</span>
-                            </div>
-                            <div className="mini-cart-bottom">
-                                <Link className="btn-view-cart" to="/cart">XEM GIỎ HÀNG</Link>
-                                <Link className="btn-checkout" to="/checkout">THANH TOÁN</Link>
-                            </div>
-                        </div>
-                    )}
-                </div>
+              <div className="mini-cart-dropdown">
+                {cartItems.length === 0 ? (
+                  <div className="mini-cart-empty">
+                    <p>Không có sản phẩm trong giỏ hàng.</p>
+                  </div>
+                ) : (
+                  <div className="mini-cart-has-items">
+                    <ul className="mini-cart-list">
+                      {cartItems.map((item, idx) => (
+                        <li key={idx} className="mini-cart-item">
+                          <img src={item.imageFront || item.img} alt={item.name} className="mc-img" />
+                          <div className="mc-info">
+                            <Link className="mc-name" to={`/product/${item.id}`}>{item.name}</Link>
+                            <span className="mc-price">{item.quantity} x {(item.price).toLocaleString('vi-VN')}₫</span>
+                          </div>
+                          <button className="mc-remove" onClick={() => removeFromCart(item.id)}>
+                            <i className="fa-solid fa-xmark"></i>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mini-cart-total-wrap">
+                      <span>TỔNG SỐ PHỤ:</span>
+                      <span className="mc-total-price">{totalPrice.toLocaleString('vi-VN')}₫</span>
+                    </div>
+                    <div className="mini-cart-bottom">
+                      <Link className="btn-view-cart" to="/cart">XEM GIỎ HÀNG</Link>
+                      <Link className="btn-checkout" to="/checkout">THANH TOÁN</Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* 👉 KẾT THÚC: MINI CART DROPDOWN */}
 
           </div>
 

@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
-import { useCart } from '../../context/CartContext'; // 👉 KẾT NỐI BỘ NÃO GIỎ HÀNG
+import { useCart } from '../../context/CartContext'; 
 import './ProductDetailPage.css';
+
+// 👉 KẾT NỐI FILE SVG TỪ THƯ MỤC ICON CỦA BOSS
+import iconPayment from '../../assets/icon/icon-payment.svg';
+import iconOffer from '../../assets/icon/icon-offer.svg';
+import iconReturn from '../../assets/icon/icon-return.svg';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
     const { products, formatPrice } = useProduct();
-    const { addToCart } = useCart(); // 👉 RÚT HÀM THÊM VÀO GIỎ HÀNG RA SỬ DỤNG
+    const { addToCart } = useCart(); 
     
     const [product, setProduct] = useState(null);
     const [mainImage, setMainImage] = useState('');
@@ -17,23 +22,17 @@ const ProductDetailPage = () => {
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const trackRef = useRef(null);
 
-    // 1. TẠO SỐ "ĐÃ BÁN" CỐ ĐỊNH THEO ID
     const soldCount = useMemo(() => {
         if (!product) return 0;
         return (product.id * 37 % 87) + 12; 
     }, [product?.id]);
 
-    // 2. THUẬT TOÁN CAROUSEL RANDOM (CỐ ĐỊNH KHÔNG BỊ NHẢY)
     const relatedProducts = useMemo(() => {
         if (!products || !product) return [];
         
-        // Bước 1: Lọc sản phẩm cùng danh mục, trừ đi cái đang xem
         const sameCategory = products.filter(p => p.category === product.category && p.id !== product.id);
-        
-        // Bước 2: Nếu danh mục này nghèo nàn quá (ít hơn 4 món), thì bốc đại random từ toàn bộ kho
         const sourcePool = sameCategory.length >= 4 ? sameCategory : products.filter(p => p.id !== product.id);
         
-        // Bước 3: Xáo bài ngẫu nhiên và lấy 8 món
         return [...sourcePool].sort(() => 0.5 - Math.random()).slice(0, 8);
     }, [products, product?.id]);
 
@@ -59,7 +58,6 @@ const ProductDetailPage = () => {
 
     const gallery = [product.imageFront, product.imageBack].filter(Boolean);
 
-    // Hàm điều khiển trượt Carousel
     const scrollNext = () => {
         if (trackRef.current) trackRef.current.scrollBy({ left: 300, behavior: 'smooth' });
     };
@@ -67,9 +65,7 @@ const ProductDetailPage = () => {
         if (trackRef.current) trackRef.current.scrollBy({ left: -300, behavior: 'smooth' });
     };
 
-    // 👉 THAY THẾ TOÀN BỘ HÀM handleAddToCart CŨ BẰNG HÀM CÓ HIỆU ỨNG NÀY:
     const handleAddToCart = () => {
-        // 1. Tìm vị trí của ảnh sản phẩm và cái túi Giỏ hàng trên Header
         const imgElement = document.querySelector('.main-image-wrap img');
         const cartIcon = document.querySelector('.cart-btn i'); 
 
@@ -77,7 +73,6 @@ const ProductDetailPage = () => {
             const imgRect = imgElement.getBoundingClientRect();
             const cartRect = cartIcon.getBoundingClientRect();
 
-            // 2. Tạo một ảnh ảo nhân bản để bay lên trời
             const flyingImg = imgElement.cloneNode(true);
             flyingImg.style.position = 'fixed';
             flyingImg.style.zIndex = '999999';
@@ -92,7 +87,6 @@ const ProductDetailPage = () => {
 
             document.body.appendChild(flyingImg);
 
-            // 3. Cho ảnh bay về phía cái túi trên Header
             requestAnimationFrame(() => {
                 flyingImg.style.top = `${cartRect.top - 15}px`;
                 flyingImg.style.left = `${cartRect.left - 15}px`;
@@ -102,25 +96,21 @@ const ProductDetailPage = () => {
                 flyingImg.style.transform = 'scale(0.2)';
             });
 
-            // 4. Đợi ảnh bay tới nơi thì xóa ảnh đi, rung cái túi và lưu dữ liệu
             setTimeout(() => {
                 flyingImg.remove();
-                addToCart(product, quantity); // Lưu vào Context + Gọi Toast xanh xanh
+                addToCart(product, quantity); 
                 
-                // Hiệu ứng giỏ hàng rung lắc (Đã khai báo CSS bên kia)
                 cartIcon.classList.add('shake-cart-anim');
                 setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
             }, 800);
             
         } else {
-            // Đề phòng lỗi trình duyệt, lưu thẳng vào giỏ không cần bay
             addToCart(product, quantity);
         }
     };
 
     return (
         <div className="product-detail-page">
-            {/* 1. BREADCRUMB */}
             <div className="detail-breadcrumb">
                 <div className="container">
                     <h1>Sản phẩm</h1>
@@ -135,7 +125,6 @@ const ProductDetailPage = () => {
             </div>
 
             <div className="container detail-content-wrapper">
-                {/* 2. MAIN INFO */}
                 <div className="detail-main">
                     <div className="detail-gallery">
                         <div 
@@ -186,7 +175,12 @@ const ProductDetailPage = () => {
                                     disabled={quantity <= 1 || product.stock === 0}
                                 >-</button>
                                 
-                                <input type="number" value={quantity} readOnly />
+                                <input 
+                                    type="number" 
+                                    value={quantity} 
+                                    readOnly 
+                                    style={{ textAlign: 'center', fontWeight: 'bold' }} 
+                                />
                                 
                                 <button 
                                     onClick={() => setQuantity(q => q < product.stock ? q + 1 : q)}
@@ -203,18 +197,19 @@ const ProductDetailPage = () => {
                             </button>
                         </div>
 
-                        <div className="trust-badges">
-                            <div className="badge-item">
-                                <i className="fa-regular fa-credit-card"></i>
-                                <span>THANH TOÁN AN TOÀN</span>
+                        {/* 👉 ĐÃ PHÓNG TO SVG LÊN 36px ĐỂ RÕ NÉT HƠN */}
+                        <div className="trust-badges" style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', padding: '15px 0', margin: '20px 0', textAlign: 'center' }}>
+                            <div className="badge-item" style={{ flex: 1 }}>
+                                <img src={iconPayment} alt="Thanh toán an toàn" style={{ width: '36px', height: '36px', marginBottom: '8px', display: 'inline-block' }} />
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#555', textTransform: 'uppercase', display: 'block' }}>THANH TOÁN AN TOÀN</span>
                             </div>
-                            <div className="badge-item">
-                                <i className="fa-solid fa-ticket"></i>
-                                <span>ƯU ĐÃI GIỚI HẠN</span>
+                            <div className="badge-item" style={{ flex: 1 }}>
+                                <img src={iconOffer} alt="Ưu đãi giới hạn" style={{ width: '36px', height: '36px', marginBottom: '8px', display: 'inline-block' }} />
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#555', textTransform: 'uppercase', display: 'block' }}>ƯU ĐÃI GIỚI HẠN</span>
                             </div>
-                            <div className="badge-item">
-                                <i className="fa-solid fa-box-open"></i>
-                                <span>HOÀN TRẢ NHANH CHÓNG</span>
+                            <div className="badge-item" style={{ flex: 1 }}>
+                                <img src={iconReturn} alt="Hoàn trả nhanh chóng" style={{ width: '36px', height: '36px', marginBottom: '8px', display: 'inline-block' }} />
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#555', textTransform: 'uppercase', display: 'block' }}>HOÀN TRẢ NHANH CHÓNG</span>
                             </div>
                         </div>
 
@@ -281,7 +276,6 @@ const ProductDetailPage = () => {
                                         </div>
                                     </div>
                                     <div className="related-info">
-                                        {/* Hàng ngôi sao */}
                                         <div className="rating">
                                             <i className="fa-solid fa-star" style={{color: '#f2b200'}}></i>
                                             <i className="fa-solid fa-star" style={{color: '#f2b200'}}></i>

@@ -10,11 +10,10 @@ const AutoScrollToTop = () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "instant", // Dùng 'instant' để nó nhảy lên ngay lập tức, không bị trượt giật giật
+      behavior: "instant", 
     });
   }, [pathname]);
 
-  // Anh chàng này chỉ làm việc ngầm, không cần vẽ ra giao diện
   return null;
 };
 

@@ -3,7 +3,7 @@ import React from 'react';
 import data from '../data/data.json';
 
 // 2. Components dùng chung
-// ❌ ĐÃ XÓA IMPORT HEADER & FOOTER VÌ MAINLAYOUTS SẼ LO VIỆC ĐÓ
+
 import ScrollTop from '../ScrollTop/ScrollTop.jsx';
 
 // 3. Components Trang chủ
@@ -20,7 +20,6 @@ import Testimonials from '../components/home/Testimonials/Testimonials.jsx';
 const HomePage = () => {
   return (
     <div className="home-page">
-      {/* ❌ ĐÃ XÓA <Header /> Ở ĐÂY */}
       
       <Hero />
       <PureCoffee categories={data.categories} />
@@ -31,8 +30,7 @@ const HomePage = () => {
       <Testimonials testimonials={data.testimonials} />
       <Instagram images={data.instagram} />
       <BrandsStrip brands={data.brands} />
-      
-      {/* ❌ ĐÃ XÓA <Footer /> Ở ĐÂY */}
+    
       <ScrollTop />
     </div>
   );

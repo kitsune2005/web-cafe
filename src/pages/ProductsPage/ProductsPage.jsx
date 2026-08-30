@@ -1,18 +1,23 @@
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
 import { useProduct } from "../../context/ProductContext";
-import { useCart } from "../../context/CartContext"; // 👉 THÊM IMPORT GIỎ HÀNG
+import { useCart } from "../../context/CartContext";
 import "./ProductsPage.css";
 
 const ProductsPage = () => {
   const { products, formatPrice } = useProduct();
-  const { addToCart } = useCart(); // 👉 KÉO HÀM THÊM GIỎ HÀNG TỪ CONTEXT
+  const { addToCart } = useCart();
+  const navigate = useNavigate(); 
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortType, setSortType] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [viewMode, setViewMode] = useState("grid-3");
+  
+  // 👉 STATE MỚI: LƯU TRỮ CÁC MỐC GIÁ ĐƯỢC CHỌN (Mảng)
+  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]); 
+
   const itemsPerPage = 12;
 
   const getPriceNumber = (price) => {
@@ -30,6 +35,14 @@ const ProductsPage = () => {
 
   const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê phin'];
 
+  // 👉 ĐỊNH NGHĨA CÁC MỐC LỌC GIÁ
+  const priceRanges = [
+    { id: 'under-100', label: 'Dưới 100.000đ', min: 0, max: 100000 },
+    { id: '100-300', label: '100.000đ - 300.000đ', min: 100000, max: 300000 },
+    { id: '300-500', label: '300.000đ - 500.000đ', min: 300000, max: 500000 },
+    { id: 'over-500', label: 'Trên 500.000đ', min: 500000, max: Infinity }
+  ];
+
   const handleCategoryChange = (categoryName) => {
     setSelectedCategories((prev) => {
       if (prev.includes(categoryName)) {
@@ -40,15 +53,40 @@ const ProductsPage = () => {
     setCurrentPage(1);
   };
 
+  // 👉 HÀM XỬ LÝ KHI TÍCH VÀO CHECKBOX GIÁ
+  const handlePriceChange = (rangeId) => {
+    setSelectedPriceRanges((prev) => {
+      if (prev.includes(rangeId)) {
+        return prev.filter((id) => id !== rangeId);
+      }
+      return [...prev, rangeId];
+    });
+    setCurrentPage(1);
+  };
+
   const filteredProducts = useMemo(() => {
     let result = [...products]; 
 
+    // 1. Lọc theo danh mục
     if (selectedCategories.length > 0) {
       result = result.filter((product) =>
         selectedCategories.includes(product.category)
       );
     }
 
+    // 2. 👉 LỌC THEO CÁC MỐC GIÁ ĐÃ TÍCH CHỌN
+    if (selectedPriceRanges.length > 0) {
+        result = result.filter((product) => {
+            const pPrice = getPriceNumber(product.price);
+            // Sản phẩm chỉ cần thỏa mãn 1 trong các mốc giá đã chọn là được hiển thị
+            return selectedPriceRanges.some(rangeId => {
+                const range = priceRanges.find(r => r.id === rangeId);
+                return pPrice >= range.min && pPrice <= range.max;
+            });
+        });
+    }
+
+    // 3. Sắp xếp
     if (sortType === "price-low") {
       result.sort((a, b) => getPriceNumber(a.price) - getPriceNumber(b.price));
     }
@@ -60,7 +98,11 @@ const ProductsPage = () => {
     }
 
     return result;
-  }, [products, selectedCategories, sortType]);
+  }, [products, selectedCategories, sortType, selectedPriceRanges]); // Nhớ đưa selectedPriceRanges vào để render lại
+
+  const newestProducts = useMemo(() => {
+      return [...products].reverse().slice(0, 3);
+  }, [products]);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -70,7 +112,7 @@ const ProductsPage = () => {
   const displayStart = filteredProducts.length === 0 ? 0 : startIndex + 1;
   const displayEnd = Math.min(endIndex, filteredProducts.length);
 
-  // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
+  // HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY
   const handleAddFromCard = (e, item) => {
     e.preventDefault(); 
     e.stopPropagation(); 
@@ -171,9 +213,9 @@ const ProductsPage = () => {
               
               {sidebarVisible && (
                 <aside className="shop-sidebar">
+                  {/* BỘ LỌC DANH MỤC */}
                   <div className="sidebar-block">
                     <h3>DANH MỤC</h3>
-                    
                     {targetCategories.map((categoryName) => (
                       <label key={categoryName}>
                         <span>
@@ -190,6 +232,44 @@ const ProductsPage = () => {
                       </label>
                     ))}
                   </div>
+
+                  {/* 👉 BỘ LỌC MỨC GIÁ BẰNG CHECKBOX */}
+                  <div className="sidebar-block">
+                      <h3>MỨC GIÁ</h3>
+                      <ul className="filter-list">
+                          {priceRanges.map((range) => (
+                              <li key={range.id}>
+                                  <label>
+                                      <span>
+                                          <input
+                                              type="checkbox"
+                                              checked={selectedPriceRanges.includes(range.id)}
+                                              onChange={() => handlePriceChange(range.id)}
+                                          />
+                                          {range.label}
+                                      </span>
+                                  </label>
+                              </li>
+                          ))}
+                      </ul>
+                  </div>
+
+                  {/* KHỐI SẢN PHẨM MỚI NHẤT */}
+                  <div className="sidebar-block">
+                      <h3>SẢN PHẨM MỚI NHẤT</h3>
+                      <div className="newest-products-list">
+                          {newestProducts.map(prod => (
+                              <div key={prod.id} className="mini-product-item" onClick={() => navigate(`/product/${prod.id}`)}>
+                                  <img src={prod.imageFront || prod.img} alt={prod.name} />
+                                  <div className="mini-product-info">
+                                      <span className="mini-name">{prod.name}</span>
+                                      <span className="mini-price">{formatPrice(prod.price)}</span>
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+
                 </aside>
               )}
 
@@ -221,7 +301,6 @@ const ProductsPage = () => {
                           <Link to={`/product/${product.id}`} title="Xem chi tiết">
                             <i className="fa-regular fa-eye"></i>
                           </Link>
-                          {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
                           <button type="button" title="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
                             <i className="fa-solid fa-cart-shopping"></i>
                           </button>
