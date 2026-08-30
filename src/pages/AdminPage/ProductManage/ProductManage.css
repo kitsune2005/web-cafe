@@ -367,7 +367,7 @@
     background: #a8a8a8;
 }
 
-/* Header modal: tiêu đề + nút đóng tròn (dùng chung cho cả 2 biến thể header) */
+/* Header modal: tiêu đề + nút đóng tròn  */
 .modal-header-1,
 .modal-header {
     display: flex;
