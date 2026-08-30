@@ -1,990 +1,782 @@
 /* =================================
-   TRANG SẢN PHẨM (SHOP PAGE)
-================================= */
-
-.products-page {
-  background: #fff;
-}
-
+   MỤC LỤC
+   1. TRANG SẢN PHẨM (SHOP PAGE) - NỀN & BREADCRUMB
+   2. BỐ CỤC TỔNG THỂ TRANG SHOP
+   3. THANH CÔNG CỤ: SẮP XẾP, LỌC, KIỂU HIỂN THỊ (GRID/LIST)
+   4. SIDEBAR & CHECKBOX TÙY CHỈNH
+   5. DANH SÁCH SẢN PHẨM (GRID 3 CỘT / 2 CỘT / LIST)
+   6. THẺ SẢN PHẨM (ẢNH HOVER, BADGE, NÚT THAO TÁC NHANH)
+   7. THÔNG TIN SẢN PHẨM TRONG CARD (TÊN, GIÁ, RATING)
+   8. PHÂN TRANG
+   9. TRẠNG THÁI KHÔNG CÓ SẢN PHẨM
+   10. THANH LỌC GIÁ (RANGE SLIDER)
+   11. WIDGET SẢN PHẨM MỚI NHẤT (SIDEBAR)
+   12. RESPONSIVE (TABLET / MOBILE / MÀN HÌNH NHỎ)
+   13. CHẾ ĐỘ LIST - TÁCH 3 CỘT (ẢNH / THÔNG TIN / NÚT) TỪ 521PX TRỞ LÊN
+   ================================= */
 
 /* =================================
-   BREADCRUMB
-================================= */
+   1. TRANG SẢN PHẨM (SHOP PAGE) - NỀN & BREADCRUMB
+   ================================= */
+   .products-page {
+    background: #fff;
+}
 
 .product-breadcrumb {
-  min-height: 190px;
-  padding-top: 85px;
-
-  display: flex;
-  align-items: center;
-
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.72),
-      rgba(255, 255, 255, 0.72)),
-    url("https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg") center / cover no-repeat;
+    min-height: 190px;
+    padding-top: 85px;
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.72)),
+        url("https://cafengon.monamedia.net/wp-content/uploads/2024/12/insta1.jpg") center / cover no-repeat;
 }
 
 .product-breadcrumb .container {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .product-breadcrumb a {
-  font-size: 13px;
-
-  color: #777;
-
-  text-decoration: none;
-
-  transition: 0.2s;
+    font-size: 13px;
+    color: #777;
+    text-decoration: none;
+    transition: 0.2s;
 }
 
 .product-breadcrumb a:hover {
-  color: #704321;
+    color: #704321;
 }
 
 .product-breadcrumb strong {
-  font-size: 13px;
-
-  color: #382316;
+    font-size: 13px;
+    color: #382316;
 }
 
 .product-breadcrumb i {
-  font-size: 10px;
-
-  color: #999;
+    font-size: 10px;
+    color: #999;
 }
 
-
 /* =================================
-   BỐ CỤC TỔNG THỂ TRANG SHOP
-================================= */
-
+   2. BỐ CỤC TỔNG THỂ TRANG SHOP
+   ================================= */
 .shop-section {
-  padding: 60px 0 90px;
+    padding: 60px 0 90px;
 }
 
-
 /* =================================
-   THANH CÔNG CỤ (TOOLBAR): SẮP XẾP, BỘ LỌC, KIỂU HIỂN THỊ
-================================= */
-
+   3. THANH CÔNG CỤ: SẮP XẾP, LỌC, KIỂU HIỂN THỊ (GRID/LIST)
+   ================================= */
 .shop-toolbar {
-  min-height: 46px;
-
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-
-  border: 1px solid #ddd;
-
-  border-radius: 4px;
-
-  margin-bottom: 18px;
-
-  background: #fff;
+    min-height: 46px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 18px;
+    background: #fff;
 }
 
 .toolbar-left {
-  display: flex;
+    display: flex;
 }
 
 .toolbar-left button,
 .toolbar-left select {
-  min-height: 44px;
-
-  padding: 0 22px;
-
-  border: none;
-  border-right: 1px solid #ddd;
-
-  background: transparent;
-
-  color: #555;
-
-  font-size: 14px;
-
-  cursor: pointer;
+    min-height: 44px;
+    padding: 0 22px;
+    border: none;
+    border-right: 1px solid #ddd;
+    background: transparent;
+    color: #555;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .toolbar-left button {
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .toolbar-left select {
-  outline: none;
+    outline: none;
 }
 
-
-/* =================================
-   NÚT CHUYỂN KIỂU HIỂN THỊ (GRID / LIST)
-================================= */
-
+/* Nút chuyển kiểu hiển thị dạng lưới / danh sách */
 .toolbar-view {
-  display: flex;
-  align-items: center;
-
-  padding-right: 12px;
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
 }
 
 .toolbar-view button {
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-
-  background: transparent;
-
-  font-size: 18px;
-
-  color: #999;
-
-  cursor: pointer;
-
-  transition:
-    color 0.25s ease,
-    background 0.25s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.25s ease, background 0.25s ease;
 }
 
 .toolbar-view button:hover {
-  color: #704321;
-
-  background: #f8f4f0;
+    color: #704321;
+    background: #f8f4f0;
 }
 
 .toolbar-view button.active {
-  color: #704321;
-
-  background: #f2ebe5;
+    color: #704321;
+    background: #f2ebe5;
 }
 
-
-/* =================================
-   SỐ LƯỢNG KẾT QUẢ TÌM ĐƯỢC
-================================= */
-
+/* Số lượng kết quả tìm được, hiển thị phía trên lưới sản phẩm */
 .result-count {
-  text-align: right;
-
-  font-size: 13px;
-
-  color: #666;
-
-  margin: 0 0 25px;
+    text-align: right;
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 25px;
 }
-
 
 /* =================================
-   BỐ CỤC SIDEBAR + DANH SÁCH SẢN PHẨM
-================================= */
-
+   4. SIDEBAR & CHECKBOX TÙY CHỈNH
+   Bố cục sidebar bộ lọc bên trái + lưới sản phẩm bên phải;
+   sidebar-hidden dùng khi ẩn sidebar để danh sách chiếm toàn bộ chiều rộng
+   ================================= */
 .shop-layout {
-  display: grid;
-
-  grid-template-columns: 220px 1fr;
-
-  gap: 28px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
 }
-
-
-/* KHI ẨN SIDEBAR: DANH SÁCH SẢN PHẨM CHIẾM TOÀN BỘ CHIỀU RỘNG */
 
 .shop-layout.sidebar-hidden {
-  grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
 }
 
-
-/* =================================
-   SIDEBAR & TÙY CHỈNH GIAO DIỆN CHECKBOX
-================================= */
-
 .shop-sidebar {
-  width: 100%;
+    width: 100%;
 }
 
 .sidebar-block {
-  margin-bottom: 45px;
+    margin-bottom: 45px;
 }
 
 .sidebar-block h3 {
-  margin: 0 0 25px;
-  font-size: 17px;
-  font-weight: 700;
-  color: #111;
+    margin: 0 0 25px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
 }
 
 .sidebar-block label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 13px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
 }
 
-.sidebar-block label>span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.sidebar-block label > span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.sidebar-block label>span:last-child {
-  color: #a1785c;
+.sidebar-block label > span:last-child {
+    color: #a1785c;
 }
 
 /* Ẩn checkbox mặc định của trình duyệt, thay bằng khung vuông tự vẽ */
 .sidebar-block input[type="checkbox"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background-color: #fff;
-  cursor: pointer;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
 }
 
-/* Đổi màu viền khi hover vào cả dòng label */
 .sidebar-block label:hover input[type="checkbox"] {
-  border-color: #704321;
+    border-color: #704321;
 }
 
-/* Dùng SVG nhúng trực tiếp (data URI) làm dấu check, đảm bảo hiển thị đồng nhất trên mọi trình duyệt */
+/* Dùng SVG nhúng (data URI) làm dấu check, đảm bảo hiển thị đồng nhất trên mọi trình duyệt */
 .sidebar-block input[type="checkbox"]:checked {
-  background-color: #704321;
-  border-color: #704321;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-  background-size: 75%;
-  background-position: center;
-  background-repeat: no-repeat;
+    background-color: #704321;
+    border-color: #704321;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: 75%;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* =================================
-   DANH SÁCH SẢN PHẨM (GRID/LIST WRAPPER)
-================================= */
-
+   5. DANH SÁCH SẢN PHẨM (GRID 3 CỘT / 2 CỘT / LIST)
+   ================================= */
 .shop-products {
-  display: grid;
-
-  gap: 22px;
-
-  width: 100%;
+    display: grid;
+    gap: 22px;
+    width: 100%;
 }
-
-
-/* =================================
-   HIỂN THỊ DẠNG LƯỚI 3 CỘT
-================================= */
 
 .shop-products.grid-3 {
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-
-
-/* =================================
-   HIỂN THỊ DẠNG LƯỚI 2 CỘT
-================================= */
 
 .shop-products.grid-2 {
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-
-/* =================================
-   HIỂN THỊ DẠNG DANH SÁCH (LIST)
-================================= */
-
 .shop-products.list {
-  grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
 }
 
 .shop-products.list .shop-product-card {
-  display: grid;
-
-  grid-template-columns: 260px 1fr;
-
-  min-height: 270px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 270px;
 }
 
 .shop-products.list .shop-product-image {
-  height: auto;
-  /* Bỏ chiều cao cố định để giữ đúng tỉ lệ ảnh 1:1 */
-  border-right: 1px solid #eee;
+    height: auto; /* Bỏ chiều cao cố định để giữ đúng tỉ lệ ảnh 1:1 */
+    border-right: 1px solid #eee;
 }
 
 .shop-products.list .shop-product-info {
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  align-items: flex-start;
-
-  padding: 30px;
-
-  text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    text-align: left;
 }
 
 .shop-products.list .shop-rating {
-  margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 
 .shop-products.list .shop-product-info h3 {
-  margin-bottom: 14px;
-
-  font-size: 21px;
+    margin-bottom: 14px;
+    font-size: 21px;
 }
 
 .shop-products.list .shop-price {
-  justify-content: flex-start;
+    justify-content: flex-start;
 }
 
 .shop-products.list .shop-price del {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .shop-products.list .shop-price span {
-  font-size: 19px;
+    font-size: 19px;
 }
 
-
 /* =================================
-   THẺ SẢN PHẨM (PRODUCT CARD)
-================================= */
-
+   6. THẺ SẢN PHẨM (ẢNH HOVER, BADGE, NÚT THAO TÁC NHANH)
+   ================================= */
 .shop-product-card {
-  position: relative;
-
-  border: 1px solid #ddd;
-
-  border-radius: 9px;
-
-  overflow: hidden;
-
-  background: #fff;
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .shop-product-card:hover {
-  transform: translateY(-4px);
-
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-
-/* =================================
-   ẢNH SẢN PHẨM (TỈ LỆ CỐ ĐỊNH 1:1, TRÀN VIỀN)
-================================= */
-
+/* Ảnh sản phẩm tỉ lệ cố định 1:1, tràn viền khung */
 .shop-product-image {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  overflow: hidden;
-  background: #f8f9fa;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+    background: #f8f9fa;
 }
 
 .shop-product-image img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-
-/* ẢNH CHÍNH (HIỂN THỊ MẶC ĐỊNH) */
-
+/* Ảnh chính hiển thị mặc định, ảnh phụ chỉ hiện khi hover vào card */
 .shop-product-image .front {
-  opacity: 1;
+    opacity: 1;
 }
-
-
-/* ẢNH PHỤ (CHỈ HIỂN THỊ KHI HOVER) */
 
 .shop-product-image .back {
-  opacity: 0;
+    opacity: 0;
 }
 
-
-/* HIỆU ỨNG ĐỔI ẢNH KHI HOVER VÀO THẺ SẢN PHẨM */
-
 .shop-product-card:hover .front {
-  opacity: 0;
+    opacity: 0;
 }
 
 .shop-product-card:hover .back {
-  opacity: 1;
-  transform: scale(1.05);
-  /* Phóng to nhẹ ảnh phụ khi hover để tạo hiệu ứng chuyển động */
+    opacity: 1;
+    transform: scale(1.05); /* Phóng to nhẹ ảnh phụ khi hover để tạo hiệu ứng chuyển động */
 }
 
-
-/* =================================
-   NHÃN GIẢM GIÁ (DISCOUNT BADGE)
-================================= */
-
+/* Nhãn giảm giá góc trên trái ảnh */
 .discount-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 5;
-  padding: 5px 8px;
-  border-radius: 4px;
-  background: #ff805f;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 5;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: #ff805f;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-
-/* =================================
-   NHÓM NÚT THAO TÁC NHANH (XUẤT HIỆN KHI HOVER)
-================================= */
-
+/* Nhóm nút thao tác nhanh (xem nhanh, yêu thích, thêm giỏ...) trượt ra khi hover */
 .product-hover-actions {
-  position: absolute;
-
-  right: 12px;
-  top: 50%;
-
-  transform:
-    translateY(-50%) translateX(20px);
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 8px;
-
-  opacity: 0;
-
-  transition: 0.3s;
-
-  z-index: 10;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%) translateX(20px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    transition: 0.3s;
+    z-index: 10;
 }
 
 .shop-product-card:hover .product-hover-actions {
-  opacity: 1;
-
-  transform:
-    translateY(-50%) translateX(0);
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
 }
-
-
-/* KIỂU DÁNG DÙNG CHUNG CHO NÚT VÀ LINK THAO TÁC */
 
 .product-hover-actions button,
 .product-hover-actions a {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: #fff;
-
-  box-shadow:
-    0 3px 12px rgba(0, 0, 0, 0.15);
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-  transition: 0.25s;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.25s;
 }
 
 .product-hover-actions button:hover,
 .product-hover-actions a:hover {
-  background: #704321;
-
-  color: #fff;
+    background: #704321;
+    color: #fff;
 }
 
-
 /* =================================
-   NỘI DUNG THÔNG TIN SẢN PHẨM (TÊN, GIÁ, ĐÁNH GIÁ)
-================================= */
-
+   7. THÔNG TIN SẢN PHẨM TRONG CARD (TÊN, GIÁ, RATING)
+   ================================= */
 .shop-product-info {
-  padding: 15px 15px 18px;
-  text-align: center;
+    padding: 15px 15px 18px;
+    text-align: center;
 }
-
-
-/* =================================
-   ĐÁNH GIÁ SAO (RATING)
-================================= */
 
 .shop-rating {
-  margin-bottom: 6px;
-  color: #f4c400;
-  font-size: 12px;
+    margin-bottom: 6px;
+    color: #f4c400;
+    font-size: 12px;
 }
-
-
-/* =================================
-   TÊN SẢN PHẨM
-================================= */
 
 .shop-product-info h3 {
-  margin: 0 0 7px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #2b1a10;
+    margin: 0 0 7px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2b1a10;
 }
 
-
-/* =================================
-   GIÁ SẢN PHẨM (GIÁ GỐC + GIÁ SAU GIẢM)
-================================= */
-
 .shop-price {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
 }
 
 .shop-price del {
-  font-size: 12px;
-  color: #999;
+    font-size: 12px;
+    color: #999;
 }
 
 .shop-price span {
-  color: #d90000;
-  font-size: 15px;
-  font-weight: 700;
+    color: #d90000;
+    font-size: 15px;
+    font-weight: 700;
 }
 
-
 /* =================================
-   PHÂN TRANG (PAGINATION)
-================================= */
-
+   8. PHÂN TRANG
+   ================================= */
 .pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 45px;
 }
 
 .pagination button {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #ddd;
-  background: #fff;
-  color: #333;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: 0.25s;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s;
 }
 
 .pagination button:hover:not(:disabled) {
-  border-color: #704321;
-  color: #704321;
+    border-color: #704321;
+    color: #704321;
 }
 
 .pagination button.active {
-  background: #704321;
-  border-color: #704321;
-  color: #fff;
+    background: #704321;
+    border-color: #704321;
+    color: #fff;
 }
 
 .pagination button:disabled {
-  opacity: 0.4;
-
-  cursor: not-allowed;
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
-
 /* =================================
-   TRẠNG THÁI KHÔNG CÓ SẢN PHẨM PHÙ HỢP
-================================= */
-
+   9. TRẠNG THÁI KHÔNG CÓ SẢN PHẨM
+   ================================= */
 .no-products {
-  grid-column: 1 / -1;
-
-  padding: 60px 20px;
-
-  text-align: center;
-
-  font-size: 17px;
-
-  color: #777;
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    font-size: 17px;
+    color: #777;
 }
-
 
 /* =================================
-   TÙY CHỈNH GIAO DIỆN THANH LỌC GIÁ (RANGE SLIDER)
-================================= */
-
+   10. THANH LỌC GIÁ (RANGE SLIDER)
+   ================================= */
 .price-filter-box {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
-/* Đường ray (track) của thanh kéo */
 .price-filter-box input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 5px;
-  outline: none;
-  margin-bottom: 20px;
-  cursor: pointer;
-  accent-color: #704321;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    outline: none;
+    margin-bottom: 20px;
+    cursor: pointer;
+    accent-color: #704321;
 }
 
-/* Núm kéo (thumb) - trình duyệt nền Webkit (Chrome, Safari, Edge) */
+/* Núm kéo - trình duyệt nền Webkit (Chrome, Safari, Edge) */
 .price-filter-box input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #704321;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #704321;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Núm kéo (thumb) - Firefox */
+/* Núm kéo - Firefox */
 .price-filter-box input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #704321;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #704321;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .price-range-text {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: #888;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #888;
 }
 
 .price-range-text strong {
-  color: #333;
-  font-weight: 700;
+    color: #333;
+    font-weight: 700;
 }
 
-
 /* =================================
-   DANH SÁCH SẢN PHẨM MỚI NHẤT (SIDEBAR WIDGET)
-================================= */
-
+   11. WIDGET SẢN PHẨM MỚI NHẤT (SIDEBAR)
+   ================================= */
 .newest-products-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .mini-product-item {
-  display: flex;
-  gap: 12px;
-  cursor: pointer;
-  align-items: center;
-  transition: 0.2s;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    align-items: center;
+    transition: 0.2s;
 }
 
 .mini-product-item:hover .mini-name {
-  color: #704321;
+    color: #704321;
 }
 
 .mini-product-item img {
-  width: 65px;
-  height: 65px;
-  object-fit: contain;
-  border-radius: 6px;
-  border: 1px solid #eee;
-  padding: 2px;
-  background: #fff;
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    padding: 2px;
+    background: #fff;
 }
 
 .mini-product-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .mini-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-  transition: color 0.2s;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    transition: color 0.2s;
 }
 
 .mini-price {
-  font-size: 14px;
-  font-weight: 700;
-  color: #d90000;
+    font-size: 14px;
+    font-weight: 700;
+    color: #d90000;
 }
 
-
 /* =================================
-   RESPONSIVE: TABLET (<= 992px)
-================================= */
-
+   12. RESPONSIVE: TABLET (<= 992px)
+   ================================= */
 @media (max-width: 992px) {
+    .shop-layout {
+        grid-template-columns: 190px 1fr;
+    }
 
-  .shop-layout {
-    grid-template-columns:
-      190px 1fr;
-  }
+    .shop-products.grid-3,
+    .shop-products.grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-  .shop-products.grid-3 {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .shop-products.grid-2 {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .shop-products.list .shop-product-card {
-    grid-template-columns:
-      220px 1fr;
-  }
-
+    .shop-products.list .shop-product-card {
+        grid-template-columns: 220px 1fr;
+    }
 }
 
-
-/* =================================
-   RESPONSIVE: MOBILE (<= 768px)
-================================= */
-
+/* RESPONSIVE: MOBILE (<= 768px) */
 @media (max-width: 768px) {
+    .product-breadcrumb {
+        min-height: 150px;
+    }
 
-  .product-breadcrumb {
-    min-height: 150px;
-  }
+    .shop-section {
+        padding-top: 35px;
+    }
 
-  .shop-section {
-    padding-top: 35px;
-  }
+    .shop-toolbar {
+        flex-direction: column;
+    }
 
-  .shop-toolbar {
-    flex-direction: column;
-  }
+    .toolbar-left {
+        width: 100%;
+    }
 
-  .toolbar-left {
-    width: 100%;
-  }
+    .toolbar-left button,
+    .toolbar-left select {
+        flex: 1;
+    }
 
-  .toolbar-left button,
-  .toolbar-left select {
-    flex: 1;
-  }
+    .toolbar-view {
+        justify-content: flex-end;
+        padding: 5px 10px;
+    }
 
-  .toolbar-view {
-    justify-content: flex-end;
+    .shop-layout {
+        grid-template-columns: 1fr;
+    }
 
-    padding: 5px 10px;
-  }
+    .shop-sidebar {
+        display: none;
+    }
 
-  .shop-layout {
-    grid-template-columns: 1fr;
-  }
+    .shop-products.grid-3,
+    .shop-products.grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-  .shop-sidebar {
-    display: none;
-  }
+    /* Chế độ list trên mobile: thu nhỏ cột ảnh */
+    .shop-products.list .shop-product-card {
+        grid-template-columns: 180px 1fr;
+    }
 
-  .shop-products.grid-3,
-  .shop-products.grid-2 {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-
-  /* CHẾ ĐỘ LIST TRÊN MOBILE: THU NHỎ CỘT ẢNH */
-
-  .shop-products.list .shop-product-card {
-    grid-template-columns:
-      180px 1fr;
-  }
-
-  .shop-products.list .shop-product-info {
-    padding: 20px;
-  }
-
+    .shop-products.list .shop-product-info {
+        padding: 20px;
+    }
 }
 
-
-/* =================================
-   RESPONSIVE: MÀN HÌNH NHỎ (<= 520px)
-================================= */
-
+/* RESPONSIVE: MÀN HÌNH NHỎ (<= 520px) */
 @media (max-width: 520px) {
+    .shop-products.grid-3,
+    .shop-products.grid-2 {
+        grid-template-columns: 1fr;
+    }
 
-  .shop-products.grid-3,
-  .shop-products.grid-2 {
-    grid-template-columns: 1fr;
-  }
+    /* Chế độ list chuyển thành dạng card dọc */
+    .shop-products.list .shop-product-card {
+        display: block;
+    }
 
+    .shop-products.list .shop-product-image {
+        border-right: none;
+    }
 
-  /* CHẾ ĐỘ LIST CHUYỂN THÀNH DẠNG CARD DỌC */
+    .shop-products.list .shop-product-info {
+        align-items: center;
+        text-align: center;
+    }
 
-  .shop-products.list .shop-product-card {
-    display: block;
-  }
+    .shop-products.list .shop-price {
+        justify-content: center;
+    }
 
-  .shop-products.list .shop-product-image {
-    border-right: none;
-  }
+    .toolbar-left {
+        flex-direction: column;
+    }
 
-  .shop-products.list .shop-product-info {
-    align-items: center;
-
-    text-align: center;
-  }
-
-  .shop-products.list .shop-price {
-    justify-content: center;
-  }
-
-
-  /* TOOLBAR: XẾP DỌC TRÊN MÀN HÌNH NHỎ */
-
-  .toolbar-left {
-    flex-direction: column;
-  }
-
-  .toolbar-left button,
-  .toolbar-left select {
-    border-right: none;
-
-    border-bottom:
-      1px solid #ddd;
-  }
-
+    .toolbar-left button,
+    .toolbar-left select {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
 }
 
 /* =================================
-   CHẾ ĐỘ LIST TRÊN MÀN HÌNH >= 521px:
-   TÁCH RIÊNG CỘT ẢNH / THÔNG TIN / NÚT THAO TÁC
-================================= */
-
+   13. CHẾ ĐỘ LIST - TÁCH 3 CỘT (ẢNH / THÔNG TIN / NÚT) TỪ 521PX TRỞ LÊN
+   ================================= */
 @media (min-width: 521px) {
+    /* 1. Chuyển thẻ sản phẩm từ 2 cột thành 3 cột (Ảnh | Thông tin | Nút thao tác) */
+    .shop-products.list .shop-product-card {
+        display: grid !important;
+        grid-template-columns: 260px 1fr 80px !important;
+        align-items: stretch !important; /* Kéo dãn các cột bằng nhau để đường viền thẳng hàng */
+        padding-right: 15px;
+    }
 
-  /* 1. Chuyển thẻ sản phẩm từ 2 cột thành 3 cột (Ảnh | Thông tin | Nút thao tác) */
-  .shop-products.list .shop-product-card {
-    display: grid !important;
-    grid-template-columns: 260px 1fr 80px !important;
-    align-items: stretch !important;
-    /* Kéo dãn các cột bằng nhau để đường viền thẳng hàng */
-    padding-right: 15px;
-  }
+    /* 2. Dùng display: contents để loại div bọc ảnh khỏi luồng grid,
+          cho phép 2 thẻ <img> bên trong tự xếp trực tiếp vào các cột grid */
+    .shop-products.list .shop-product-image {
+        display: contents !important;
+    }
 
-  /* 2. Dùng display: contents để loại div bọc ảnh khỏi luồng grid,
-        cho phép 2 thẻ <img> bên trong tự xếp trực tiếp vào các cột grid */
-  .shop-products.list .shop-product-image {
-    display: contents !important;
-  }
+    /* 3. Đặt 2 ảnh (chính & phụ) vào cột 1, xếp chồng lên nhau */
+    .shop-products.list .shop-product-image img {
+        position: relative !important; /* Bỏ position: absolute mặc định để ảnh nằm đúng ô grid */
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        align-self: center; /* Giữ ảnh luôn căn giữa, không bị kéo méo */
+        background: #f8f9fa; /* Bù lại màu nền bị mất do bỏ div bọc (display: contents) */
+    }
 
-  /* 3. Đặt 2 ảnh (ảnh chính & ảnh phụ) vào Cột 1, xếp chồng lên nhau */
-  .shop-products.list .shop-product-image img {
-    position: relative !important;
-    /* Bỏ position: absolute mặc định để ảnh nằm đúng trong ô grid */
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    align-self: center;
-    /* Giữ ảnh luôn căn giữa, không bị kéo méo */
-    background: #f8f9fa;
-    /* Bù lại màu nền bị mất do bỏ div bọc (display: contents) */
-  }
+    /* 4. Đặt phần thông tin vào cột 2, thêm viền phân cách với cột 1 */
+    .shop-products.list .shop-product-info {
+        grid-column: 2;
+        grid-row: 1;
+        border-left: 1px solid #eee;
+    }
 
-  /* 4. Đặt phần thông tin vào Cột 2, thêm viền phân cách với Cột 1 */
-  .shop-products.list .shop-product-info {
-    grid-column: 2;
-    grid-row: 1;
-    border-left: 1px solid #eee;
-    /* Viền ngăn cách với Cột 1 (ảnh) */
-  }
+    /* 5. Đặt nhóm nút thao tác vào cột 3 (ngoài cùng bên phải), luôn hiển thị ở chế độ list */
+    .shop-products.list .product-hover-actions {
+        position: static !important;
+        grid-column: 3;
+        grid-row: 1;
+        transform: none !important;
+        opacity: 1 !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
 
-  /* 5. Đặt nhóm nút thao tác vào Cột 3 (ngoài cùng bên phải) */
-  .shop-products.list .product-hover-actions {
-    position: static !important;
-    /* Bỏ vị trí absolute mặc định, không còn ghim theo ảnh */
-    grid-column: 3;
-    grid-row: 1;
-    transform: none !important;
-    /* Tắt hiệu ứng trượt khi hover */
-    opacity: 1 !important;
-    /* Ở chế độ List, luôn hiển thị nút để dễ thao tác */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  /* Tắt hiệu ứng phóng to ảnh khi hover ở chế độ List để tránh lệch viền */
-  .shop-products.list .shop-product-card:hover .back {
-    transform: none !important;
-  }
+    /* Tắt hiệu ứng phóng to ảnh khi hover ở chế độ list để tránh lệch viền */
+    .shop-products.list .shop-product-card:hover .back {
+        transform: none !important;
+    }
 }
 
-/* =================================
-   THU GỌN CỘT ẢNH & NÚT THAO TÁC CHO TABLET & MOBILE (CHẾ ĐỘ LIST)
-================================= */
+/* Thu gọn cột ảnh & nút thao tác cho tablet & mobile (chế độ list) */
 @media (max-width: 992px) and (min-width: 521px) {
-  .shop-products.list .shop-product-card {
-    grid-template-columns: 220px 1fr 70px !important;
-  }
+    .shop-products.list .shop-product-card {
+        grid-template-columns: 220px 1fr 70px !important;
+    }
 }
 
 @media (max-width: 768px) and (min-width: 521px) {
-  .shop-products.list .shop-product-card {
-    grid-template-columns: 180px 1fr 60px !important;
-  }
+    .shop-products.list .shop-product-card {
+        grid-template-columns: 180px 1fr 60px !important;
+    }
 }

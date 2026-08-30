@@ -1,16 +1,34 @@
 /* =========================================
-   BỐ CỤC 2 CỘT CHO TRANG SẢN PHẨM
-========================================= */
-.product-manage-layout {
+   MỤC LỤC
+   1. BỐ CỤC 2 CỘT TRANG QUẢN LÝ SẢN PHẨM
+   2. SIDEBAR THỐNG KÊ KHO (CỘT PHẢI)
+   3. LƯỚI SẢN PHẨM DẠNG CARD (CỘT TRÁI)
+   4. PHÂN TRANG
+   5. MODAL THÊM / SỬA SẢN PHẨM
+   6. CHECKBOX "SẢN PHẨM NỔI BẬT" TRONG MODAL
+   7. Ô GIÁ TỰ ĐỘNG & KHUNG TẢI ẢNH KÉP TRONG MODAL
+   8. RESPONSIVE
+   ========================================= */
+
+/* =========================================
+   1. BỐ CỤC 2 CỘT TRANG QUẢN LÝ SẢN PHẨM
+   Cột trái: lưới sản phẩm | Cột phải: sidebar thống kê kho
+   ========================================= */
+   .product-manage-layout {
     display: grid;
     grid-template-columns: 1fr 280px;
     gap: 24px;
     align-items: start;
 }
 
+.product-main-area {
+    min-width: 0;
+}
+
 /* =========================================
-   CỘT PHẢI: THỐNG KÊ KHO (SIDEBAR)
-========================================= */
+   2. SIDEBAR THỐNG KÊ KHO (CỘT PHẢI)
+   Các thẻ số liệu (tổng SP, sắp hết hàng, hết hàng...), dính (sticky) khi cuộn
+   ========================================= */
 .product-stats-sidebar {
     display: flex;
     flex-direction: column;
@@ -65,14 +83,11 @@
     color: #fa5252 !important;
 }
 
-
 /* =========================================
-   CỘT TRÁI: LƯỚI SẢN PHẨM (CARD GRID)
-========================================= */
-.product-main-area {
-    min-width: 0;
-}
-
+   3. LƯỚI SẢN PHẨM DẠNG CARD (CỘT TRÁI)
+   Mỗi card: ảnh, tên, danh mục, giá, badge (giảm giá/trang chủ),
+   badge tồn kho và các nút hành động (thêm, sửa, xóa)
+   ========================================= */
 .admin-product-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -97,6 +112,7 @@
     transform: translateY(-3px);
 }
 
+/* Badge góc trái: hiển thị % giảm giá */
 .badge-discount {
     position: absolute;
     top: 12px;
@@ -109,6 +125,7 @@
     border-radius: 4px;
 }
 
+/* Badge góc phải: đánh dấu sản phẩm đang hiển thị ở trang chủ */
 .badge-home {
     position: absolute;
     top: 12px;
@@ -164,6 +181,7 @@
     color: #b23a2c;
 }
 
+/* Hàng nút hành động dưới mỗi card: badge tồn kho + nút sửa/xóa */
 .card-actions {
     display: flex;
     justify-content: center;
@@ -196,6 +214,7 @@
     color: #fa5252;
 }
 
+/* Nút "Thêm sản phẩm" ở đầu trang quản lý */
 .btn-add-product {
     background: #6f4323;
     color: white;
@@ -216,6 +235,7 @@
     transform: translateY(-2px);
 }
 
+/* Nút tròn nhỏ sửa/xóa trong card-actions */
 .action-btn {
     width: 32px;
     height: 32px;
@@ -232,17 +252,23 @@
     background: #e7f5ff;
     color: #1c7ed6;
 }
-.action-btn.edit:hover { background: #d0ebff; }
+
+.action-btn.edit:hover {
+    background: #d0ebff;
+}
 
 .action-btn.delete {
     background: #ffe3e3;
     color: #fa5252;
 }
-.action-btn.delete:hover { background: #ffc9c9; }
+
+.action-btn.delete:hover {
+    background: #ffc9c9;
+}
 
 /* =========================================
-   PHÂN TRANG (PAGINATION)
-========================================= */
+   4. PHÂN TRANG
+   ========================================= */
 .admin-pagination {
     display: flex;
     justify-content: center;
@@ -287,32 +313,20 @@
 }
 
 /* =========================================
-   MODAL THÊM / SỬA SẢN PHẨM (ĐÃ CHỈNH CĂN GIỮA TUYỆT ĐỐI)
-========================================= */
-.modal-header-1 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-
-.modal-header-1 h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-}
-
-
+   5. MODAL THÊM / SỬA SẢN PHẨM
+   Overlay che toàn màn hình + hộp form căn giữa, có scroll riêng,
+   header (tiêu đề + nút đóng) và footer (nút hủy/lưu)
+   ========================================= */
 .product-modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0; 
-    width: 100vw; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 99999; 
+    z-index: 99999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -323,34 +337,38 @@
     background: #fff;
     width: 600px;
     max-width: 90vw;
-    max-height: 90vh; 
-    overflow-y: auto; 
+    max-height: 90vh;
+    overflow-y: auto;
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     padding: 25px 30px;
     animation: slideDown 0.3s ease;
     margin: auto;
 }
 
-/* Thanh cuộn (Scrollbar) bên trong Modal */
+/* Thanh cuộn tùy chỉnh bên trong modal */
 .product-modal-box::-webkit-scrollbar {
     width: 6px;
 }
+
 .product-modal-box::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #f1f1f1;
     border-radius: 8px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .product-modal-box::-webkit-scrollbar-thumb {
-    background: #ccc; 
+    background: #ccc;
     border-radius: 8px;
 }
+
 .product-modal-box::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8; 
+    background: #a8a8a8;
 }
 
-/* Header Modal & Nút X Tròn */
+/* Header modal: tiêu đề + nút đóng tròn (dùng chung cho cả 2 biến thể header) */
+.modal-header-1,
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -360,6 +378,7 @@
     margin-bottom: 20px;
 }
 
+.modal-header-1 h3,
 .modal-header h3 {
     font-size: 18px;
     font-weight: 600;
@@ -382,11 +401,12 @@
     transition: 0.2s;
 }
 
-.close-btn:hover { 
+.close-btn:hover {
     background: #e2e2e2;
-    color: #fa5252; 
+    color: #fa5252;
 }
 
+/* Form nhập liệu trong modal: bố cục hàng/nhóm input */
 .modal-form .form-row {
     display: flex;
     gap: 15px;
@@ -421,6 +441,7 @@
     border-color: #6f4323;
 }
 
+/* Footer modal: nút hủy + nút lưu */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -441,13 +462,14 @@
     transition: 0.2s;
 }
 
-.btn-cancel:hover { background: #f5f5f5; }
+.btn-cancel:hover {
+    background: #f5f5f5;
+}
 
-/* Nút Tạo Sản Phẩm (Màu Nâu) */
 .btn-save {
     padding: 10px 24px;
     border: none;
-    background: #6f4323 !important; 
+    background: #6f4323 !important;
     color: #fff !important;
     border-radius: 8px;
     font-weight: 600;
@@ -456,16 +478,23 @@
     transition: 0.2s;
 }
 
-.btn-save:hover { 
-    background: #55331a !important; 
+.btn-save:hover {
+    background: #55331a !important;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* =========================================
-   CHECKBOX TRANG CHỦ (MODAL)
-========================================= */
+   6. CHECKBOX "SẢN PHẨM NỔI BẬT" TRONG MODAL
+   ========================================= */
 .featured-checkbox-group {
     margin-top: 5px;
     margin-bottom: 20px !important;
@@ -473,8 +502,8 @@
 
 .featured-label {
     display: flex !important;
-    flex-direction: row !important; /* Ép cứng nằm ngang */
-    align-items: center !important; /* Căn giữa theo chiều dọc */
+    flex-direction: row !important;
+    align-items: center !important;
     gap: 12px;
     background: #fffafa;
     border: 1px solid #ffc9c9;
@@ -482,7 +511,7 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin: 0 !important; 
+    margin: 0 !important;
 }
 
 .featured-label:hover {
@@ -494,11 +523,11 @@
 .featured-label input[type="checkbox"] {
     width: 20px !important;
     height: 20px !important;
-    accent-color: #fa5252; 
+    accent-color: #fa5252;
     cursor: pointer;
     margin: 0 !important;
     padding: 0 !important;
-    flex-shrink: 0; /* Ngăn không cho ô vuông bị bóp méo */
+    flex-shrink: 0;
 }
 
 .featured-label span {
@@ -512,8 +541,8 @@
 }
 
 /* =========================================
-   Ô HIỂN THỊ GIÁ TỰ ĐỘNG & TẢI ẢNH KÉP
-========================================= */
+   7. Ô GIÁ TỰ ĐỘNG & KHUNG TẢI ẢNH KÉP TRONG MODAL
+   ========================================= */
 .auto-price-display {
     background: #fff5f5;
     color: #b23a2c;
@@ -593,8 +622,8 @@
 }
 
 /* =========================================
-   RESPONSIVE
-========================================= */
+   8. RESPONSIVE
+   ========================================= */
 @media (max-width: 1400px) {
     .admin-product-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -605,6 +634,7 @@
     .product-manage-layout {
         grid-template-columns: 1fr;
     }
+
     .product-stats-sidebar {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -616,6 +646,7 @@
     .admin-product-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .product-stats-sidebar {
         grid-template-columns: 1fr;
     }

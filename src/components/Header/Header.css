@@ -4,14 +4,17 @@
    2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
    3. LOGO
    4. HEADER ACTIONS & ICONS
-   5. SEARCH BAR & DROPDOWN (ĐÃ NÂNG CẤP FULL)
+   5. SEARCH BAR & DROPDOWN
    6. USER MENU & DROPDOWN
-   7. RESPONSIVE & MOBILE
-   8. LIGHT MODE (TẮC KÈ HOA)
+   7. MINI CART DROPDOWN
+   8. RESPONSIVE & MOBILE
+   9. LIGHT MODE (TRANG SẢN PHẨM)
    ========================================= */
 
 /* =========================================
    1. SITE HEADER & STICKY
+   Header trong suốt, đè lên hero; khi cuộn (.scrolled)
+   chuyển sang fixed + nền tối + đổ bóng
    ========================================= */
    .site-header {
     position: absolute;
@@ -41,6 +44,8 @@
 
 /* =========================================
    2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
+   Menu chính + gạch chân trượt theo mục hover (.nav-indicator)
+   + dropdown con dạng "bong bóng" bật lên khi hover
    ========================================= */
 .main-nav {
     flex: 1;
@@ -69,11 +74,12 @@
     transition: color 0.25s ease;
 }
 
-.main-nav ul li:hover>a,
-.main-nav ul li.active>a {
+.main-nav ul li:hover > a,
+.main-nav ul li.active > a {
     color: #c99a6b;
 }
 
+/* Thanh "magic line" trượt theo vị trí item đang active/hover */
 .nav-indicator {
     position: absolute;
     bottom: -2px;
@@ -84,6 +90,7 @@
     pointer-events: none;
 }
 
+/* Panel dropdown con, có mũi tên tam giác chỉ lên trên */
 .main-nav .nav-dropdown {
     position: absolute;
     top: 130%;
@@ -161,6 +168,7 @@
 
 /* =========================================
    4. HEADER ACTIONS & ICONS
+   Cụm icon bên phải header (search, user, cart...) + badge số lượng giỏ hàng
    ========================================= */
 .header-actions {
     flex: 1;
@@ -203,7 +211,9 @@
 }
 
 /* =========================================
-   5. SEARCH BAR & DROPDOWN (ĐÃ NÂNG CẤP FULL)
+   5. SEARCH BAR & DROPDOWN
+   Ô input search co giãn khi active + bảng kết quả rơi xuống
+   (gồm: tag gợi ý khi rỗng, danh sách sản phẩm khớp tên, trạng thái không có kết quả)
    ========================================= */
 .search-wrap {
     position: relative;
@@ -250,7 +260,7 @@
     width: 150px;
 }
 
-/* BẢNG RƠI XUỐNG CỦA SEARCH */
+/* Bảng dropdown rơi xuống khi ô search active */
 .search-dropdown {
     position: absolute;
     top: calc(100% + 14px);
@@ -264,7 +274,9 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
-    transition: opacity var(--transition, 0.25s ease), visibility var(--transition, 0.25s ease), transform var(--transition, 0.25s ease);
+    transition: opacity var(--transition, 0.25s ease),
+        visibility var(--transition, 0.25s ease),
+        transform var(--transition, 0.25s ease);
     z-index: 9999;
 }
 
@@ -274,7 +286,7 @@
     transform: translateY(0);
 }
 
-/* NẾU RỖNG THÌ HIỆN TAG GỢI Ý */
+/* Tiêu đề + các tag gợi ý hiển thị khi chưa gõ gì */
 .search-dropdown h4 {
     font-size: 12px;
     font-weight: 700;
@@ -307,7 +319,7 @@
     color: #fff;
 }
 
-/* KẾT QUẢ SẢN PHẨM KHỚP TÊN */
+/* Danh sách sản phẩm khớp với từ khóa đang gõ */
 .search-results {
     display: flex;
     flex-direction: column;
@@ -316,8 +328,14 @@
     overflow-y: auto;
 }
 
-.search-results::-webkit-scrollbar { width: 4px; }
-.search-results::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+.search-results::-webkit-scrollbar {
+    width: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
 
 .search-result-item {
     display: flex;
@@ -365,6 +383,7 @@
     margin: 0;
 }
 
+/* Trạng thái không tìm thấy sản phẩm nào khớp */
 .no-result {
     text-align: center;
     padding: 20px 0;
@@ -373,9 +392,9 @@
     font-size: 14px;
 }
 
-
 /* =========================================
    6. USER MENU & DROPDOWN
+   Nút tài khoản góc phải + panel dropdown (thông tin user, các mục menu, đăng xuất)
    ========================================= */
 .user-menu {
     position: relative;
@@ -437,6 +456,7 @@
     transform: translateY(0);
 }
 
+/* Phần header của dropdown: avatar + tên/email user */
 .user-dropdown-header {
     display: flex;
     align-items: center;
@@ -512,128 +532,9 @@
 }
 
 /* =========================================
-   7. RESPONSIVE & MOBILE
-   ========================================= */
-.menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: inherit;
-    font-size: 22px;
-    cursor: pointer;
-}
-
-@media (max-width: 992px) {
-    .main-nav {
-        display: none;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .main-nav.open {
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--color-dark, #0d0d0d);
-        padding: 20px;
-        z-index: 999;
-    }
-
-    .main-nav.open ul {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .main-nav.open a {
-        color: #ffffff !important;
-    }
-
-    .main-nav.open a:hover {
-        color: #c99a6b !important;
-    }
-
-    .main-nav .nav-dropdown {
-        position: static;
-        box-shadow: none;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        background: transparent;
-        padding-left: 20px;
-        border-left: 2px solid #c99a6b;
-    }
-}
-
-@media (max-width: 768px) {
-    .search-form {
-        display: none;
-    }
-
-    .user-name {
-        display: none;
-    }
-
-    .search-dropdown {
-        width: 280px;
-    }
-}
-
-/* =========================================
-   8. LIGHT MODE (TRANG SẢN PHẨM)
-   ========================================= */
-.site-header.light-mode {
-    color: #2b1a10 !important;
-}
-
-.site-header.light-mode.scrolled {
-    background: #ffffff !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.site-header.light-mode .main-nav a {
-    color: #2b1a10 !important;
-}
-
-.site-header.light-mode .main-nav a:hover,
-.site-header.light-mode .main-nav li.active>a {
-    color: #c99a6b !important;
-}
-
-/* Đen hóa Logo & Icon */
-.site-header.light-mode .logo img {
-    filter: brightness(0) !important;
-}
-
-.site-header.light-mode .icon-btn,
-.site-header.light-mode .user-btn,
-.site-header.light-mode .menu-toggle {
-    color: #2b1a10 !important;
-}
-
-.site-header.light-mode .user-name {
-    color: #2b1a10 !important;
-}
-
-/* Đen hóa Search Bar */
-.site-header.light-mode .search-form {
-    border-bottom-color: rgba(43, 26, 16, 0.35) !important;
-}
-
-.site-header.light-mode .search-form input,
-.site-header.light-mode .search-form button {
-    color: #2b1a10 !important;
-}
-
-.site-header.light-mode .search-form input::placeholder {
-    color: rgba(43, 26, 16, 0.55) !important;
-}
-
-/* =========================================
-   MINI CART DROPDOWN (BẢN ĐẸP) + ANIMATION
+   7. MINI CART DROPDOWN
+   Bảng giỏ hàng nhanh hiện khi hover icon cart, gồm: danh sách item,
+   tổng tiền, 2 nút (xem giỏ hàng / thanh toán), hiệu ứng rung khi thêm sản phẩm
    ========================================= */
 .cart-wrap {
     position: relative;
@@ -791,7 +692,8 @@
     align-items: stretch !important;
 }
 
-.btn-view-cart, .btn-checkout {
+.btn-view-cart,
+.btn-checkout {
     flex: 1 !important;
     display: flex !important;
     align-items: center !important;
@@ -834,6 +736,7 @@
     border-color: #55331a !important;
 }
 
+/* Hiệu ứng rung icon giỏ hàng khi thêm sản phẩm thành công */
 .shake-cart-anim {
     animation: shakeCart 0.4s ease-in-out;
     color: #b23a2c !important;
@@ -845,4 +748,126 @@
     50% { transform: scale(1.2) rotate(10deg); }
     75% { transform: scale(1.2) rotate(-10deg); }
     100% { transform: scale(1) rotate(0deg); }
+}
+
+/* =========================================
+   8. RESPONSIVE & MOBILE
+   ========================================= */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .main-nav {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .main-nav.open {
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--color-dark, #0d0d0d);
+        padding: 20px;
+        z-index: 999;
+    }
+
+    .main-nav.open ul {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .main-nav.open a {
+        color: #ffffff !important;
+    }
+
+    .main-nav.open a:hover {
+        color: #c99a6b !important;
+    }
+
+    .main-nav .nav-dropdown {
+        position: static;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        padding-left: 20px;
+        border-left: 2px solid #c99a6b;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        display: none;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .search-dropdown {
+        width: 280px;
+    }
+}
+
+/* =========================================
+   9. LIGHT MODE (TRANG SẢN PHẨM)
+   Bản header nền sáng dùng cho các trang không có ảnh nền tối (vd: trang sản phẩm)
+   ========================================= */
+.site-header.light-mode {
+    color: #2b1a10 !important;
+}
+
+.site-header.light-mode.scrolled {
+    background: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.site-header.light-mode .main-nav a {
+    color: #2b1a10 !important;
+}
+
+.site-header.light-mode .main-nav a:hover,
+.site-header.light-mode .main-nav li.active > a {
+    color: #c99a6b !important;
+}
+
+/* Đổi logo & icon sang màu đen để hiện rõ trên nền sáng */
+.site-header.light-mode .logo img {
+    filter: brightness(0) !important;
+}
+
+.site-header.light-mode .icon-btn,
+.site-header.light-mode .user-btn,
+.site-header.light-mode .menu-toggle {
+    color: #2b1a10 !important;
+}
+
+.site-header.light-mode .user-name {
+    color: #2b1a10 !important;
+}
+
+/* Đổi màu search bar sang tối để hiện rõ trên nền sáng */
+.site-header.light-mode .search-form {
+    border-bottom-color: rgba(43, 26, 16, 0.35) !important;
+}
+
+.site-header.light-mode .search-form input,
+.site-header.light-mode .search-form button {
+    color: #2b1a10 !important;
+}
+
+.site-header.light-mode .search-form input::placeholder {
+    color: rgba(43, 26, 16, 0.55) !important;
 }
