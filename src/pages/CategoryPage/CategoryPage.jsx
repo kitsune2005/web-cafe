@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
-import { useCart } from "../../context/CartContext"; // 👉 THÊM IMPORT
+import { useCart } from "../../context/CartContext"; 
 import '../ProductsPage/ProductsPage.css';
 
 const CategoryPage = () => {

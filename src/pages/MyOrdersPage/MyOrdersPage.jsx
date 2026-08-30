@@ -7,9 +7,9 @@ import './MyOrdersPage.css';
 const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [currentTime, setCurrentTime] = useState(Date.now());
-    
+
     // 👉 LẤY THÔNG TIN NGƯỜI ĐANG ĐĂNG NHẬP
-    const { currentUser, loading } = useAuth(); 
+    const { currentUser, loading } = useAuth();
     const navigate = useNavigate();
 
     // 1. Tải đơn hàng từ LocalStorage khi vào trang
@@ -25,13 +25,13 @@ const MyOrdersPage = () => {
 
         window.scrollTo(0, 0);
         const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
-        
+
         // 👉 BỘ LỌC MA THUẬT: Chỉ lấy đúng đơn của tài khoản hiện tại
         const myOwnOrders = allOrders.filter(order => order.customerId === currentUser.id);
-        
+
         // Sắp xếp đơn mới lên đầu
         const sortedOrders = myOwnOrders.sort((a, b) => b.createdAt - a.createdAt);
-        
+
         setOrders(sortedOrders);
     }, [currentUser, loading, navigate]);
 
@@ -39,7 +39,7 @@ const MyOrdersPage = () => {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(Date.now());
-            
+
             setOrders(prevOrders => {
                 let hasChanges = false;
                 const updated = prevOrders.map(order => {
@@ -52,7 +52,7 @@ const MyOrdersPage = () => {
                     }
                     return order;
                 });
-                
+
                 // CẬP NHẬT KHO TỔNG: Chỉ cập nhật đơn của mình, giữ nguyên đơn người khác
                 if (hasChanges) {
                     const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
@@ -73,17 +73,17 @@ const MyOrdersPage = () => {
         // Cập nhật giao diện nội bộ
         const updatedOrders = orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
         setOrders(updatedOrders);
-        
+
         // CẬP NHẬT KHO TỔNG
         const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
-        const newAllOrders = allOrders.map(sysOrder => 
+        const newAllOrders = allOrders.map(sysOrder =>
             sysOrder.id === orderId ? { ...sysOrder, status: newStatus } : sysOrder
         );
         localStorage.setItem('my_orders', JSON.stringify(newAllOrders));
     };
 
     const formatPrice = (price) => price.toLocaleString('vi-VN') + '₫';
-    
+
     const formatTime = (timestamp) => {
         const d = new Date(timestamp);
         return d.toLocaleTimeString('vi-VN') + ' - ' + d.toLocaleDateString('vi-VN');
@@ -113,10 +113,10 @@ const MyOrdersPage = () => {
                             // Tính toán thời gian
                             const elapsed = Math.floor((currentTime - order.createdAt) / 1000);
                             const remaining = Math.max(0, 60 - elapsed);
-                            
+
                             return (
                                 <div key={order.id} className={`order-card status-${order.status}`}>
-                                    
+
                                     {/* PHẦN ĐẦU: TRẠNG THÁI & THỜI GIAN */}
                                     <div className="order-header">
                                         <div className="order-id">
@@ -166,7 +166,7 @@ const MyOrdersPage = () => {
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                 </div>
                             );
                         })}

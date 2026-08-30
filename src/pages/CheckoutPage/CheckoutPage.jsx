@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { useAuth } from '../../context/AuthContext'; // 👉 BƯỚC 1: KÉO BỘ NÃO BẢO VỆ VÀO
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
     const { cartItems, setCartItems } = useCart();
-    const { currentUser, loading } = useAuth(); // 👉 BƯỚC 2: LẤY THÔNG TIN USER HIỆN TẠI
+    const { currentUser, loading } = useAuth();
     const navigate = useNavigate();
 
     const [isProcessing, setIsProcessing] = useState(false);
+    
+    // 👉 BÍ KÍP CHỐNG LỖI KÉP: Cờ hiệu báo đơn hàng đã chốt xong
+    const isOrderSuccess = useRef(false); 
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -23,7 +26,6 @@ const CheckoutPage = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('bank');
 
-    // 👉 BƯỚC 3: NẾU CÓ USER, TỰ ĐỘNG ĐIỀN SẴN HỌ TÊN VÀ EMAIL CHO NHANH
     useEffect(() => {
         if (currentUser) {
             const nameParts = currentUser.name ? currentUser.name.split(' ') : [];
@@ -39,22 +41,24 @@ const CheckoutPage = () => {
         }
     }, [currentUser]);
 
-    // 👉 BƯỚC 4: "BẢO VỆ CỬA" CHẶN KHÁCH VÃNG LAI
+    // BẢO VỆ CỬA CHẶN KHÁCH VÃNG LAI
     useEffect(() => {
-        if (loading) return; // Đang tải dữ liệu thì đứng chờ 1 giây
+        if (loading) return; 
 
         window.scrollTo(0, 0);
 
-        // KIỂM TRA ĐĂNG NHẬP: CHƯA ĐĂNG NHẬP LÀ ĐÁ VỀ TRANG CHỦ
         if (!currentUser) {
-            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé! 🦊", { duration: 4000 });
-            navigate('/'); // Đá về trang chủ (Hoặc đổi thành '/login' nếu Boss có trang Login riêng)
+            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé! 🦊", { 
+                id: 'chot-don-error', 
+                duration: 4000 
+            });
+            navigate('/');
             return;
         }
 
-        // Nếu giỏ hàng trống thì đá về trang sản phẩm
-        if (cartItems.length === 0) {
-            toast.error("Giỏ hàng của bạn đang trống!");
+        // 👉 ĐÃ SỬA: Nếu cờ "Chốt đơn" bật lên rồi thì kệ xác giỏ hàng trống, KHÔNG báo lỗi nữa!
+        if (cartItems.length === 0 && !isOrderSuccess.current) {
+            toast.error("Giỏ hàng của bạn đang trống!", { id: 'empty-cart-error' });
             navigate('/products');
         }
     }, [currentUser, loading, cartItems.length, navigate]); 
@@ -74,7 +78,7 @@ const CheckoutPage = () => {
         e.preventDefault();
         
         if (!formData.firstName || !formData.phone || !formData.address) {
-            toast.error("Vui lòng điền đầy đủ thông tin bắt buộc (*)");
+            toast.error("Vui lòng điền đầy đủ thông tin bắt buộc (*)", { id: 'missing-info-error' });
             return;
         }
 
@@ -82,12 +86,19 @@ const CheckoutPage = () => {
 
         setTimeout(() => {
             setIsProcessing(false);
-            toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { duration: 4000 });
+            
+            // 👉 Bật cờ "Đã chốt đơn" lên trước khi xóa giỏ hàng
+            isOrderSuccess.current = true; 
+
+            toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { 
+                id: 'order-success', 
+                duration: 4000 
+            });
             
             const newOrder = {
                 id: 'FOX-' + Math.floor(100000 + Math.random() * 900000),
                 createdAt: Date.now(),
-                customerId: currentUser.id, // 👉 Lưu luôn ID của khách để sau này làm lịch sử mua hàng
+                customerId: currentUser.id,
                 customerName: `${formData.lastName} ${formData.firstName}`.trim(),
                 phone: formData.phone,
                 address: formData.address,
@@ -99,6 +110,7 @@ const CheckoutPage = () => {
             const existingOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
             localStorage.setItem('my_orders', JSON.stringify([newOrder, ...existingOrders]));
 
+            // Xóa giỏ hàng mượt mà không lo bị bảo vệ cửa chửi
             setCartItems([]);
             localStorage.removeItem('cart');
             
@@ -107,7 +119,7 @@ const CheckoutPage = () => {
     };
 
     // Chặn render giao diện nếu chưa có User hoặc giỏ hàng trống để tránh lỗi nhấp nháy
-    if (loading || !currentUser || cartItems.length === 0) return null; 
+    if (loading || !currentUser || (cartItems.length === 0 && !isOrderSuccess.current)) return null; 
 
     return (
         <div className="checkout-page">

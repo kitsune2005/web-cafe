@@ -1,6 +1,6 @@
 .orders-content-wrapper {
-    padding: 0 24px 100px !important; 
-    margin-bottom: 120px !important; 
+    padding: 0 24px 100px !important;
+    margin-bottom: 120px !important;
     min-height: 50vh;
 }
 
@@ -18,7 +18,7 @@
     border: 2px solid #eae5df;
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     transition: all 0.4s ease;
     overflow: hidden;
     position: relative;
@@ -46,48 +46,161 @@
     margin-bottom: 15px;
 }
 
-.order-id { font-size: 16px; color: #382212; }
-.order-id i { color: #6f4323; margin-right: 8px; }
+.order-id {
+    font-size: 16px;
+    color: #382212;
+}
+
+.order-id i {
+    color: #6f4323;
+    margin-right: 8px;
+}
 
 .badge {
-    padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
-.badge.warning { background: #fff3cd; color: #d97706; }
-.badge.info { background: #e0f2fe; color: #0284c7; }
-.badge.success { background: #d3f9d8; color: #0ca678; }
-.badge.danger { background: #ffe3e3; color: #fa5252; }
+
+.badge.warning {
+    background: #fff3cd;
+    color: #d97706;
+}
+
+.badge.info {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.badge.success {
+    background: #d3f9d8;
+    color: #0ca678;
+}
+
+.badge.danger {
+    background: #ffe3e3;
+    color: #fa5252;
+}
 
 /* THÔNG TIN THỜI GIAN */
-.order-timeline p { margin-bottom: 5px; font-size: 14px; color: #666; }
-.order-timeline strong { color: #333; }
+.order-timeline p {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+}
+
+.order-timeline strong {
+    color: #333;
+}
 
 /* BIÊN LAI (RECEIPT) */
 .order-receipt {
-    background: #fdfbf7; border: 1px dashed #d5c8b8; padding: 20px; border-radius: 8px; margin-top: 20px;
+    background: #fdfbf7;
+    border: 1px dashed #d5c8b8;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
 }
-.receipt-items { list-style: none; padding: 0; margin: 0 0 15px; border-bottom: 1px dashed #d5c8b8; padding-bottom: 15px; }
-.receipt-items li { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #555; }
-.receipt-items li:last-child { margin-bottom: 0; }
-.item-name strong { color: #6f4323; margin-left: 5px; }
 
-.receipt-total { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #382212; }
-.total-amount { font-size: 20px; color: #b23a2c; }
+.receipt-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px;
+    border-bottom: 1px dashed #d5c8b8;
+    padding-bottom: 15px;
+}
+
+.receipt-items li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.receipt-items li:last-child {
+    margin-bottom: 0;
+}
+
+.item-name strong {
+    color: #6f4323;
+    margin-left: 5px;
+}
+
+.receipt-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: #382212;
+}
+
+.total-amount {
+    font-size: 20px;
+    color: #b23a2c;
+}
 
 /* KHU VỰC NÚT XÁC NHẬN */
 .order-actions {
-    margin-top: 25px; padding-top: 20px; border-top: 1px solid #eae5df; text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eae5df;
+    text-align: center;
 }
-.action-title { font-size: 15px; color: #382212; margin-bottom: 15px; }
-.action-buttons { display: flex; gap: 15px; justify-content: center; }
+
+.action-title {
+    font-size: 15px;
+    color: #382212;
+    margin-bottom: 15px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
 
 .btn-confirm {
-    padding: 12px 25px; border: none; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
 }
-.btn-confirm.success { background: #0ca678; color: #fff; }
-.btn-confirm.success:hover { background: #099268; transform: translateY(-2px); }
-.btn-confirm.danger { background: #fa5252; color: #fff; }
-.btn-confirm.danger:hover { background: #f03e3e; transform: translateY(-2px); }
+
+.btn-confirm.success {
+    background: #0ca678;
+    color: #fff;
+}
+
+.btn-confirm.success:hover {
+    background: #099268;
+    transform: translateY(-2px);
+}
+
+.btn-confirm.danger {
+    background: #fa5252;
+    color: #fff;
+}
+
+.btn-confirm.danger:hover {
+    background: #f03e3e;
+    transform: translateY(-2px);
+}
 
 @media (max-width: 576px) {
-    .action-buttons { flex-direction: column; }
+    .action-buttons {
+        flex-direction: column;
+    }
 }
