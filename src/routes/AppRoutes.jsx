@@ -1,125 +1,342 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import {
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
 
-// NẠP BỘ NGUỒN CÀI ĐẶT VÀO ĐÂY
-import { SettingsProvider } from '../context/SettingsContext';
-import { ProductProvider } from '../context/ProductContext';
-import { CartProvider } from '../context/CartContext'; // 👉 THÊM BỘ NÃO GIỎ HÀNG
-import { Toaster } from 'react-hot-toast'; // 👉 THÊM THƯ VIỆN THÔNG BÁO
+import { useAuth } from "../context/AuthContext";
+
+// ================= CONTEXT =================
+
+import { SettingsProvider } from "../context/SettingsContext";
+import { ProductProvider } from "../context/ProductContext";
+import { CartProvider } from "../context/CartContext";
+import { NewsProvider } from "../context/NewsContext";
+import { ContactProvider } from "../context/ContactContext";
+
+import { Toaster } from "react-hot-toast";
 
 // ================= LAYOUTS =================
-import MainLayouts from '../layouts/MainLayouts';
-import AdminLayout from '../layouts/adminLayout/AdminLayout';
+
+import MainLayouts from "../layouts/MainLayouts";
+import AdminLayout from "../layouts/adminLayout/AdminLayout";
 
 // ================= CLIENT PAGES =================
-import HomePage from '../pages/HomePage';
-import ProductsPage from '../pages/ProductsPage/ProductsPage';
-import CategoryPage from '../pages/CategoryPage/CategoryPage';
-import NewsPage from '../pages/NewsPage/NewsPage';
-import NewsDetailPage from '../pages/NewsDetailPage/NewsDetailPage';
-import ContactPage from '../pages/ContactPage/ContactPage';
 
+import HomePage from "../pages/HomePage";
 
-// NHẬP TRANG CHI TIẾT SẢN PHẨM VÀ GIỎ HÀNG
-import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage';
-import CartPage from '../pages/CartPage/CartPage';
+import ProductsPage from "../pages/ProductsPage/ProductsPage";
+import CategoryPage from "../pages/CategoryPage/CategoryPage";
+import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 
-// IMPORT TRANG THANH TOÁN VÀ ĐƠN HÀNG
-import CheckoutPage from '../pages/CheckoutPage/CheckoutPage';
-import MyOrdersPage from '../pages/MyOrdersPage/MyOrdersPage';
+import NewsPage from "../pages/NewsPage/NewsPage";
+import NewsDetailPage from "../pages/NewsDetailPage/NewsDetailPage";
+
+import ContactPage from "../pages/ContactPage/ContactPage";
+
+import CartPage from "../pages/CartPage/CartPage";
+import CheckoutPage from "../pages/CheckoutPage/CheckoutPage";
+import MyOrdersPage from "../pages/MyOrdersPage/MyOrdersPage";
 
 // ================= ADMIN PAGES =================
-import ProductManage from '../pages/AdminPage/ProductManage/ProductManage';
-import NewsManage from '../pages/AdminPage/NewsManage/NewsManage';
-import Dashboard from '../pages/AdminPage/Dashboard/Dashboard';
-import OrderManage from '../pages/AdminPage/OrderManage/OrderManage';
-import ContactManage from '../pages/AdminPage/ContactManage/ContactManage';
-import AutoScrollToTop from './AutoScrollToTop';
-import ProductStoryManage from '../pages/AdminPage/ProductStoryManage/ProductStoryManage';
-import CustomerManage from '../pages/AdminPage/CustomerManage/CustomerManage';
+
+import Dashboard from "../pages/AdminPage/Dashboard/Dashboard";
+
+import ProductManage from "../pages/AdminPage/ProductManage/ProductManage";
+
+import NewsManage from "../pages/AdminPage/NewsManage/NewsManage";
+
+import ContactManage from "../pages/AdminPage/ContactManage/ContactManage";
+
+import OrderManage from "../pages/AdminPage/OrderManage/OrderManage";
+
+import ProductStoryManage from "../pages/AdminPage/ProductStoryManage/ProductStoryManage";
+
+import CustomerManage from "../pages/AdminPage/CustomerManage/CustomerManage";
+
+// ================= COMPONENT =================
+
+import AutoScrollToTop from "./AutoScrollToTop";
+
 
 const AppRoutes = () => {
-    const { currentUser, loading } = useAuth();
 
-    // 🛡️ BẢO VỆ ROUTE ADMIN
-    const ProtectedAdminRoute = ({ children }) => {
-        if (loading) {
-            return (
-                <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <h3 style={{ color: '#6f4323' }}><i className="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu Admin...</h3>
-                </div>
-            );
-        }
+  const {
+    currentUser,
+    loading
+  } = useAuth();
 
-        if (!currentUser || currentUser.role !== 'admin') {
-            return <Navigate to="/" replace />;
-        }
-        return children;
-    };
 
-    return (
-        <SettingsProvider>
-            <CartProvider>
-                <ProductProvider>
-                    <AutoScrollToTop />
-                    {/* 👉 ĐẶT MÁY PHÁT THÔNG BÁO Ở ĐÂY */}
-                    <Toaster position="top-center" reverseOrder={false} />
+  // =========================================
+  // BẢO VỆ ADMIN
+  // =========================================
 
-                    <Routes>
+  const ProtectedAdminRoute = ({
+    children
+  }) => {
 
-                                {/* ==============================================
-                                    PHE 1: KHÁCH HÀNG 
-                                ================================================ */}
-                                <Route element={<MainLayouts />}>
-                                    <Route path="/" element={<HomePage />} />
-                                    <Route path="/products" element={<ProductsPage />} />
-                                    <Route path="/category/:slug" element={<CategoryPage />} />
-                                    <Route path="/news" element={<NewsPage />}/>
-                                    <Route path="/news/:id" element={<NewsDetailPage />}/>
-                                    <Route path="/contact" element={<ContactPage />}/>
-                                    {/* TUYỆT CHIÊU ĐỊNH TUYẾN ĐỘNG CHO 45+ SẢN PHẨM */}
-                                    <Route path="/product/:id" element={<ProductDetailPage />} />
+    if (loading) {
 
-                            {/* ĐƯỜNG DẪN TỚI TRANG GIỎ HÀNG, THANH TOÁN, ĐƠN HÀNG */}
-                            <Route path="/cart" element={<CartPage />} />
-                            <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/my-orders" element={<MyOrdersPage />} /> {/* 👉 ĐÃ SỬA CHUẨN CÚ PHÁP */}
-                        </Route>
+      return (
+        <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
 
-                        {/* ==============================================
-                            PHE 2: ADMIN 
-                        ================================================ */}
-                        <Route
-                            path="/admin"
-                            element={
-                                <ProtectedAdminRoute>
-                                    <AdminLayout />
-                                </ProtectedAdminRoute>
-                            }
-                        >
-                            <Route index element={<Navigate to="dashboard" replace />} />
-                            <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="products" element={<ProductManage />} />
-                            <Route path="orders" element={<OrderManage />} />
-                        </Route>
+          <h3
+            style={{
+              color: "#6f4323"
+            }}
+          >
+            <i className="fa-solid fa-spinner fa-spin"></i>
 
-                                {/* ==============================================
-                                    BẮT LỖI 404 
-                                ================================================ */}
-                                <Route path="*" element={
-                                    <div style={{ textAlign: 'center', padding: '100px 0' }}>
-                                        <h1 style={{ color: '#6f4323' }}>404 - Lạc đường rồi 🦊</h1>
-                                    </div>
-                                } />
+            {" "}Đang tải dữ liệu Admin...
+          </h3>
 
-                            </Routes>
-                        </ContactProvider>
-                    </NewsProvider>        
-                </ProductProvider>
-            </CartProvider>
-        </SettingsProvider>
-    );
+        </div>
+      );
+    }
+
+
+    // Chưa login hoặc không phải admin
+    if (
+      !currentUser ||
+      currentUser.role !== "admin"
+    ) {
+
+      return (
+        <Navigate
+          to="/"
+          replace
+        />
+      );
+    }
+
+
+    return children;
+  };
+
+
+  return (
+
+    <SettingsProvider>
+
+      <CartProvider>
+
+        <ProductProvider>
+
+          <ContactProvider>
+
+            <NewsProvider>
+
+              <AutoScrollToTop />
+
+              <Toaster
+                position="top-center"
+                reverseOrder={false}
+              />
+
+
+              <Routes>
+
+                {/* =====================================
+                    CLIENT
+                ====================================== */}
+
+                <Route
+                  element={<MainLayouts />}
+                >
+
+                  {/* HOME */}
+                  <Route
+                    path="/"
+                    element={<HomePage />}
+                  />
+
+
+                  {/* PRODUCTS */}
+                  <Route
+                    path="/products"
+                    element={<ProductsPage />}
+                  />
+
+                  <Route
+                    path="/category/:slug"
+                    element={<CategoryPage />}
+                  />
+
+                  <Route
+                    path="/product/:id"
+                    element={<ProductDetailPage />}
+                  />
+
+
+                  {/* NEWS */}
+                  <Route
+                    path="/news"
+                    element={<NewsPage />}
+                  />
+
+                  <Route
+                    path="/news/:id"
+                    element={<NewsDetailPage />}
+                  />
+
+
+                  {/* CONTACT */}
+                  <Route
+                    path="/contact"
+                    element={<ContactPage />}
+                  />
+
+
+                  {/* CART */}
+                  <Route
+                    path="/cart"
+                    element={<CartPage />}
+                  />
+
+
+                  {/* CHECKOUT */}
+                  <Route
+                    path="/checkout"
+                    element={<CheckoutPage />}
+                  />
+
+
+                  {/* MY ORDERS */}
+                  <Route
+                    path="/my-orders"
+                    element={<MyOrdersPage />}
+                  />
+
+                </Route>
+
+
+                {/* =====================================
+                    ADMIN
+                ====================================== */}
+
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedAdminRoute>
+
+                      <AdminLayout />
+
+                    </ProtectedAdminRoute>
+                  }
+                >
+
+                  {/* /admin */}
+                  <Route
+                    index
+                    element={
+                      <Navigate
+                        to="dashboard"
+                        replace
+                      />
+                    }
+                  />
+
+
+                  {/* DASHBOARD */}
+                  <Route
+                    path="dashboard"
+                    element={<Dashboard />}
+                  />
+
+
+                  {/* PRODUCTS */}
+                  <Route
+                    path="products"
+                    element={<ProductManage />}
+                  />
+
+
+                  {/* PRODUCT STORY */}
+                  <Route
+                    path="product-story"
+                    element={<ProductStoryManage />}
+                  />
+
+
+                  {/* ORDERS */}
+                  <Route
+                    path="orders"
+                    element={<OrderManage />}
+                  />
+
+
+                  {/* CUSTOMERS */}
+                  <Route
+                    path="customers"
+                    element={<CustomerManage />}
+                  />
+
+
+                  {/* NEWS */}
+                  <Route
+                    path="news"
+                    element={<NewsManage />}
+                  />
+
+
+                  {/* CONTACT */}
+                  <Route
+                    path="contacts"
+                    element={<ContactManage />}
+                  />
+
+                </Route>
+
+
+                {/* =====================================
+                    404
+                ====================================== */}
+
+                <Route
+                  path="*"
+                  element={
+                    <div
+                      style={{
+                        textAlign: "center",
+                        padding: "100px 0"
+                      }}
+                    >
+
+                      <h1
+                        style={{
+                          color: "#6f4323"
+                        }}
+                      >
+                        404 - Lạc đường rồi 🦊
+                      </h1>
+
+                    </div>
+                  }
+                />
+
+              </Routes>
+
+
+            </NewsProvider>
+
+          </ContactProvider>
+
+        </ProductProvider>
+
+      </CartProvider>
+
+    </SettingsProvider>
+
+  );
 };
+
 
 export default AppRoutes;
