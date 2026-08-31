@@ -2,19 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { useProduct } from '../../context/ProductContext'; // 👉 IMPORT THÊM CONTEXT SẢN PHẨM
+import { useProduct } from '../../context/ProductContext';
 import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
     const { cartItems, setCartItems } = useCart();
     const { currentUser, loading } = useAuth();
-    const { deductStock } = useProduct(); // 👉 KÉO HÀM TRỪ KHO RA SỬ DỤNG
+    const { deductStock } = useProduct(); 
     const navigate = useNavigate();
 
     const [isProcessing, setIsProcessing] = useState(false);
-    
-    // BÍ KÍP CHỐNG LỖI KÉP: Cờ hiệu báo đơn hàng đã chốt xong
     const isOrderSuccess = useRef(false); 
 
     const [formData, setFormData] = useState({
@@ -43,10 +41,8 @@ const CheckoutPage = () => {
         }
     }, [currentUser]);
 
-    // BẢO VỆ CỬA CHẶN KHÁCH VÃNG LAI
     useEffect(() => {
         if (loading) return; 
-
         window.scrollTo(0, 0);
 
         if (!currentUser) {
@@ -58,7 +54,6 @@ const CheckoutPage = () => {
             return;
         }
 
-        // Nếu cờ "Chốt đơn" bật lên rồi thì kệ xác giỏ hàng trống, KHÔNG báo lỗi nữa!
         if (cartItems.length === 0 && !isOrderSuccess.current) {
             toast.error("Giỏ hàng của bạn đang trống!", { id: 'empty-cart-error' });
             navigate('/products');
@@ -76,7 +71,8 @@ const CheckoutPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handlePlaceOrder = (e) => {
+    // 👉 ĐÃ SỬA: Hàm Đặt hàng BẮT BUỘC ĐỢI (async/await)
+    const handlePlaceOrder = async (e) => {
         e.preventDefault();
         
         if (!formData.firstName || !formData.phone || !formData.address) {
@@ -86,44 +82,48 @@ const CheckoutPage = () => {
 
         setIsProcessing(true);
 
-        setTimeout(() => {
+        try {
+            // 👉 CHỐT CHẶN TỬ THẦN: Bắt buộc đợi Database báo cáo "Đã Trừ Kho Xong"
+            await deductStock(cartItems);
+
+            // 👉 Trừ kho thành công 100% rồi, giờ mới cho hiển thị hiệu ứng Loading và chuyển trang
+            setTimeout(() => {
+                setIsProcessing(false);
+                isOrderSuccess.current = true; 
+
+                toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { 
+                    id: 'order-success', 
+                    duration: 4000 
+                });
+                
+                const newOrder = {
+                    id: 'FOX-' + Math.floor(100000 + Math.random() * 900000),
+                    createdAt: Date.now(),
+                    customerId: currentUser.id,
+                    customerName: `${formData.lastName} ${formData.firstName}`.trim(),
+                    phone: formData.phone,
+                    address: formData.address,
+                    paymentMethod: paymentMethod === 'bank' ? 'Chuyển khoản' : 'Tiền mặt',
+                    items: cartItems,
+                    total: total,
+                    status: 'delivering' 
+                };
+                const existingOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
+                localStorage.setItem('my_orders', JSON.stringify([newOrder, ...existingOrders]));
+
+                setCartItems([]);
+                localStorage.removeItem('cart');
+                
+                navigate('/my-orders');
+            }, 1500);
+
+        } catch (error) {
+            // Lỡ có đứt mạng lúc trừ kho
             setIsProcessing(false);
-            
-            // 👉 Bật cờ "Đã chốt đơn" lên trước khi xóa giỏ hàng
-            isOrderSuccess.current = true; 
-
-            // 👉 GỌI HÀM TRỪ KHO VÀ TĂNG ĐÃ BÁN TRÊN DATABASE
-            deductStock(cartItems);
-
-            toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { 
-                id: 'order-success', 
-                duration: 4000 
-            });
-            
-            const newOrder = {
-                id: 'FOX-' + Math.floor(100000 + Math.random() * 900000),
-                createdAt: Date.now(),
-                customerId: currentUser.id,
-                customerName: `${formData.lastName} ${formData.firstName}`.trim(),
-                phone: formData.phone,
-                address: formData.address,
-                paymentMethod: paymentMethod === 'bank' ? 'Chuyển khoản' : 'Tiền mặt',
-                items: cartItems,
-                total: total,
-                status: 'delivering' 
-            };
-            const existingOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
-            localStorage.setItem('my_orders', JSON.stringify([newOrder, ...existingOrders]));
-
-            // Xóa giỏ hàng mượt mà không lo bị bảo vệ cửa chửi
-            setCartItems([]);
-            localStorage.removeItem('cart');
-            
-            navigate('/my-orders');
-        }, 2500);
+            toast.error("Lỗi kết nối máy chủ! Vui lòng thử đặt hàng lại.", { id: 'network-error' });
+        }
     };
 
-    // Chặn render giao diện nếu chưa có User hoặc giỏ hàng trống để tránh lỗi nhấp nháy
     if (loading || !currentUser || (cartItems.length === 0 && !isOrderSuccess.current)) return null; 
 
     return (
@@ -277,7 +277,7 @@ const CheckoutPage = () => {
                     <div className="processing-content">
                         <i className="fa-solid fa-circle-notch fa-spin processing-spinner"></i>
                         <h2>Đang xử lý đơn hàng...</h2>
-                        <p>Vui lòng không đóng trình duyệt lúc này!</p>
+                        <p>Vui lòng chờ trong giây lát và không đóng trình duyệt!</p>
                     </div>
                 </div>
             )}

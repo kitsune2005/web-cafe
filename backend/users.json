@@ -28,5 +28,27 @@
     "avatar": "http://localhost:5000/uploads/avatar_1788078301829_1788078459185.jpg",
     "provider": "local",
     "createdAt": "2026-08-30T08:25:01.829Z"
+  },
+  {
+    "id": 1788188967513,
+    "name": "test",
+    "username": "test123",
+    "email": "test@gmail.com",
+    "password": "123456",
+    "role": "customer",
+    "avatar": "",
+    "provider": "local",
+    "createdAt": "2026-08-31T15:09:27.513Z"
+  },
+  {
+    "id": 1788189783964,
+    "name": "Test nè",
+    "username": "tonytran2k5",
+    "email": "n@gmail.com",
+    "password": "123456abc",
+    "role": "customer",
+    "avatar": "",
+    "provider": "local",
+    "createdAt": "2026-08-31T15:23:03.964Z"
   }
 ]

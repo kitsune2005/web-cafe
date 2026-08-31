@@ -366,8 +366,9 @@
 .product-modal-box::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
-
-/* Header modal: tiêu đề + nút đóng tròn  */
+/* =========================================
+   1. HEADER MODAL CHUNG (Giữ nguyên nút xám cho các bảng khác)
+========================================= */
 .modal-header-1,
 .modal-header {
     display: flex;
@@ -405,7 +406,40 @@
     background: #e2e2e2;
     color: #fa5252;
 }
+/* =========================================
+   2. GHI ĐÈ RIÊNG CHO BẢNG SẢN PHẨM (Chuẩn 100% form Tài Khoản)
+========================================= */
+.product-modal-box .modal-header {
+    border-bottom: 2px solid #f1f1f1 !important; /* Ép viền ngang liền mạch, nét căng */
+    padding: 15px 0 15px 0;
+    margin-bottom: 20px;
+}
 
+.product-modal-box .modal-header h3 {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.product-modal-box .close-btn {
+    background: transparent !important; 
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    font-size: 20px !important; 
+    color: #888 !important;
+    padding: 0;
+}
+
+.product-modal-box .close-btn:hover {
+    background: transparent !important;
+    color: #fa5252 !important;
+    transform: scale(1.1);
+}
+
+.product-modal-box .modal-actions {
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+}
 /* Form nhập liệu trong modal: bố cục hàng/nhóm input */
 .modal-form .form-row {
     display: flex;

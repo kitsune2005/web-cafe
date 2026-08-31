@@ -9,7 +9,20 @@
     "status": "published",
     "isFeatured": true,
     "createdAt": "2026-08-30T09:28:36.737Z",
-    "updatedAt": "2026-08-30T10:32:49.725Z"
+    "updatedAt": "2026-08-31T17:34:16.364Z",
+    "contentBlocks": [
+      {
+        "id": 1788197636009,
+        "type": "image",
+        "url": "http://localhost:5000/uploads/news/block_img_1788197656363_617.png",
+        "caption": "Hình ảnh trên là cánh đồng cafe"
+      },
+      {
+        "id": 1788196459179,
+        "type": "text",
+        "value": "Trên con đường trở thành một nhà xuất khẩu café robusta lớn, Golden Robusta đã giúp cà phê Robusta thoát \"bẫy giá thấp\", dù vẫn đối mặt nhiều thách thức về chi phí và thị trường.\n\nNiên vụ 2024 - 2025, Golden Robusta đã xuất khẩu 20.000 tấn cà phê nhân xanh sang châu Âu, Hàn Quốc, Nhật Bản - những thị trường được coi là khó tính hàng đầu. \n\nNhưng đằng sau con số ấy không chỉ là câu chuyện mở rộng quy mô, mà là hành trình kiến tạo một hệ sinh thái cà phê tương hỗ, nơi doanh nghiệp và hơn 1.500 nông hộ cùng phát triển và chia sẻ giá trị, đưa dòng cà phê Robusta thoát khỏi mặc định cà phê giá trị thấp.\n\nNHỮNG \"CÔ CHÚ NÔNG HỘ\" GẮN BÓ\n\nNhà xưởng của Golden Robusta nằm ở Khu công nghiệp Lộc Sơn thuộc Bảo Lộc, Lâm Đồng - trên vùng đất B'Lao nổi danh về chất lượng cà phê Robusta. \n\nTừ những ngày đầu đặt chân đến đây, Golden Robusta đã không chọn con đường phát triển đơn lẻ. Họ xây dựng một mạng lưới liên kết chặt chẽ với nông dân – những người trực tiếp quyết định chất lượng hạt cà phê từ khâu trồng và thu hái.\n\nChị Phạm Thị Hồng Đào (Trưởng bộ phận chứng nhận của Golden Robusta) nhắc đến những người nông dân bằng một cái tên thân mật \"những cô chú nông hộ\". Cách gọi ấy phản ánh triết lý vận hành của họ: nông dân không phải là nhà cung cấp, mà là đối tác trong cùng một hệ sinh thái.\n\nTrong khu vườn rộng 10 ha của bà Đoàn Thị Cậy (63 tuổi, ngụ phường 1, Bảo Lộc), mối liên kết này được thể hiện rõ nét. Gắn bó 3 năm nay với chương trình hợp tác đáp ứng tiêu chuẩn xuất khẩu châu Âu, năm đầu, bà Cậy được hướng dẫn tham gia chương trình truy xuất mã vùng trồng, \"ghim\" địa chỉ vườn lên bản đồ. \n\nNgoài việc được bao tiêu với giá cao hơn giá thị trường khoảng trên dưới 1.000 đồng/kg, hằng năm, bà Cậy được cộng thưởng theo chương trình CRA (Canh tác cà phê thông minh - Climate Resilient Agriculture) - giúp bà thoát khỏi tình trạng bấp bênh của những mùa vụ trước, vững tâm canh tác trên mảnh đất cha mẹ để lại.\n\n\"Tôi biết thêm nhiều kỹ thuật mới, học cách bón phân đầu mùa và cuối mùa phù hợp để quả chín đều, cách tưới và canh sản lượng bình quân để dưỡng cây lâu dài - bà Cậy nói - Làm đúng quy trình thì đầu ra ổn định, giá tốt, mình yên tâm gắn bó lâu dài\".\n\n"
+      }
+    ]
   },
   {
     "id": 1788085941084,
@@ -21,7 +34,20 @@
     "status": "published",
     "isFeatured": true,
     "createdAt": "2026-08-30T10:32:21.084Z",
-    "updatedAt": "2026-08-30T10:32:21.084Z"
+    "updatedAt": "2026-08-31T17:36:20.797Z",
+    "contentBlocks": [
+      {
+        "id": 1788197707225,
+        "type": "image",
+        "url": "http://localhost:5000/uploads/news/block_img_1788197780796_813.png",
+        "caption": "Cà phê thải từ phân chim của Brazil"
+      },
+      {
+        "id": 1788197704103,
+        "type": "text",
+        "value": "Theo Hãng tin Reuters, ngành cà phê đặc sản của Brazil đang đối mặt với giai đoạn đầy thử thách, khi Mỹ - thị trường xuất khẩu lớn nhất - áp mức thuế lên đến 50% đối với nhiều mặt hàng từ quốc gia Nam Mỹ này.\n\nSố liệu từ Hiệp hội Cà phê đặc sản Brazil cho thấy chỉ riêng trong tháng 8, lượng cà phê đặc sản xuất khẩu sang Mỹ đã lao dốc gần 70% so với tháng trước. Giới chuyên gia dự báo tình hình sẽ còn tiếp tục ảm đạm trong những tháng tới.\n\nGiữa lúc phần lớn các dòng cà phê cao cấp rơi vào cảnh ế ẩm, một cái tên lại nổi bật với sức hút khó tin: cà phê chim Jacu - một trong những loại cà phê đắt đỏ và độc đáo nhất thế giới - vẫn phát triển ổn định, thậm chí là bứt phá."
+      }
+    ]
   },
   {
     "id": 1788086313203,

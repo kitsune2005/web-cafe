@@ -6,19 +6,20 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Đổi port theo đúng server.js của Boss (hiện tại là 5000)
   const API_URL = 'http://localhost:5000/api/products'; 
 
-  // LẤY DỮ LIỆU TỪ BACKEND
+  // 1. LẤY DỮ LIỆU TỪ BACKEND
   const fetchProducts = async () => {
     try {
       const response = await fetch(API_URL);
       if (response.ok) {
         const data = await response.json();
-        setProducts(data.products || data || []); 
+        // Ép kiểu an toàn 100%
+        setProducts(Array.isArray(data) ? data : (data.products || [])); 
       }
     } catch (error) {
       console.error("Lỗi khi tải dữ liệu từ API:", error);
+      setProducts([]); 
     } finally {
       setLoading(false);
     }
@@ -28,106 +29,95 @@ export const ProductProvider = ({ children }) => {
     fetchProducts();
   }, []);
 
-  // THÊM SẢN PHẨM MỚI (POST)
+  // 2. THÊM SẢN PHẨM MỚI (Bọc thép)
   const addProduct = async (newProduct) => {
-    const newId = products.length > 0 ? Math.max(...products.map(p => Number(p.id) || 0)) + 1 : 1;
-    const itemToAdd = { ...newProduct, id: newId, rating: newProduct.rating || 5 };
+    const safeProducts = Array.isArray(products) ? products : [];
+    const newId = safeProducts.length > 0 ? Math.max(...safeProducts.map(p => Number(p.id) || 0)) + 1 : 1;
+    const itemToAdd = { ...newProduct, id: String(newId), rating: newProduct.rating || 5, sold: 0 };
 
-    const response = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(itemToAdd),
     });
 
-    if (!response.ok) throw new Error("Lỗi từ Backend"); 
-    
-    const addedProduct = await response.json();
-    setProducts(prev => [addedProduct, ...prev]); 
+    // Ép tải lại danh sách, từ chối nhận rác từ Server gây crash
+    await fetchProducts(); 
   };
 
-  // XÓA SẢN PHẨM (DELETE)
+  // 3. XÓA SẢN PHẨM (Bọc thép)
   const deleteProduct = async (id) => {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) throw new Error("Lỗi xóa từ Backend");
-    setProducts(prev => prev.filter(product => product.id !== id));
+    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    await fetchProducts();
   };
 
-  // CẬP NHẬT SẢN PHẨM (PUT)
-  const updateProduct = async (updatedProduct) => {
-    const response = await fetch(`${API_URL}/${updatedProduct.id}`, {
+  // 4. CẬP NHẬT TỪ ADMIN (Giữ nguyên "Đã bán")
+  const updateProduct = async (updatedFields) => {
+    // Tìm lấy data cũ đang hiển thị trên web
+    const safeProducts = Array.isArray(products) ? products : [];
+    const oldProduct = safeProducts.find(p => String(p.id) === String(updatedFields.id)) || {};
+
+    // 👉 Bí kíp: Lấy đồ mới của Admin đè lên đồ cũ (Số sold cũ sẽ được giữ nguyên an toàn)
+    const finalPayload = { ...oldProduct, ...updatedFields };
+
+    await fetch(`${API_URL}/${updatedFields.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedProduct),
+      body: JSON.stringify(finalPayload),
     });
 
-    if (!response.ok) throw new Error("Lỗi cập nhật từ Backend");
-    setProducts(prev => prev.map(product => 
-      product.id === updatedProduct.id ? updatedProduct : product
-    ));
+    // Cập nhật lại toàn web mượt mà không crash
+    await fetchProducts();
   };
 
-  // CẬP NHẬT TIỂU SỬ SẢN PHẨM (PATCH)
+  // 5. CẬP NHẬT TIỂU SỬ
   const updateProductStory = async (id, shortDesc, longDesc) => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: 'PATCH',
+      const safeProducts = Array.isArray(products) ? products : [];
+      const oldProduct = safeProducts.find(p => String(p.id) === String(id)) || {};
+      const finalPayload = { ...oldProduct, shortDesc, longDesc };
+
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shortDesc, longDesc })
+        body: JSON.stringify(finalPayload)
       });
 
-      if (!response.ok) throw new Error("Lỗi cập nhật tiểu sử từ Backend");
-
-      setProducts(prev => prev.map(product => 
-        product.id === id ? { ...product, shortDesc, longDesc } : product
-      ));
-
+      await fetchProducts();
       return true; 
     } catch (error) {
-      console.error("Lỗi khi lưu tiểu sử API:", error);
+      console.error("Lỗi khi lưu tiểu sử:", error);
       return false; 
     }
   };
 
-  // 👉 HÀM MỚI: TRỪ KHO & TĂNG SỐ LƯỢNG ĐÃ BÁN (Tích hợp Optimistic Update)
+  // 6. TRỪ KHO BỌC THÉP CHO CHECKOUT
   const deductStock = async (cartItems) => {
-    // 1. ÉP GIAO DIỆN TRỪ KHO NGAY LẬP TỨC ĐỂ KHÁCH THẤY CHỮ "HẾT HÀNG" LIỀN
-    setProducts(prevProducts => prevProducts.map(prod => {
-      const itemInCart = cartItems.find(c => c.id === prod.id);
-      if (itemInCart) {
-        return {
-          ...prod,
-          stock: Math.max(0, (prod.stock || 0) - itemInCart.quantity),
-          sold: (prod.sold || 0) + itemInCart.quantity
-        };
-      }
-      return prod;
-    }));
-
-    // 2. GỌI API NGẦM PHÍA SAU ĐỂ LƯU VÀO DATABASE MÀ KHÔNG LÀM LAG TRANG
     try {
-      const updatePromises = cartItems.map(async (cartItem) => {
-        const product = products.find(p => p.id === cartItem.id);
-        if (!product) return;
+      const safeProducts = Array.isArray(products) ? products : [];
 
-        const newStock = Math.max(0, (product.stock || 0) - cartItem.quantity);
-        const newSold = (product.sold || 0) + cartItem.quantity;
+      for (const cartItem of cartItems) {
+        // Tìm số cũ trên giao diện
+        const oldProduct = safeProducts.find(p => String(p.id) === String(cartItem.id));
+        if (!oldProduct) continue;
 
-        // Bắn API PATCH để cập nhật 2 trường này trên Database
-        await fetch(`${API_URL}/${product.id}`, {
-          method: 'PATCH',
+        // Tính số lượng mới
+        const newStock = Math.max(0, (Number(oldProduct.stock) || 0) - Number(cartItem.quantity));
+        const newSold = (Number(oldProduct.sold) || 0) + Number(cartItem.quantity);
+
+        const finalPayload = { ...oldProduct, stock: newStock, sold: newSold };
+
+        await fetch(`${API_URL}/${cartItem.id}`, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stock: newStock, sold: newSold })
+          body: JSON.stringify(finalPayload)
         });
-      });
+      }
 
-      // Chờ Database xử lý xong xuôi hết
-      await Promise.all(updatePromises);
-
+      // Xong xuôi thì load lại danh sách 1 lần duy nhất
+      await fetchProducts(); 
     } catch (error) {
-      console.error("Lỗi khi đồng bộ Kho bãi trên Database:", error);
+      console.error("Lỗi khi trừ kho:", error);
     }
   };
 
@@ -138,13 +128,13 @@ export const ProductProvider = ({ children }) => {
 
   return (
     <ProductContext.Provider value={{ 
-      products, 
+      products: Array.isArray(products) ? products : [], // Rào cuối cùng chống sập
       loading, 
       addProduct, 
       deleteProduct, 
       updateProduct, 
       updateProductStory,
-      deductStock, /* 👉 KÉO HÀM NÀY RA CHO CÁC TRANG KHÁC DÙNG */
+      deductStock, 
       formatPrice, 
       refreshData: fetchProducts 
     }}>

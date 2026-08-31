@@ -1,47 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../context/CartContext'; 
+import toast from 'react-hot-toast'; 
+import Swal from 'sweetalert2'; 
 import './CartPage.css';
 
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState([]);
+    const { cartItems, setCartItems, removeFromCart } = useCart();
 
-    // Lấy dữ liệu giỏ hàng từ localStorage khi vừa vào trang
     useEffect(() => {
         window.scrollTo(0, 0);
-        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItems(savedCart);
     }, []);
 
-    // Hàm định dạng tiền tệ VNĐ
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + '₫';
     };
 
-    // Hàm cập nhật số lượng
-    const updateQuantity = (id, newQuantity) => {
+    // HÀM CẬP NHẬT SỐ LƯỢNG
+    const updateQuantity = (item, newQuantity) => {
         if (newQuantity < 1) return;
-        const updatedCart = cartItems.map(item =>
-            item.id === id ? { ...item, quantity: newQuantity } : item
-        );
-        setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        
+        if (newQuantity > (item.stock || 99)) {
+            toast.error(`Kho chỉ còn đúng ${item.stock} sản phẩm thôi Boss ơi! 🦊`, { 
+                id: 'over-stock-cart',
+                position: "bottom-right",
+                style: { fontWeight: 600 }
+            });
+            return;
+        }
+
+        setCartItems(prev => {
+            const updatedCart = prev.map(cartItem =>
+                cartItem.id === item.id ? { ...cartItem, quantity: newQuantity } : cartItem
+            );
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            return updatedCart;
+        });
     };
 
-    // Hàm xóa sản phẩm khỏi giỏ
-    const removeItem = (id) => {
-        const updatedCart = cartItems.filter(item => item.id !== id);
-        setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
+    // HÀM XÓA 1 MÓN
+    const handleRemoveItem = (id, name) => {
+        removeFromCart(id);
+        toast.success(`Đã xóa ${name} khỏi giỏ!`, {
+            position: "bottom-right",
+            icon: '🗑️',
+            style: { fontWeight: 600, color: '#fa5252' }
+        });
     };
 
-    // Tính toán tiền bạc
+    // 👉 ĐÃ SỬA: HÀM XÓA SẠCH GIỎ HÀNG BẰNG SWEETALERT2
+    const handleClearCart = () => {
+        Swal.fire({
+            title: 'Dọn sạch giỏ hàng?',
+            text: "Boss có chắc chắn muốn xóa hết tất cả các món trong giỏ không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#fa5252', // Màu đỏ cho nút xóa
+            cancelButtonColor: '#888',     // Màu xám cho nút hủy
+            confirmButtonText: 'Xóa sạch!',
+            cancelButtonText: 'Giữ lại'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setCartItems([]); 
+                localStorage.removeItem('cart');
+                toast.success('Đã dọn sạch giỏ hàng! ✨', {
+                    position: "bottom-right",
+                    style: { background: '#6f4323', color: '#fff', fontWeight: 600 } 
+                });
+            }
+        });
+    };
+
     const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shippingFee = subtotal > 500000 ? 0 : 30000; // Freeship cho đơn trên 500k
+    const shippingFee = subtotal > 500000 ? 0 : 30000;
     const total = subtotal + (cartItems.length > 0 ? shippingFee : 0);
 
     return (
         <div className="cart-page">
-            {/* 1. BREADCRUMB */}
             <div className="detail-breadcrumb">
                 <div className="container">
                     <h1>Giỏ hàng</h1>
@@ -54,7 +89,6 @@ const CartPage = () => {
 
             <div className="container cart-content-wrapper">
                 {cartItems.length === 0 ? (
-                    /* 2. TRẠNG THÁI GIỎ HÀNG TRỐNG */
                     <div className="empty-cart-area">
                         <div className="empty-cart-icon">
                             <i className="fa-solid fa-basket-shopping"></i>
@@ -66,9 +100,7 @@ const CartPage = () => {
                         </Link>
                     </div>
                 ) : (
-                    /* 3. DANH SÁCH GIỎ HÀNG & THANH TOÁN */
                     <div className="cart-main-layout">
-                        {/* Cột trái: Danh sách sản phẩm */}
                         <div className="cart-items-section">
                             <div className="cart-table-header">
                                 <div className="col-product">SẢN PHẨM</div>
@@ -83,7 +115,7 @@ const CartPage = () => {
                                         <div className="col-product">
                                             <button
                                                 className="btn-remove-item"
-                                                onClick={() => removeItem(item.id)}
+                                                onClick={() => handleRemoveItem(item.id, item.name)} 
                                                 title="Xóa sản phẩm này"
                                             >
                                                 <i className="fa-solid fa-xmark"></i>
@@ -103,10 +135,10 @@ const CartPage = () => {
 
                                         <div className="col-qty">
                                             <div className="quantity-selector cart-qty">
-                                                <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                                                <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
                                                 <input type="number" value={item.quantity} readOnly />
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                    onClick={() => updateQuantity(item, item.quantity + 1)}
                                                     disabled={item.quantity >= (item.stock || 99)}
                                                 >+</button>
                                             </div>
@@ -123,18 +155,12 @@ const CartPage = () => {
                                 <Link to="/products" className="btn-back-shop">
                                     <i className="fa-solid fa-arrow-left-long"></i> TIẾP TỤC MUA SẮM
                                 </Link>
-                                <button className="btn-clear-cart" onClick={() => {
-                                    if (window.confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')) {
-                                        setCartItems([]);
-                                        localStorage.removeItem('cart');
-                                    }
-                                }}>
+                                <button className="btn-clear-cart" onClick={handleClearCart}>
                                     XÓA GIỎ HÀNG
                                 </button>
                             </div>
                         </div>
 
-                        {/* Cột phải: Hóa đơn tóm tắt */}
                         <div className="cart-summary-section">
                             <div className="summary-card">
                                 <h3>CỘNG GIỎ HÀNG</h3>

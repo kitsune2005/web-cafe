@@ -5,7 +5,7 @@
     "oldPrice": 150000,
     "price": 150000,
     "discount": 0,
-    "stock": 40,
+    "stock": 38,
     "imageFront": "http://localhost:5000/uploads/sp_front_1788017907153.jpg",
     "imageBack": "http://localhost:5000/uploads/sp_back_1788017907155.jpg",
     "isFeatured": true,
@@ -13,7 +13,8 @@
     "status": "Còn hàng",
     "id": 2,
     "shortDesc": "test",
-    "longDesc": "test"
+    "longDesc": "test",
+    "sold": 2
   },
   {
     "name": "Cà Phê Decaf ",
@@ -35,13 +36,15 @@
     "oldPrice": 220000,
     "price": 198000,
     "discount": 10,
-    "stock": 10,
+    "stock": 15,
     "imageFront": "http://localhost:5000/uploads/sp_front_1788017898872.jpg",
     "imageBack": "http://localhost:5000/uploads/sp_back_1788017898873.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 4
+    "id": 4,
+    "sold": 10,
+    "img": "http://localhost:5000/uploads/sp_front_1788017898872.jpg"
   },
   {
     "name": "Cà phê MĂNG ĐEN BLEND Robusta & Arabica 250g ",

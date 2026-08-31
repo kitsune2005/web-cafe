@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './AuthModal.css';
 
-// Cấu hình Toast popup góc trên bên phải
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -26,6 +25,8 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [mode, setMode] = useState('login');
   const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (isOpen) {
@@ -40,15 +41,20 @@ const AuthModal = ({ isOpen, onClose }) => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+        setErrors(prev => ({ ...prev, [e.target.name]: '' }));
+    }
   };
 
   const handleSwitchMode = (newMode) => {
     setMode(newMode);
+    setErrors({}); 
   };
 
   // 1. Xử lý Google Login
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
+    setErrors({});
     try {
       const decoded = jwtDecode(credentialResponse.credential);
       const googleUserData = {
@@ -92,6 +98,59 @@ const AuthModal = ({ isOpen, onClose }) => {
   // 2. Xử lý Đăng ký / Đăng nhập thường
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({}); 
+    
+    const newErrors = {};
+
+    // ===============================================
+    // 👉 LUẬT LỆ KHẮT KHE CHO ĐĂNG KÝ
+    // ===============================================
+    if (mode === 'register') {
+        // 1. Check Họ Tên
+        if (!formData.name.trim()) {
+            newErrors.name = 'Vui lòng nhập Họ và Tên';
+        } else if (/\d/.test(formData.name)) {
+            // Ép luật: Tên không được phép chứa số
+            newErrors.name = 'Tên người không được chứa chữ số !!';
+        }
+        
+        // 2. Check Email
+        if (!formData.email.trim()) {
+            newErrors.email = 'Vui lòng nhập Địa chỉ Email';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Địa chỉ Email không hợp lệ';
+        }
+    }
+
+    // 3. Check Username
+    if (!formData.username.trim()) {
+        newErrors.username = 'Vui lòng nhập Tên đăng nhập';
+    } else if (mode === 'register') {
+        // Ép luật: Username đăng ký mới phải chứa CẢ CHỮ VÀ SỐ
+        const hasLetter = /[a-zA-Z]/.test(formData.username);
+        const hasNumber = /\d/.test(formData.username);
+        if (!hasLetter || !hasNumber) {
+            newErrors.username = 'Tên đăng nhập phải bao gồm cả chữ và số (VD: kitsune123)';
+        }
+    }
+
+    // 4. Check Password
+    if (!formData.password.trim()) {
+        newErrors.password = 'Vui lòng nhập Mật khẩu';
+    } else if (mode === 'register') {
+        if (formData.password.length < 6) {
+            newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        } else if (/^\d+$/.test(formData.password)) {
+            newErrors.password = 'Mật khẩu không được chỉ chứa toàn số';
+        }
+    }
+
+    // Nếu có lỗi thì ngưng luôn, hiện chữ đỏ lên
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+    }
+
     setLoading(true);
 
     if (mode === 'register') {
@@ -106,20 +165,20 @@ const AuthModal = ({ isOpen, onClose }) => {
           confirmButtonText: 'Đăng nhập ngay',
         }).then(() => {
           setMode('login');
-          // Chuyển sang login thì giữ lại username vừa đăng ký cho tiện
           setFormData({ name: '', username: formData.username, email: '', password: '' });
+          setErrors({});
         });
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Đăng ký thất bại',
-          text: result.message || 'Tên đăng nhập hoặc Email đã tồn tại.',
-          confirmButtonColor: '#6f4323',
-        });
+        if (result.message.toLowerCase().includes('email')) {
+            setErrors({ email: result.message });
+        } else if (result.message.toLowerCase().includes('đăng nhập') || result.message.toLowerCase().includes('tồn tại')) {
+            setErrors({ username: result.message });
+        } else {
+            setErrors({ server: result.message }); 
+        }
       }
       setLoading(false);
     } else {
-      // 🚨 ĐÃ SỬA: Đăng nhập bằng Username thay vì Email
       const result = await login(formData.username, formData.password);
       if (result.success) {
         Toast.fire({
@@ -132,12 +191,13 @@ const AuthModal = ({ isOpen, onClose }) => {
           navigate('/admin');
         }
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Đăng nhập thất bại',
-          text: result.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.',
-          confirmButtonColor: '#6f4323',
-        });
+        if (result.message.toLowerCase().includes('mật khẩu')) {
+            setErrors({ password: result.message });
+        } else if (result.message.toLowerCase().includes('tài khoản') || result.message.toLowerCase().includes('đăng nhập')) {
+            setErrors({ username: result.message });
+        } else {
+            setErrors({ server: result.message }); 
+        }
       }
       setLoading(false);
     }
@@ -187,76 +247,83 @@ const AuthModal = ({ isOpen, onClose }) => {
           <span>HOẶC TIẾP TỤC VỚI USERNAME</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {/* CÁC Ô CHỈ HIỆN KHI ĐĂNG KÝ (Tên & Email) */}
+        {errors.server && (
+            <div style={{ color: '#fa5252', fontSize: '13px', textAlign: 'center', marginBottom: '15px', fontWeight: 'bold' }}>
+                <i className="fa-solid fa-circle-exclamation"></i> {errors.server}
+            </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {mode === 'register' && (
             <>
               <div className="form-group-field">
                 <label>Họ và tên</label>
-                <div className="input-with-icon">
+                <div className={`input-with-icon ${errors.name ? 'has-error' : ''}`}>
                   <i className="fa-regular fa-user"></i>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    required
                     placeholder="Ví dụ: Kitsune Coffee"
                     disabled={loading}
+                    style={{ borderColor: errors.name ? '#fa5252' : '' }}
                   />
                 </div>
+                {errors.name && <span style={{ color: '#fa5252', fontSize: '12px', marginTop: '5px', display: 'block' }}>{errors.name}</span>}
               </div>
 
               <div className="form-group-field">
                 <label>Địa chỉ Email</label>
-                <div className="input-with-icon">
+                <div className={`input-with-icon ${errors.email ? 'has-error' : ''}`}>
                   <i className="fa-regular fa-envelope"></i>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
                     placeholder="tenban@domain.com"
                     disabled={loading}
+                    style={{ borderColor: errors.email ? '#fa5252' : '' }}
                   />
                 </div>
+                {errors.email && <span style={{ color: '#fa5252', fontSize: '12px', marginTop: '5px', display: 'block' }}>{errors.email}</span>}
               </div>
             </>
           )}
 
-          {/* Ô TÊN ĐĂNG NHẬP: Dùng chung cho cả Đăng nhập & Đăng ký */}
           <div className="form-group-field">
             <label>Tên đăng nhập</label>
-            <div className="input-with-icon">
+            <div className={`input-with-icon ${errors.username ? 'has-error' : ''}`}>
               <i className="fa-solid fa-at"></i>
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                required
                 placeholder="Ví dụ: kitsune_123"
                 disabled={loading}
+                style={{ borderColor: errors.username ? '#fa5252' : '' }}
               />
             </div>
+            {errors.username && <span style={{ color: '#fa5252', fontSize: '12px', marginTop: '5px', display: 'block' }}>{errors.username}</span>}
           </div>
 
-          {/* Ô MẬT KHẨU: Dùng chung cho cả Đăng nhập & Đăng ký */}
           <div className="form-group-field">
             <label>Mật khẩu</label>
-            <div className="input-with-icon">
+            <div className={`input-with-icon ${errors.password ? 'has-error' : ''}`}>
               <i className="fa-solid fa-lock"></i>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                required
                 placeholder="••••••••"
                 disabled={loading}
+                style={{ borderColor: errors.password ? '#fa5252' : '' }}
               />
             </div>
+            {errors.password && <span style={{ color: '#fa5252', fontSize: '12px', marginTop: '5px', display: 'block' }}>{errors.password}</span>}
           </div>
 
           <button type="submit" className={`auth-submit-btn ${loading ? 'is-loading' : ''}`} disabled={loading}>

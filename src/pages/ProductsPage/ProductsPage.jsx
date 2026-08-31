@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useProduct } from "../../context/ProductContext";
 import { useCart } from "../../context/CartContext";
-import toast from 'react-hot-toast'; // 👉 IMPORT THÊM TOAST ĐỂ BÁO LỖI
+import toast from 'react-hot-toast'; 
 import "./ProductsPage.css";
 
 const ProductsPage = () => {
@@ -16,7 +16,6 @@ const ProductsPage = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [viewMode, setViewMode] = useState("grid-3");
   
-  // LƯU TRỮ CÁC MỐC GIÁ ĐƯỢC CHỌN (Mảng)
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]); 
 
   const itemsPerPage = 12;
@@ -36,7 +35,6 @@ const ProductsPage = () => {
 
   const targetCategories = ['Cà phê nguyên chất', 'Cà phê đóng gói', 'Cà phê phin'];
 
-  // ĐỊNH NGHĨA CÁC MỐC LỌC GIÁ
   const priceRanges = [
     { id: 'under-100', label: 'Dưới 100.000đ', min: 0, max: 100000 },
     { id: '100-300', label: '100.000đ - 300.000đ', min: 100000, max: 300000 },
@@ -65,17 +63,14 @@ const ProductsPage = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    // 👉 ĐÃ SỬA LẠI: Lấy tất cả sản phẩm (Không lọc ẩn đồ hết hàng nữa)
     let result = [...products]; 
 
-    // 1. Lọc theo danh mục
     if (selectedCategories.length > 0) {
       result = result.filter((product) =>
         selectedCategories.includes(product.category)
       );
     }
 
-    // 2. LỌC THEO CÁC MỐC GIÁ ĐÃ TÍCH CHỌN
     if (selectedPriceRanges.length > 0) {
         result = result.filter((product) => {
             const pPrice = getPriceNumber(product.price);
@@ -86,7 +81,6 @@ const ProductsPage = () => {
         });
     }
 
-    // 3. Sắp xếp
     if (sortType === "price-low") {
       result.sort((a, b) => getPriceNumber(a.price) - getPriceNumber(b.price));
     }
@@ -100,7 +94,6 @@ const ProductsPage = () => {
     return result;
   }, [products, selectedCategories, sortType, selectedPriceRanges]);
 
-  // Cập nhật Sản phẩm mới nhất (Cũng hiển thị cả đồ hết hàng)
   const newestProducts = useMemo(() => {
       return [...products].reverse().slice(0, 3);
   }, [products]);
@@ -113,12 +106,10 @@ const ProductsPage = () => {
   const displayStart = filteredProducts.length === 0 ? 0 : startIndex + 1;
   const displayEnd = Math.min(endIndex, filteredProducts.length);
 
-  // HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY
   const handleAddFromCard = (e, item) => {
     e.preventDefault(); 
-    e.stopPropagation(); 
+    e.stopPropagation(); // Chặn nút Giỏ hàng chuyển trang
 
-    // 👉 CHẶN KHÔNG CHO MUA NẾU HẾT HÀNG VÀ BÁO LỖI
     if ((item.stock || 0) <= 0) {
         toast.error("Món này đang cháy hàng mất rồi Boss ơi! 🦊");
         return;
@@ -220,7 +211,6 @@ const ProductsPage = () => {
               
               {sidebarVisible && (
                 <aside className="shop-sidebar">
-                  {/* BỘ LỌC DANH MỤC */}
                   <div className="sidebar-block">
                     <h3>DANH MỤC</h3>
                     {targetCategories.map((categoryName) => (
@@ -240,7 +230,6 @@ const ProductsPage = () => {
                     ))}
                   </div>
 
-                  {/* BỘ LỌC MỨC GIÁ BẰNG CHECKBOX */}
                   <div className="sidebar-block">
                       <h3>MỨC GIÁ</h3>
                       <ul className="filter-list">
@@ -261,12 +250,11 @@ const ProductsPage = () => {
                       </ul>
                   </div>
 
-                  {/* KHỐI SẢN PHẨM MỚI NHẤT */}
                   <div className="sidebar-block">
                       <h3>SẢN PHẨM MỚI NHẤT</h3>
                       <div className="newest-products-list">
                           {newestProducts.map(prod => (
-                              <div key={prod.id} className="mini-product-item" onClick={() => navigate(`/product/${prod.id}`)}>
+                              <div key={prod.id} className="mini-product-item" onClick={() => navigate(`/product/${prod.id}`)} style={{ cursor: 'pointer' }}>
                                   <img src={prod.imageFront || prod.img} alt={prod.name} />
                                   <div className="mini-product-info">
                                       <span className="mini-name">{prod.name}</span>
@@ -283,7 +271,12 @@ const ProductsPage = () => {
               <div className={`shop-products ${viewMode}`}>
                 {currentProducts.length > 0 ? (
                   currentProducts.map((product) => (
-                    <article className="shop-product-card" key={product.id}>
+                    <article 
+                      className="shop-product-card" 
+                      key={product.id}
+                      onClick={() => navigate(`/product/${product.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="shop-product-image">
                         {product.discount > 0 && (
                           <span className="discount-badge">-{product.discount}%</span>
@@ -293,7 +286,7 @@ const ProductsPage = () => {
                           className="front"
                           src={product.imageFront || product.img}
                           alt={product.name}
-                          style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }} // Làm mờ ảnh nhẹ nếu hết hàng
+                          style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }} 
                         />
 
                         <img
@@ -304,13 +297,18 @@ const ProductsPage = () => {
                         />
 
                         <div className="product-hover-actions">
-                          <button type="button" title="Yêu thích">
+                          <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
                             <i className="fa-regular fa-heart"></i>
                           </button>
-                          <Link to={`/product/${product.id}`} title="Xem chi tiết">
+                          
+                          <Link 
+                            to={`/product/${product.id}`} 
+                            title="Xem chi tiết"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <i className="fa-regular fa-eye"></i>
                           </Link>
-                          {/* Khóa mờ nút Add To Cart nếu hết hàng */}
+                          
                           <button 
                             type="button" 
                             title={(product.stock || 0) <= 0 ? "Hết hàng" : "Thêm vào giỏ"} 
@@ -336,7 +334,11 @@ const ProductsPage = () => {
                         </div>
 
                         <h3>
-                          <Link to={`/product/${product.id}`} style={{color: 'inherit'}}>
+                          <Link 
+                            to={`/product/${product.id}`} 
+                            style={{color: 'inherit'}}
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             {product.name}
                           </Link>
                         </h3>
@@ -348,7 +350,6 @@ const ProductsPage = () => {
                           <span>{formatPrice(product.price)}</span>
                         </div>
 
-                        {/* 👉 BẢNG BÁO TÌNH TRẠNG KHO HÀNG */}
                         <div style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
                           {(product.stock || 0) <= 0 ? (
                             <span style={{ color: '#fa5252' }}>

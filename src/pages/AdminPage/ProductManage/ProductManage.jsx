@@ -9,14 +9,10 @@ const ProductManage = () => {
     const { products, deleteProduct, formatPrice, addProduct, updateProduct } = useProduct();
     const [searchTerm, setSearchTerm] = useState('');
     
-    // State bộ lọc trạng thái kho
     const [stockFilter, setStockFilter] = useState('all'); 
-
-    // STATE CHO PHÂN TRANG (PAGINATION)
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 16; 
 
-    // STATE CHO MODAL THÊM / SỬA SẢN PHẨM
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null); 
     
@@ -24,12 +20,13 @@ const ProductManage = () => {
         name: '', category: 'Cà phê nguyên chất', price: '', oldPrice: '', stock: '', imageFront: '', imageBack: '', discount: 0, isFeatured: false
     });
 
-    // TÍNH TOÁN DỮ LIỆU KHO CHO CỘT BÊN PHẢI
-    const totalProducts = products.length;
-    const outOfStockCount = products.filter(p => !p.stock || p.stock === 0).length;
-    const lowStockCount = products.filter(p => p.stock > 0 && p.stock < 10).length;
+    // 👉 BỌC THÉP MẢNG: Nếu chưa có data thì tự hiểu là mảng rỗng để không bị lỗi .length
+    const safeProducts = Array.isArray(products) ? products : [];
+    
+    const totalProducts = safeProducts.length;
+    const outOfStockCount = safeProducts.filter(p => !p.stock || Number(p.stock) === 0).length;
+    const lowStockCount = safeProducts.filter(p => Number(p.stock) > 0 && Number(p.stock) < 10).length;
 
-    // THUẬT TOÁN TỰ ĐỘNG TÍNH "GIÁ BÁN THỰC TẾ"
     useEffect(() => {
         if (isModalOpen) {
             const oldP = Number(formData.oldPrice) || 0;
@@ -55,9 +52,9 @@ const ProductManage = () => {
     const handleOpenEdit = (product) => {
         setEditingProduct(product);
         setFormData({ 
-            name: product.name, 
-            category: product.category, 
-            price: product.price, 
+            name: product.name || '', 
+            category: product.category || 'Cà phê nguyên chất', 
+            price: product.price || 0, 
             oldPrice: product.oldPrice || product.price || '', 
             stock: product.stock || 0, 
             imageFront: product.imageFront || product.img || '', 
@@ -79,7 +76,7 @@ const ProductManage = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!formData.imageFront) {
@@ -88,22 +85,38 @@ const ProductManage = () => {
         }
 
         const payload = {
-            ...formData,
+            name: formData.name,
+            category: formData.category,
             price: Number(formData.price),
             oldPrice: formData.oldPrice ? Number(formData.oldPrice) : 0,
             stock: Number(formData.stock),
             discount: formData.discount ? Number(formData.discount) : 0,
             img: formData.imageFront, 
+            imageFront: formData.imageFront,
+            imageBack: formData.imageBack,
+            isFeatured: formData.isFeatured
         };
 
-        if (editingProduct) {
-            if (updateProduct) updateProduct(editingProduct.id, payload);
-            toast.success("Cập nhật sản phẩm thành công! 🦊", { id: 'update-prod-success' });
-        } else {
-            if (addProduct) addProduct({ ...payload, id: Date.now() }); 
-            toast.success("Thêm sản phẩm mới thành công! 🦊", { id: 'add-prod-success' });
+        try {
+            if (editingProduct) {
+                const finalUpdatedProduct = { id: editingProduct.id, ...payload };
+                if (updateProduct) await updateProduct(finalUpdatedProduct);
+                toast.success("Cập nhật sản phẩm thành công! 🦊", { id: 'update-prod-success' });
+                
+                if (stockFilter === 'out' && payload.stock > 0) {
+                    setTimeout(() => {
+                        toast("Sản phẩm đã được nạp kho nên dời về tab 'Tất cả' nhé Boss!", { icon: '📦' });
+                    }, 500);
+                }
+            } else {
+                if (addProduct) await addProduct({ ...payload, id: String(Date.now()) }); 
+                toast.success("Thêm sản phẩm mới thành công! 🦊", { id: 'add-prod-success' });
+            }
+            setIsModalOpen(false);
+        } catch (error) {
+            toast.error("Có lỗi xảy ra khi lưu dữ liệu lên Server!");
+            console.error(error);
         }
-        setIsModalOpen(false);
     };
 
     const handleDelete = (id, name) => {
@@ -131,14 +144,17 @@ const ProductManage = () => {
         }));
     };
 
-    // Lọc theo Tên kết hợp với Trạng thái kho
-    const filteredProducts = products.filter(p => {
-        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    // 👉 BỌC THÉP TÌM KIẾM: Phòng hờ có sản phẩm bị lỗi mất tên
+    const filteredProducts = safeProducts.filter(p => {
+        const pName = p.name || ''; // Chữa cháy nếu p.name bị undefined
+        const searchStr = searchTerm || '';
+        const matchSearch = pName.toLowerCase().includes(searchStr.toLowerCase());
+        
         let matchStock = true;
         if (stockFilter === 'low') {
-            matchStock = p.stock > 0 && p.stock < 10;
+            matchStock = Number(p.stock) > 0 && Number(p.stock) < 10;
         } else if (stockFilter === 'out') {
-            matchStock = !p.stock || p.stock === 0;
+            matchStock = !p.stock || Number(p.stock) === 0;
         }
         return matchSearch && matchStock;
     });
@@ -178,14 +194,14 @@ const ProductManage = () => {
                                 />
                             </div>
 
-                            {/* 👉 DROPDOWN LỌC TRẠNG THÁI KHO ĐÃ CẬP NHẬT GIAO DIỆN */}
                             <select 
                                 value={stockFilter}
                                 onChange={(e) => {
                                     setStockFilter(e.target.value);
                                     setCurrentPage(1); 
                                 }}
-                                style={{ padding: '8px 15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', fontSize: '14px', background: '#fff', color: '#333', cursor: 'pointer', minWidth: '180px', fontWeight: '500' }}
+                                className="fox-custom-select"
+                                style={{ width: '180px' }}
                             >
                                 <option value="all">Tất cả trạng thái</option>
                                 <option value="low">Gần hết hàng (&lt;10)</option>
@@ -207,9 +223,9 @@ const ProductManage = () => {
                                     {product.discount > 0 && <span className="badge-discount">-{product.discount}%</span>}
                                     {product.isFeatured && <span className="badge-home"><i className="fa-solid fa-star"></i> Trang chủ</span>}
 
-                                    <img src={product.imageFront || product.img} alt={product.name} />
+                                    <img src={product.imageFront || product.img} alt={product.name || 'Sản phẩm'} />
 
-                                    <h4 className="product-name">{product.name}</h4>
+                                    <h4 className="product-name">{product.name || 'Chưa có tên'}</h4>
                                     <p className="product-category">{product.category}</p>
 
                                     <div className="product-prices">
@@ -218,7 +234,7 @@ const ProductManage = () => {
                                     </div>
 
                                     <div className="card-actions">
-                                        <div className={`stock-badge ${(!product.stock || product.stock === 0) ? 'danger' : (product.stock < 10 ? 'warning' : 'success')}`}>
+                                        <div className={`stock-badge ${(!product.stock || Number(product.stock) === 0) ? 'danger' : (Number(product.stock) < 10 ? 'warning' : 'success')}`}>
                                             <i className="fa-solid fa-box"></i> {product.stock || 0}
                                         </div>
                                         
@@ -272,11 +288,11 @@ const ProductManage = () => {
 
             </div>
 
-            {/* BẢNG MODAL THÊM / SỬA SẢN PHẨM */}
+            {/* BẢNG MODAL */}
             {isModalOpen && (
                 <div className="product-modal-overlay">
                     <div className="product-modal-box">
-                        <div className="modal-header-1">
+                        <div className="modal-header">
                             <h3>{editingProduct ? 'Sửa Sản Phẩm' : 'Thêm Món Mới'}</h3>
                             <button className="close-btn" onClick={() => setIsModalOpen(false)}><i className="fa-solid fa-xmark"></i></button>
                         </div>
@@ -288,7 +304,7 @@ const ProductManage = () => {
                             
                             <div className="form-group">
                                 <label>Danh mục *</label>
-                                <select name="category" value={formData.category} onChange={handleInputChange}>
+                                <select name="category" value={formData.category} onChange={handleInputChange} className="fox-custom-select">
                                     <option value="Cà phê nguyên chất">Cà phê nguyên chất</option>
                                     <option value="Cà phê đóng gói">Cà phê đóng gói</option>
                                     <option value="Cà phê phin">Cà phê phin</option>
