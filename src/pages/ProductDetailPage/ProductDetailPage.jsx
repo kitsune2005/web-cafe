@@ -67,7 +67,7 @@ const ProductDetailPage = () => {
     const handleAddToCart = () => {
         // Chặn luồng nếu sản phẩm đã hết hàng
         if (product.stock <= 0) {
-            toast.error("Sản phẩm này đã hết hàng rồi Boss ơi! 🦊");
+            toast.error("Sản phẩm này đã hết hàng rồi Boss ơi!");
             return;
         }
 

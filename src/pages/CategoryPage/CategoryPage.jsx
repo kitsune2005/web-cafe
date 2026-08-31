@@ -45,7 +45,7 @@ const CategoryPage = () => {
     e.stopPropagation(); 
 
     if ((item.stock || 0) <= 0) {
-        toast.error("Món này đang cháy hàng mất rồi Boss ơi! 🦊");
+        toast.error("Món này đang cháy hàng mất rồi Boss ơi!");
         return;
     }
 

@@ -36,7 +36,7 @@ const CustomerManage = () => {
 
     const handleDeleteUser = (id, name, role) => {
         if (role === 'admin') {
-            toast.error("Boss ơi! Đừng tự xóa chính mình chứ! 🦊");
+            toast.error("Boss ơi! Đừng tự xóa chính mình chứ!");
             return;
         }
 

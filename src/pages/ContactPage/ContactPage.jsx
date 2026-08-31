@@ -26,7 +26,7 @@ const ContactPage = () => {
       !formData.email ||
       !formData.message
     ) {
-      toast.error("Boss vui lòng điền đầy đủ thông tin nhé! 🦊", {
+      toast.error("Boss vui lòng điền đầy đủ thông tin nhé!", {
         position: "bottom-right",
         style: { fontWeight: 600 }
       });

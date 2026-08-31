@@ -18,7 +18,7 @@ const MyOrdersPage = () => {
 
         // Nếu chưa đăng nhập thì đuổi ra ngoài
         if (!currentUser) {
-            toast.error("Boss ơi, phải đăng nhập mới xem được đơn hàng nhé! 🦊");
+            toast.error("Boss ơi, phải đăng nhập mới xem được đơn hàng nhé! ");
             navigate('/');
             return;
         }

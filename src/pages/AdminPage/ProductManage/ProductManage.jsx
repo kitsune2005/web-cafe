@@ -80,7 +80,7 @@ const ProductManage = () => {
         e.preventDefault();
         
         if (!formData.imageFront) {
-            toast.error("Boss quên tải ảnh mặt trước kìa! 🦊");
+            toast.error("Boss quên tải ảnh mặt trước kìa!");
             return;
         }
 
@@ -101,7 +101,7 @@ const ProductManage = () => {
             if (editingProduct) {
                 const finalUpdatedProduct = { id: editingProduct.id, ...payload };
                 if (updateProduct) await updateProduct(finalUpdatedProduct);
-                toast.success("Cập nhật sản phẩm thành công! 🦊", { id: 'update-prod-success' });
+                toast.success("Cập nhật sản phẩm thành công!", { id: 'update-prod-success' });
                 
                 if (stockFilter === 'out' && payload.stock > 0) {
                     setTimeout(() => {
@@ -110,7 +110,7 @@ const ProductManage = () => {
                 }
             } else {
                 if (addProduct) await addProduct({ ...payload, id: String(Date.now()) }); 
-                toast.success("Thêm sản phẩm mới thành công! 🦊", { id: 'add-prod-success' });
+                toast.success("Thêm sản phẩm mới thành công! ", { id: 'add-prod-success' });
             }
             setIsModalOpen(false);
         } catch (error) {

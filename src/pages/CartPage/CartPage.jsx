@@ -21,7 +21,7 @@ const CartPage = () => {
         if (newQuantity < 1) return;
         
         if (newQuantity > (item.stock || 99)) {
-            toast.error(`Kho chỉ còn đúng ${item.stock} sản phẩm thôi Boss ơi! 🦊`, { 
+            toast.error(`Kho chỉ còn đúng ${item.stock} sản phẩm thôi Boss ơi!`, { 
                 id: 'over-stock-cart',
                 position: "bottom-right",
                 style: { fontWeight: 600 }

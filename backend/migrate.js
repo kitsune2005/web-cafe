@@ -13,8 +13,6 @@ Object.values(dirs).forEach(dir => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 });
 
-console.log('🦊 Kitsune đang bắt đầu dọn nhà...');
-
 // 2. Quét file và chuyển chuồng
 const files = fs.readdirSync(uploadsDir);
 let moveCount = 0;

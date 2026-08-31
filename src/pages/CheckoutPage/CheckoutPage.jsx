@@ -46,7 +46,7 @@ const CheckoutPage = () => {
         window.scrollTo(0, 0);
 
         if (!currentUser) {
-            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé! 🦊", { 
+            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé!", { 
                 id: 'chot-don-error', 
                 duration: 4000 
             });
