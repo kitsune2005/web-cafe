@@ -10,8 +10,15 @@ const NewsDetailPage = () => {
   // URL trả id dạng string nên phải Number
   const news = newsList.find((item) => String(item.id) === String(id));
   
-  const otherNews = newsList
+  // 👉 THUẬT TOÁN: RANDOM NHƯNG ƯU TIÊN BÀI MỚI NHẤT
+  const otherNews = [...newsList]
+    // 1. Loại bỏ bài đang đọc và chỉ lấy bài đã xuất bản
     .filter((item) => String(item.id) !== String(id) && item.status === "published")
+    // 2. Trộn ngẫu nhiên một chút (Tạo tính Random)
+    .sort(() => 0.5 - Math.random())
+    // 3. Xếp lại ưu tiên bài mới nhất (So sánh thời gian tạo)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    // 4. Bốc đúng 3 bài đầu tiên
     .slice(0, 3);
 
   // Cuộn lên đầu trang khi chuyển bài

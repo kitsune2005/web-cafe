@@ -96,5 +96,103 @@
     "isFeatured": false,
     "createdAt": "2026-08-30T10:43:38.198Z",
     "updatedAt": "2026-08-30T10:43:38.198Z"
+  },
+  {
+    "id": "1788209661647",
+    "title": "Giới thiệu về Thương hiệu Cà phê ART COFFEE",
+    "excerpt": "\"Giữa nhịp sống hối hả, ART COFFEE là điểm chạm của hương vị và nghệ thuật sống chậm. Bằng sự kết hợp khéo léo giữa nguồn hạt chất lượng cao cùng phong cách pha chế đầy sáng tạo, chúng tôi mang đến trải nghiệm cà phê đậm chất nghệ thuật—nơi bạn tìm thấy sự kết nối, năng lượng tích cực và những khoảnh khắc thăng hoa trong từng ngụm thưởng thức.\"",
+    "content": "",
+    "contentBlocks": [
+      {
+        "id": 1788209245689,
+        "type": "text",
+        "value": "Trong nhịp sống hiện đại hối hả, ly cà phê buổi sáng từ lâu đã không còn đơn thuần là một thói quen nạp lại năng lượng hay một thức uống giúp xua tan cơn buồn ngủ. Đối với những tâm hồn trót say mê hương vị tự nhiên của đất trời, thưởng thức cà phê là một khoảng lặng quý giá, một nghi thức đánh thức mọi giác quan và khơi nguồn cho những ý tưởng mới. Khởi nguồn từ chính niềm đam mê thuần khiết và tình yêu mãnh liệt với nông sản Việt Nam, ART COFFEE ra đời với sứ mệnh biến mỗi khoảnh khắc thưởng thức cà phê thành một trải nghiệm nghệ thuật đích thực."
+      },
+      {
+        "id": 1788209536489,
+        "type": "video",
+        "url": "https://youtu.be/HWe5S2yWebU?si=NkBpX6IQ5d4nwqFD",
+        "caption": "Hành Trình Chạm Đến Nghệ Thuật Trong Từng Tách Cà Phê  Trong nhịp sống hiện đại hối hả, ly cà phê buổi sáng từ lâu đã không còn đơn thuần là một thói quen nạp lại năng lượng hay một thức uống giúp xua tan cơn buồn ngủ. Đối với những tâm hồn trót say mê hương vị tự nhiên của đất trời, thưởng thức cà phê là một khoảng lặng quý giá, một nghi thức đánh thức mọi giác quan và khơi nguồn cho những ý tưởng mới. Khởi nguồn từ chính niềm đam mê thuần khiết và tình yêu mãnh liệt với nông sản Việt Nam, ART COFFEE ra đời với sứ mệnh biến mỗi khoảnh khắc thưởng thức cà phê thành một trải nghiệm nghệ thuật đích thực."
+      },
+      {
+        "id": 1788209546811,
+        "type": "text",
+        "value": "Giữa thị trường với muôn vàn lựa chọn, ART COFFEE kiên định theo đuổi con đường cà phê mộc sạch 100%. Chúng tôi nói không với hương liệu nhân tạo, chất phụ gia hay các phương pháp tẩm ướp công nghiệp làm mất đi bản sắc tự nhiên của hạt cà phê. Từng dòng sản phẩm—dù là Arabica thơm nồng nàn quyến rũ, Robusta đậm đà mạnh mẽ hay những công thức pha trộn (blend) độc quyền—đều mang trọn vẹn tinh túy của đất, nước và công sức của người gieo trồng.\n\nKhông chỉ dừng lại ở chất lượng sản phẩm đóng gói, ART COFFEE còn hướng tới việc xây dựng một không gian kết nối. Đó là nơi những người yêu cà phê có thể tìm thấy sự đồng điệu, nơi các bạn trẻ tìm thấy không gian làm việc tràn đầy cảm hứng, và là chốn dừng chân bình yên để sẻ chia những câu chuyện đời thường bên ly cà phê thơm ngát."
+      },
+      {
+        "id": 1788209593081,
+        "type": "image",
+        "url": "http://localhost:5000/uploads/news/block_img_1788209661645_29.jpg",
+        "caption": "Đồng Hành Cùng Phong Cách Sống Hiện Đại"
+      },
+      {
+        "id": 1788209640712,
+        "type": "text",
+        "value": "ART COFFEE tin rằng nghệ thuật không nằm ở những điều xa vời, mà hiện diện ngay trong sự tỉ mỉ của từng việc nhỏ chúng ta làm mỗi ngày. Việc lựa chọn một tách cà phê chất lượng chính là cách bạn yêu thương bản thân và trân trọng những giá trị bền vững.\n\nDù bạn đang tự tay pha chế một ly pour-over thanh tao tại nhà, khởi đầu ngày mới bằng ly espresso đậm đặc nơi văn phòng, hay thảnh thơi nhâm nhi từng giọt cà phê phin truyền thống, ART COFFEE luôn sẵn sàng đồng hành để mang đến cho bạn nguồn năng lượng tích cực và những xúc cảm trọn vẹn nhất."
+      }
+    ],
+    "image": "http://localhost:5000/uploads/news/news_cover_1788209661644_623.jpg",
+    "author": "Tony Trần",
+    "status": "published",
+    "isFeatured": true,
+    "createdAt": "2026-08-31T20:54:21.647Z",
+    "updatedAt": "2026-08-31T20:54:21.647Z"
+  },
+  {
+    "id": "1788210115083",
+    "title": "test",
+    "excerpt": "",
+    "content": "",
+    "contentBlocks": [
+      {
+        "id": 1788210091562,
+        "type": "text",
+        "value": ""
+      }
+    ],
+    "image": "http://localhost:5000/uploads/news/news_cover_1788210115082_727.jpg",
+    "author": "Admin",
+    "status": "published",
+    "isFeatured": true,
+    "createdAt": "2026-08-31T21:01:55.083Z",
+    "updatedAt": "2026-08-31T21:02:03.675Z"
+  },
+  {
+    "id": "1788210140023",
+    "title": "Test 2",
+    "excerpt": "",
+    "content": "",
+    "contentBlocks": [
+      {
+        "id": 1788210127026,
+        "type": "text",
+        "value": ""
+      }
+    ],
+    "image": "http://localhost:5000/uploads/news/news_cover_1788210140022_116.png",
+    "author": "Admin",
+    "status": "published",
+    "isFeatured": true,
+    "createdAt": "2026-08-31T21:02:20.023Z",
+    "updatedAt": "2026-08-31T21:02:20.023Z"
+  },
+  {
+    "id": "1788210172199",
+    "title": "Xin nhẹ con mắt nào =))",
+    "excerpt": "",
+    "content": "",
+    "contentBlocks": [
+      {
+        "id": 1788210144880,
+        "type": "text",
+        "value": ""
+      }
+    ],
+    "image": "http://localhost:5000/uploads/news/news_cover_1788210172189_777.gif",
+    "author": "Admin",
+    "status": "published",
+    "isFeatured": false,
+    "createdAt": "2026-08-31T21:02:52.199Z",
+    "updatedAt": "2026-08-31T21:02:52.199Z"
   }
 ]

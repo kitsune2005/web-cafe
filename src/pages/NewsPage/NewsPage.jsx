@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { useNews } from "../../context/NewsContext";
 
@@ -7,16 +7,28 @@ import "./NewsPage.css";
 const NewsPage = () => {
   const { newsList, loading } = useNews();
 
+  // 👉 THÊM STATE QUẢN LÝ PHÂN TRANG
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // Tối đa 9 bài một trang
+
   // Cuộn lên đầu trang khi vừa vào
   useEffect(() => {
       window.scrollTo(0, 0);
   }, []);
 
-  // 👉 BỌC THÉP CHỐNG SẬP TRẮNG TRANG: Ép kiểu mảng an toàn
   const safeNewsList = Array.isArray(newsList) ? newsList : [];
-  
-  // Chỉ lấy những bài đã đăng
   const publishedNews = safeNewsList.filter(news => news.status === "published");
+
+  // 👉 THUẬT TOÁN CẮT MẢNG THEO SỐ TRANG
+  const totalPages = Math.ceil(publishedNews.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentNews = publishedNews.slice(startIndex, startIndex + itemsPerPage);
+
+  // Hàm chuyển trang kèm hiệu ứng cuộn mượt
+  const changePage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 350, behavior: "smooth" }); // Cuộn vừa qua cái Banner
+  };
 
   if (loading) {
     return (
@@ -46,15 +58,13 @@ const NewsPage = () => {
         <div className="news-page-container">
             <div className="news-grid">
 
-                {publishedNews.length === 0 ? (
+                {currentNews.length === 0 ? (
                     <p style={{ textAlign: 'center', gridColumn: '1/-1', color: '#888', padding: '40px' }}>
                         Hiện tại chưa có bài viết nào được đăng.
                     </p>
                 ) : (
-                    publishedNews.map(news => (
-                        /* Bọc Link ra ngoài cùng để bấm vào đâu cũng mở bài viết */
+                    currentNews.map(news => (
                         <Link to={`/news/${news.id}`} className="news-card" key={news.id}>
-                            
                             <div className="news-card-img">
                                 <img 
                                     src={news.image || 'https://via.placeholder.com/400x250?text=No+Image'} 
@@ -70,12 +80,48 @@ const NewsPage = () => {
                                     Đọc thêm <i className="fa-solid fa-arrow-right-long"></i>
                                 </span>
                             </div>
-
                         </Link>
                     ))
                 )}
 
             </div>
+
+            {/* =========================================
+               THANH PHÂN TRANG (PAGINATION)
+            ========================================= */}
+            {totalPages > 1 && (
+                <div className="pagination" style={{ marginTop: '50px' }}>
+                    <button 
+                        type="button" 
+                        disabled={currentPage === 1} 
+                        onClick={() => changePage(currentPage - 1)}
+                    >
+                        <i className="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    {[...Array(totalPages)].map((_, index) => {
+                        const page = index + 1;
+                        return (
+                            <button
+                                type="button"
+                                key={page}
+                                className={currentPage === page ? "active" : ""}
+                                onClick={() => changePage(page)}
+                            >
+                                {page}
+                            </button>
+                        );
+                    })}
+
+                    <button 
+                        type="button" 
+                        disabled={currentPage === totalPages} 
+                        onClick={() => changePage(currentPage + 1)}
+                    >
+                        <i className="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            )}
         </div>
 
     </div>
