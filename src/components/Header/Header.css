@@ -16,7 +16,7 @@
    Header trong suốt, đè lên hero; khi cuộn (.scrolled)
    chuyển sang fixed + nền tối + đổ bóng
    ========================================= */
-   .site-header {
+.site-header {
     position: absolute;
     top: 0;
     left: 0;
@@ -74,8 +74,8 @@
     transition: color 0.25s ease;
 }
 
-.main-nav ul li:hover > a,
-.main-nav ul li.active > a {
+.main-nav ul li:hover>a,
+.main-nav ul li.active>a {
     color: #c99a6b;
 }
 
@@ -743,11 +743,25 @@
 }
 
 @keyframes shakeCart {
-    0% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.2) rotate(-10deg); }
-    50% { transform: scale(1.2) rotate(10deg); }
-    75% { transform: scale(1.2) rotate(-10deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.2) rotate(-10deg);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    75% {
+        transform: scale(1.2) rotate(-10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
 }
 
 /* =========================================
@@ -839,7 +853,7 @@
 }
 
 .site-header.light-mode .main-nav a:hover,
-.site-header.light-mode .main-nav li.active > a {
+.site-header.light-mode .main-nav li.active>a {
     color: #c99a6b !important;
 }
 
