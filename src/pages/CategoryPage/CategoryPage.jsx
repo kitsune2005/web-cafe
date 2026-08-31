@@ -1,13 +1,15 @@
 import React, { useMemo } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Link, Navigate, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
 import { useCart } from "../../context/CartContext"; 
+import toast from 'react-hot-toast';
 import '../ProductsPage/ProductsPage.css';
 
 const CategoryPage = () => {
   const { slug } = useParams();
   const { products, formatPrice } = useProduct();
-  const { addToCart } = useCart(); // 👉 KÉO HÀM TỪ CONTEXT
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const categoryConfig = useMemo(() => ({
     'nguyen-chat': {
@@ -38,10 +40,14 @@ const CategoryPage = () => {
 
   const filteredProducts = products.filter(product => product.category === currentCategory.dbCategoryName);
 
-  // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
   const handleAddFromCard = (e, item) => {
     e.preventDefault(); 
     e.stopPropagation(); 
+
+    if ((item.stock || 0) <= 0) {
+        toast.error("Món này đang cháy hàng mất rồi Boss ơi! 🦊");
+        return;
+    }
 
     const cardElement = e.currentTarget.closest('.shop-product-card');
     const imgElement = cardElement ? cardElement.querySelector('.front') : null;
@@ -133,7 +139,14 @@ const CategoryPage = () => {
         ) : (
           <div className="shop-products grid-3">
             {filteredProducts.map(product => (
-              <article className="shop-product-card" key={product.id}>
+              
+              /* 👉 Ép thẻ nằm dọc giống hệt bên ProductsPage */
+              <article 
+                className="shop-product-card" 
+                key={product.id}
+                onClick={() => navigate(`/product/${product.id}`)}
+                style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+              >
                 
                 <div className="shop-product-image">
                   {product.discount > 0 && (
@@ -144,29 +157,18 @@ const CategoryPage = () => {
                     className="front"
                     src={product.imageFront || product.img}
                     alt={product.name}
+                    style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }} 
                   />
 
                   <img
                     className="back"
                     src={product.imageBack || product.imageFront || product.img}
                     alt={`${product.name} mặt sau`}
+                    style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }}
                   />
-
-                  <div className="product-hover-actions">
-                    <button type="button" title="Yêu thích">
-                      <i className="fa-regular fa-heart"></i>
-                    </button>
-                    <Link to={`/product/${product.id}`} title="Xem chi tiết">
-                      <i className="fa-regular fa-eye"></i>
-                    </Link>
-                    {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
-                    <button type="button" title="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
-                      <i className="fa-solid fa-cart-shopping"></i>
-                    </button>
-                  </div>
                 </div>
 
-                <div className="shop-product-info">
+                <div className="shop-product-info" style={{ flex: 1 }}>
                   <div className="shop-rating">
                     {[...Array(5)].map((_, index) => (
                       <i
@@ -177,7 +179,7 @@ const CategoryPage = () => {
                   </div>
 
                   <h3>
-                    <Link to={`/product/${product.id}`} style={{color: 'inherit'}}>
+                    <Link to={`/product/${product.id}`} style={{color: 'inherit'}} onClick={(e) => e.stopPropagation()}>
                       {product.name}
                     </Link>
                   </h3>
@@ -189,14 +191,14 @@ const CategoryPage = () => {
                     <span>{formatPrice(product.price)}</span>
                   </div>
 
-                  <div style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
-                    {product.stock === 0 ? (
+                  <div className="shop-stock-status" style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
+                    {(product.stock || 0) <= 0 ? (
                       <span style={{ color: '#fa5252' }}>
                         <i className="fa-solid fa-xmark"></i> Hết hàng
                       </span>
-                    ) : product.stock <= 5 ? (
+                    ) : (product.stock || 0) <= 5 ? (
                       <span style={{ color: '#fd7e14' }}>
-                        <i className="fa-solid fa-triangle-exclamation"></i> Gần hết hàng (còn {product.stock})
+                        <i className="fa-solid fa-triangle-exclamation"></i> Gần hết (còn {product.stock})
                       </span>
                     ) : (
                       <span style={{ color: '#0ca678' }}>
@@ -204,7 +206,29 @@ const CategoryPage = () => {
                       </span>
                     )}
                   </div>
+                </div>
 
+                {/* 👉 DỜI NHÓM NÚT XUỐNG DƯỚI ĐÁY */}
+                <div className="product-hover-actions">
+                  <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
+                    <i className="fa-regular fa-heart"></i>
+                  </button>
+                  
+                  <Link to={`/product/${product.id}`} title="Xem chi tiết" onClick={(e) => e.stopPropagation()}>
+                    <i className="fa-regular fa-eye"></i>
+                  </Link>
+                  
+                  <button 
+                    type="button" 
+                    title={(product.stock || 0) <= 0 ? "Hết hàng" : "Thêm vào giỏ"} 
+                    onClick={(e) => handleAddFromCard(e, product)}
+                    style={{ 
+                        opacity: (product.stock || 0) <= 0 ? 0.5 : 1, 
+                        cursor: (product.stock || 0) <= 0 ? 'not-allowed' : 'pointer' 
+                    }}
+                  >
+                    <i className="fa-solid fa-cart-shopping"></i>
+                  </button>
                 </div>
 
               </article>

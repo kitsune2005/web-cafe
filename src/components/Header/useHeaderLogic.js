@@ -36,16 +36,16 @@ export const useHeaderLogic = () => {
       let threshold;
 
       if (location.pathname === "/products") {
-      threshold = 106;
+        threshold = 106;
       } else if (location.pathname === "/news") {
-      threshold = 236;
+        threshold = 236;
       } else if (location.pathname === "/contact") {
-      threshold = 436;
+        threshold = 436;
       } else {
-      threshold = Math.max(
-        window.innerHeight - 84,
-        40
-      );
+        threshold = Math.max(
+          window.innerHeight - 84,
+          40
+        );
       }
 
       setScrolled(window.scrollY > threshold);

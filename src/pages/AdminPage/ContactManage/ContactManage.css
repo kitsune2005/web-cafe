@@ -1,259 +1,91 @@
-.contact-manage-page {
-  display: flex;
-
-  gap: 24px;
-
-  padding: 24px;
-
-  align-items: flex-start;
-}
-
-.contact-list-section {
-  flex: 3;
-
-  min-width: 0;
-}
-
-.contact-stats-section {
-  flex: 1;
-
-  min-width: 210px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 20px;
-}
-
-
-/* HEADER */
-
-.contact-admin-header {
-  margin-bottom: 24px;
-}
-
-.contact-admin-header h3 {
-  margin: 0 0 8px;
-
-  font-size: 24px;
-
-  color: #333;
-}
-
-.contact-admin-header p {
-  margin: 0;
-
-  color: #888;
-
-  font-size: 14px;
-}
-
-
-/* TABLE */
+/* ==========================================
+   CSS BẢNG LIÊN HỆ (Layout ngoài dùng chung)
+========================================== */
 
 .contact-table-wrap {
   background: #fff;
-
-  border-radius: 12px;
-
+  border-radius: 8px;
   overflow-x: auto;
-
-  box-shadow:
-    0 4px 10px
-    rgba(0,0,0,.05);
 }
 
 .contact-table {
   width: 100%;
-
   border-collapse: collapse;
 }
 
 .contact-table th,
 .contact-table td {
-  padding: 15px;
-
+  padding: 18px 15px;
   text-align: left;
-
-  border-bottom:
-    1px solid #eee;
-
-  font-size: 13px;
-
-  vertical-align: top;
+  border-bottom: 1px dashed #eee;
+  font-size: 14px;
+  vertical-align: middle;
+  color: #444;
 }
 
 .contact-table th {
-  color: #666;
-
-  background: #fafafa;
-
-  font-weight: 600;
+  color: #888;
+  background: #fdfdfd;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-bottom: 2px solid #eee;
 }
 
 .unread-row {
   background: #fffdf8;
 }
 
+.unread-row td {
+  font-weight: 600; /* Làm đậm hàng chưa đọc */
+}
 
-/* INFO */
-
+/* INFO KHÁCH HÀNG */
 .contact-customer-info {
   display: flex;
-
   flex-direction: column;
-
-  gap: 6px;
-
-  color: #777;
-
-  font-size: 12px;
+  gap: 8px;
+  color: #666;
+  font-size: 13px;
 }
 
 .contact-customer-info span {
   display: flex;
-
-  gap: 6px;
-
+  gap: 8px;
   align-items: center;
 }
 
-.contact-message-cell {
-  max-width: 280px;
-
-  line-height: 1.5;
+.contact-customer-info i {
+  color: #a1785c;
 }
 
+.contact-message-cell {
+  max-width: 250px;
+  line-height: 1.6;
+  color: #555;
+}
 
-/* STATUS */
-
+/* BADGE TRẠNG THÁI */
 .contact-status {
   display: inline-block;
-
-  padding:
-    6px 10px;
-
+  padding: 6px 12px;
   border-radius: 20px;
-
   font-size: 11px;
-
   font-weight: bold;
 }
 
 .contact-status.unread {
   background: #fff3bf;
-
   color: #e67700;
 }
 
 .contact-status.read {
   background: #e6fcf5;
-
   color: #0ca678;
 }
 
-
-/* ACTION */
-
+/* HÀNG NÚT HÀNH ĐỘNG */
 .contact-actions {
   display: flex;
-
-  gap: 8px;
-}
-
-.contact-actions button {
-  width: 31px;
-
-  height: 31px;
-
-  border: none;
-
-  border-radius: 6px;
-
-  cursor: pointer;
-}
-
-.read-btn {
-  background: #eef2ff;
-
-  color: #3b82f6;
-}
-
-.delete-btn {
-  background: #ffe3e3;
-
-  color: #fa5252;
-}
-
-
-/* STAT */
-
-.contact-stat-card {
-  background: #fff;
-
-  padding: 24px;
-
-  border-radius: 12px;
-
-  text-align: center;
-
-  box-shadow:
-    0 4px 10px
-    rgba(0,0,0,.05);
-}
-
-.contact-stat-card p {
-  margin:
-    0 0 10px;
-
-  color: #888;
-
-  font-size: 13px;
-}
-
-.contact-stat-card h2 {
-  margin: 0;
-
-  font-size: 32px;
-
-  color: #382212;
-}
-
-.contact-stat-card span {
-  display: block;
-
-  margin-top: 5px;
-
-  font-size: 11px;
-
-  color: #aaa;
-}
-
-.unread-number {
-  color: #e67700 !important;
-}
-
-
-/* RESPONSIVE */
-
-@media (max-width: 1000px) {
-
-  .contact-manage-page {
-    flex-direction: column;
-  }
-
-  .contact-list-section,
-  .contact-stats-section {
-    width: 100%;
-  }
-
-  .contact-stats-section {
-    flex-direction: row;
-  }
-
-  .contact-stat-card {
-    flex: 1;
-  }
-
+  gap: 10px;
 }

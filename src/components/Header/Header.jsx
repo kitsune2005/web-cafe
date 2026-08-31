@@ -7,7 +7,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoFox from '../../assets/img/logo_fox_coffee.png';
 import './Header.css';
 
-// Kéo kho Giỏ Hàng và Sản phẩm vào
 import { useCart } from '../../context/CartContext';
 import { useProduct } from '../../context/ProductContext';
 
@@ -27,44 +26,51 @@ const Header = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const location = useLocation();
   const navListRef = useRef(null);
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
-
-  // STATE TÌM KIẾM MỚI
+  
+  // Dùng Ref để thao tác trực tiếp mượt mà
+  const indicatorRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact") || location.pathname.startsWith("/search");
   const isLightMode = !isDarkBannerPage;
-  // ==============================================================
 
-  const updateIndicator = (el) => {
-    if (!el || !navListRef.current) return;
-    const navRect = navListRef.current.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-    setIndicatorStyle({
-      left: elRect.left - navRect.left,
-      width: elRect.width,
-      opacity: 1
-    });
-  };
-
-  const resetIndicator = () => {
-    const activeEl = navListRef.current?.querySelector('li.active');
+  // 👉 HÀM MỚI: Chỉ bám theo thẻ Active, phớt lờ Hover
+  const updateActiveIndicator = () => {
+    if (!navListRef.current || !indicatorRef.current) return;
+    
+    // Tìm thằng nào đang có class 'active'
+    const activeEl = navListRef.current.querySelector('li.active');
+    
     if (activeEl) {
-      updateIndicator(activeEl);
+      const navRect = navListRef.current.getBoundingClientRect();
+      const elRect = activeEl.getBoundingClientRect();
+      
+      indicatorRef.current.style.left = `${elRect.left - navRect.left}px`;
+      indicatorRef.current.style.width = `${elRect.width}px`;
+      indicatorRef.current.style.opacity = '1';
     } else {
-      setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
+      // Nếu không trang nào active (ví dụ trang Giỏ hàng) thì giấu thanh line đi
+      indicatorRef.current.style.opacity = '0';
     }
   };
 
   useEffect(() => {
-    setTimeout(resetIndicator, 100);
+    setNavDropdown(null);
+    // Chạy khi vừa vào trang hoặc đổi trang
+    const timer = setTimeout(updateActiveIndicator, 150);
+    
+    // Cập nhật lại thanh line khi xoay màn hình hoặc đổi size
+    window.addEventListener('resize', updateActiveIndicator);
+    
+    return () => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', updateActiveIndicator);
+    };
   }, [location.pathname, menuItems]);
 
-  // 👉 ĐÃ SỬA TẠI ĐÂY: Chỉ lấy độ dài của mảng để đếm số loại món ăn
   const totalQuantity = cartItems.length; 
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-  // BỘ LỌC TÌM KIẾM MA THUẬT (Giới hạn hiện 5 món)
   const searchResults = searchTerm.trim() === ''
     ? []
     : products.filter(p =>
@@ -72,7 +78,6 @@ const Header = () => {
       p.category.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 5);
 
-  // Đóng Search khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -83,7 +88,6 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchRef, setSearchOpen]);
 
-  // HÀM XỬ LÝ CHUYỂN TRANG KHI BẤM ENTER TÌM KIẾM
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -100,22 +104,34 @@ const Header = () => {
       <header className={`site-header ${scrolled ? 'scrolled' : ''} ${isLightMode ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
-          {/* Menu Desktop */}
+          {mobileMenuOpen && (
+              <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}></div>
+          )}
+
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
-            <ul ref={navListRef} onMouseLeave={resetIndicator} style={{ position: 'relative' }}>
+            <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)}>
+                <i className="fa-solid fa-xmark"></i>
+            </button>
+
+            {/* 👉 Đã xóa sự kiện onMouseLeave ở thẻ ul */}
+            <ul ref={navListRef} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.link || (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
                 return (
                   <li
                     key={index}
                     className={`${item.dropdown ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}
-                    onMouseEnter={(e) => updateIndicator(e.currentTarget)}
+                    // 👉 Đã xóa sự kiện onMouseEnter ở thẻ li
                   >
                     <Link
                       to={item.link || '#'}
                       onClick={() => {
                         if (item.label.toLowerCase() === 'giới thiệu') window.scrollTo({ top: 0, behavior: 'smooth' });
-                        if (item.dropdown) setNavDropdown(navDropdown === item.label ? null : item.label);
+                        if (item.dropdown) {
+                            setNavDropdown(navDropdown === item.label ? null : item.label);
+                        } else {
+                            setMobileMenuOpen(false);
+                        }
                       }}
                     >
                       {item.label}
@@ -125,14 +141,14 @@ const Header = () => {
                       <ul className={`nav-dropdown ${navDropdown === item.label ? 'force-show' : ''}`}>
                         {item.label.toLowerCase() === 'sản phẩm' ? (
                           <>
-                            <li><Link to="/category/nguyen-chat" onClick={() => setNavDropdown(null)}>Cà phê nguyên chất</Link></li>
-                            <li><Link to="/category/dong-goi" onClick={() => setNavDropdown(null)}>Cà phê đóng gói</Link></li>
-                            <li><Link to="/category/phin" onClick={() => setNavDropdown(null)}>Cà phê phin</Link></li>
+                            <li><Link to="/category/nguyen-chat" onClick={() => { setNavDropdown(null); setMobileMenuOpen(false); }}>Cà phê nguyên chất</Link></li>
+                            <li><Link to="/category/dong-goi" onClick={() => { setNavDropdown(null); setMobileMenuOpen(false); }}>Cà phê đóng gói</Link></li>
+                            <li><Link to="/category/phin" onClick={() => { setNavDropdown(null); setMobileMenuOpen(false); }}>Cà phê phin</Link></li>
                           </>
                         ) : (
                           item.dropdown.map((sub, subIndex) => (
                             <li key={subIndex}>
-                              <Link to={sub.link || '#'} onClick={() => setNavDropdown(null)}>{sub.label}</Link>
+                              <Link to={sub.link || '#'} onClick={() => { setNavDropdown(null); setMobileMenuOpen(false); }}>{sub.label}</Link>
                             </li>
                           ))
                         )}
@@ -141,22 +157,39 @@ const Header = () => {
                   </li>
                 );
               })}
-              <div className="nav-indicator" style={indicatorStyle}></div>
+              
+              {/* Thanh gạch dưới chỉ di chuyển khi state Active thay đổi */}
+              <div className="nav-indicator" ref={indicatorRef}></div>
             </ul>
+
+            <div className="mobile-user-bottom">
+                {currentUser ? (
+                    <div className="mobile-user-card" onClick={() => { setMobileMenuOpen(false); setProfileOpen(true); }}>
+                        {currentUser.avatar ? (
+                            <img src={currentUser.avatar} alt="Avatar" />
+                        ) : (
+                            <div className="m-avatar-placeholder">{currentUser.name.charAt(0).toUpperCase()}</div>
+                        )}
+                        <div className="m-user-info">
+                            <span className="m-greeting">Xin chào,</span>
+                            <span className="m-name">{currentUser.name}</span>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="mobile-user-card login-btn" onClick={() => { setMobileMenuOpen(false); setAuthModalOpen(true); }}>
+                        <div className="m-avatar-placeholder"><i className="fa-regular fa-user"></i></div>
+                        <span className="m-name">Đăng nhập / Đăng ký</span>
+                    </div>
+                )}
+            </div>
           </nav>
 
-          {/* Logo */}
           <Link to="/" className="logo">
             <img src={logoFox} alt="Logo" />
           </Link>
 
-          {/* Actions bên phải */}
           <div className="header-actions">
-
-            {/* KHU VỰC SEARCH ĐÃ ĐƯỢC NÂNG CẤP */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
-
-              {/* Đã gắn hàm handleSearchSubmit vào Form */}
               <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
                 <input
                   type="text"
@@ -174,11 +207,9 @@ const Header = () => {
               {searchOpen && (
                 <div className="search-dropdown">
                   {searchTerm.trim() === '' ? (
-                    // TRẠNG THÁI 1: CHƯA GÕ (GỢI Ý)
                     <div className="search-dropdown-block">
                       <h4>Sản phẩm bán chạy</h4>
                       <div className="search-tags">
-                        {/* Đã gắn sự kiện bấm vào tag là bay sang trang Search ngay lập tức */}
                         <span className="tag-chip" onClick={() => { setSearchOpen(false); navigate('/search?q=Cà+phê'); }}>
                           <i className="fa-solid fa-magnifying-glass"></i> Cà phê
                         </span>
@@ -191,7 +222,6 @@ const Header = () => {
                       </div>
                     </div>
                   ) : (
-                    // TRẠNG THÁI 2: ĐANG GÕ (HIỂN THỊ KẾT QUẢ DROPDOWN)
                     <div className="search-results">
                       {searchResults.length > 0 ? (
                         searchResults.map(product => (
@@ -219,11 +249,9 @@ const Header = () => {
                 </div>
               )}
             </div>
-            {/* KẾT THÚC: KHU VỰC SEARCH */}
 
             <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
 
-            {/* User Dropdown */}
             {currentUser ? (
               <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
                 <button className="icon-btn user-btn" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
@@ -247,22 +275,17 @@ const Header = () => {
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setProfileOpen(true); }}>
                       <i className="fa-solid fa-user"></i> Tài khoản của tôi
                     </button>
-
                     <Link to="/cart" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-cart-shopping"></i> Giỏ hàng
                     </Link>
-
                     <Link to="/my-orders" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                       <i className="fa-solid fa-box"></i> Đơn hàng
                     </Link>
-
-                    {/* CHỈ ADMIN MỚI ĐƯỢC VÀO TRANG QUẢN TRỊ */}
                     {currentUser.role === 'admin' && (
                       <Link to="/admin" className="user-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                         <i className="fa-solid fa-chart-line"></i> Trang Quản Trị
                       </Link>
                     )}
-
                     <button className="user-dropdown-item" onClick={() => { setUserDropdownOpen(false); setSettingsOpen(true); }}>
                       <i className="fa-solid fa-gear"></i> Cài đặt
                     </button>
@@ -279,7 +302,6 @@ const Header = () => {
               </button>
             )}
 
-            {/* MINI CART DROPDOWN */}
             <div className="cart-wrap">
               <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
                 <i className="fa-solid fa-cart-shopping"></i>
@@ -322,7 +344,7 @@ const Header = () => {
 
           </div>
 
-          <button className="menu-toggle" aria-label="Menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button className="menu-toggle" aria-label="Menu" onClick={() => setMobileMenuOpen(true)}>
             <i className="fa-solid fa-bars"></i>
           </button>
         </div>

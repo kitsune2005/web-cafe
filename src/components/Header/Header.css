@@ -13,10 +13,8 @@
 
 /* =========================================
    1. SITE HEADER & STICKY
-   Header trong suốt, đè lên hero; khi cuộn (.scrolled)
-   chuyển sang fixed + nền tối + đổ bóng
    ========================================= */
-.site-header {
+   .site-header {
     position: absolute;
     top: 0;
     left: 0;
@@ -44,8 +42,6 @@
 
 /* =========================================
    2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
-   Menu chính + gạch chân trượt theo mục hover (.nav-indicator)
-   + dropdown con dạng "bong bóng" bật lên khi hover
    ========================================= */
 .main-nav {
     flex: 1;
@@ -79,18 +75,18 @@
     color: #c99a6b;
 }
 
-/* Thanh "magic line" trượt theo vị trí item đang active/hover */
 .nav-indicator {
     position: absolute;
     bottom: -2px;
     height: 3px;
     background: #c99a6b;
     border-radius: 4px;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+   transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.3s ease;
     pointer-events: none;
 }
 
-/* Panel dropdown con, có mũi tên tam giác chỉ lên trên */
 .main-nav .nav-dropdown {
     position: absolute;
     top: 130%;
@@ -124,8 +120,7 @@
     border-left: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.main-nav ul li.has-dropdown:hover .nav-dropdown,
-.main-nav ul li.has-dropdown .nav-dropdown.force-show {
+.main-nav ul li.has-dropdown:hover .nav-dropdown {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
@@ -168,7 +163,6 @@
 
 /* =========================================
    4. HEADER ACTIONS & ICONS
-   Cụm icon bên phải header (search, user, cart...) + badge số lượng giỏ hàng
    ========================================= */
 .header-actions {
     flex: 1;
@@ -212,8 +206,6 @@
 
 /* =========================================
    5. SEARCH BAR & DROPDOWN
-   Ô input search co giãn khi active + bảng kết quả rơi xuống
-   (gồm: tag gợi ý khi rỗng, danh sách sản phẩm khớp tên, trạng thái không có kết quả)
    ========================================= */
 .search-wrap {
     position: relative;
@@ -260,7 +252,6 @@
     width: 150px;
 }
 
-/* Bảng dropdown rơi xuống khi ô search active */
 .search-dropdown {
     position: absolute;
     top: calc(100% + 14px);
@@ -286,7 +277,6 @@
     transform: translateY(0);
 }
 
-/* Tiêu đề + các tag gợi ý hiển thị khi chưa gõ gì */
 .search-dropdown h4 {
     font-size: 12px;
     font-weight: 700;
@@ -319,7 +309,6 @@
     color: #fff;
 }
 
-/* Danh sách sản phẩm khớp với từ khóa đang gõ */
 .search-results {
     display: flex;
     flex-direction: column;
@@ -383,7 +372,6 @@
     margin: 0;
 }
 
-/* Trạng thái không tìm thấy sản phẩm nào khớp */
 .no-result {
     text-align: center;
     padding: 20px 0;
@@ -394,7 +382,6 @@
 
 /* =========================================
    6. USER MENU & DROPDOWN
-   Nút tài khoản góc phải + panel dropdown (thông tin user, các mục menu, đăng xuất)
    ========================================= */
 .user-menu {
     position: relative;
@@ -456,7 +443,6 @@
     transform: translateY(0);
 }
 
-/* Phần header của dropdown: avatar + tên/email user */
 .user-dropdown-header {
     display: flex;
     align-items: center;
@@ -533,8 +519,6 @@
 
 /* =========================================
    7. MINI CART DROPDOWN
-   Bảng giỏ hàng nhanh hiện khi hover icon cart, gồm: danh sách item,
-   tổng tiền, 2 nút (xem giỏ hàng / thanh toán), hiệu ứng rung khi thêm sản phẩm
    ========================================= */
 .cart-wrap {
     position: relative;
@@ -736,108 +720,39 @@
     border-color: #55331a !important;
 }
 
-/* Hiệu ứng rung icon giỏ hàng khi thêm sản phẩm thành công */
 .shake-cart-anim {
     animation: shakeCart 0.4s ease-in-out;
     color: #b23a2c !important;
 }
 
 @keyframes shakeCart {
-    0% {
-        transform: scale(1) rotate(0deg);
-    }
-
-    25% {
-        transform: scale(1.2) rotate(-10deg);
-    }
-
-    50% {
-        transform: scale(1.2) rotate(10deg);
-    }
-
-    75% {
-        transform: scale(1.2) rotate(-10deg);
-    }
-
-    100% {
-        transform: scale(1) rotate(0deg);
-    }
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.2) rotate(-10deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+    75% { transform: scale(1.2) rotate(-10deg); }
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 /* =========================================
-   8. RESPONSIVE & MOBILE
+   8. ẨN CÁC THÀNH PHẦN MOBILE TRÊN DESKTOP
    ========================================= */
+.close-mobile-menu, 
+.mobile-user-bottom, 
+.mobile-menu-overlay {
+    display: none;
+}
 .menu-toggle {
     display: none;
     background: none;
     border: none;
     color: inherit;
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
-}
-
-@media (max-width: 992px) {
-    .main-nav {
-        display: none;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .main-nav.open {
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--color-dark, #0d0d0d);
-        padding: 20px;
-        z-index: 999;
-    }
-
-    .main-nav.open ul {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .main-nav.open a {
-        color: #ffffff !important;
-    }
-
-    .main-nav.open a:hover {
-        color: #c99a6b !important;
-    }
-
-    .main-nav .nav-dropdown {
-        position: static;
-        box-shadow: none;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        background: transparent;
-        padding-left: 20px;
-        border-left: 2px solid #c99a6b;
-    }
-}
-
-@media (max-width: 768px) {
-    .search-form {
-        display: none;
-    }
-
-    .user-name {
-        display: none;
-    }
-
-    .search-dropdown {
-        width: 280px;
-    }
+    transition: 0.2s;
 }
 
 /* =========================================
    9. LIGHT MODE (TRANG SẢN PHẨM)
-   Bản header nền sáng dùng cho các trang không có ảnh nền tối (vd: trang sản phẩm)
    ========================================= */
 .site-header.light-mode {
     color: #2b1a10 !important;
@@ -857,7 +772,6 @@
     color: #c99a6b !important;
 }
 
-/* Đổi logo & icon sang màu đen để hiện rõ trên nền sáng */
 .site-header.light-mode .logo img {
     filter: brightness(0) !important;
 }
@@ -872,7 +786,6 @@
     color: #2b1a10 !important;
 }
 
-/* Đổi màu search bar sang tối để hiện rõ trên nền sáng */
 .site-header.light-mode .search-form {
     border-bottom-color: rgba(43, 26, 16, 0.35) !important;
 }
@@ -884,4 +797,215 @@
 
 .site-header.light-mode .search-form input::placeholder {
     color: rgba(43, 26, 16, 0.55) !important;
+}
+
+
+/* =========================================
+   10. RESPONSIVE & MOBILE (Giao diện chuẩn App)
+   🔥 BỌC THÉP VŨ KHÍ HẠT NHÂN FIX LỖI TỐI THUI
+   ========================================= */
+
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Màn hình mờ đen che phía sau khi mở menu */
+    .mobile-menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 998;
+        backdrop-filter: blur(3px);
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s ease;
+    }
+
+    .main-nav.open ~ .mobile-menu-overlay,
+    .mobile-menu-overlay:has(~ .main-nav.open), 
+    .mobile-menu-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* PANEL MENU TRƯỢT TỪ BÊN PHẢI SANG - Sửa lại 50vw cho Tablet */
+    .main-nav {
+        position: fixed;
+        top: 0;
+        right: -100%; 
+        width: 50vw; /* Bề ngang 1 Nửa màn hình trên Tablet */
+        height: 100vh;
+        background: #111; 
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .main-nav.open {
+        right: 0; 
+    }
+
+    /* Nút X tắt menu */
+    .close-mobile-menu {
+        display: block;
+        position: absolute;
+        top: 25px;
+        right: 30px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 26px;
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.2s;
+    }
+    .close-mobile-menu:hover { color: #c99a6b; transform: rotate(90deg); }
+
+    /* Container của các nút menu chính */
+    .main-nav ul {
+        flex-direction: column;
+        gap: 0;
+        margin-top: 80px; 
+        padding: 0 30px;
+        flex: 1; 
+        overflow-y: auto;
+    }
+
+    .main-nav ul li {
+        padding: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Dọn rác: Giấu luôn cái mũi tên (tam giác trắng) thừa thãi */
+    .main-nav .nav-dropdown::before {
+        display: none !important;
+    }
+
+    /* ====================================================
+       🔥 VŨ KHÍ HẠT NHÂN: Ép màu chữ Menu trên Mobile (Bất chấp Light Mode)
+       ==================================================== */
+    
+    /* Ép chữ các mục chính (Giới thiệu, Sản phẩm, Tin tức...) thành Trắng */
+    #root .site-header .main-nav a,
+    #root .site-header.light-mode .main-nav a {
+        display: block !important;
+        padding: 20px 0 !important;
+        font-size: 16px !important;
+        color: #ffffff !important; 
+    }
+
+    #root .site-header .main-nav a:hover,
+    #root .site-header.light-mode .main-nav a:hover {
+        color: #c99a6b !important;
+        padding-left: 10px !important;
+    }
+
+    /* Sub-menu trên Mobile xổ thẳng xuống */
+    .main-nav .nav-dropdown {
+        position: static !important;
+        box-shadow: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        background: transparent !important;
+        padding: 0 0 15px 15px !important;
+        border: none !important;
+        border-left: 2px solid #c99a6b !important;
+        min-width: auto !important;
+        display: none; /* Ẩn đi chờ toggle */
+    }
+
+    .main-nav .has-dropdown.active .nav-dropdown,
+    .main-nav .nav-dropdown.force-show {
+        display: flex !important;
+    }
+
+    /* Ép chữ các mục con (Cà phê phin, Đóng gói...) thành Xám sáng */
+    #root .site-header .main-nav ul li .nav-dropdown a,
+    #root .site-header.light-mode .main-nav ul li .nav-dropdown a {
+        padding: 10px 0 !important;
+        font-size: 14px !important;
+        color: #dddddd !important; 
+        font-weight: 500 !important;
+    }
+
+    #root .site-header .main-nav ul li .nav-dropdown a:hover,
+    #root .site-header.light-mode .main-nav ul li .nav-dropdown a:hover {
+        color: #c99a6b !important;
+    }
+
+
+    /* ====================================================
+       THÔNG TIN USER Ở ĐÁY MENU
+       ==================================================== */
+    .mobile-user-bottom {
+        display: block;
+        padding: 20px 30px 30px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        background: rgba(0,0,0,0.2);
+    }
+
+    .mobile-user-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+    }
+
+    .mobile-user-card img {
+        width: 45px; height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #c99a6b;
+    }
+
+    .m-avatar-placeholder {
+        width: 45px; height: 45px;
+        border-radius: 50%;
+        background: #c99a6b;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .m-user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .m-greeting {
+        font-size: 12px;
+        color: #aaa;
+    }
+
+    .m-name {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .login-btn .m-name {
+        color: #c99a6b;
+        font-size: 16px;
+    }
+}
+
+/* =========================================
+   ÉP FULL MÀN HÌNH CHO ĐIỆN THOẠI 
+   ========================================= */
+@media (max-width: 768px) {
+    .main-nav {
+        width: 100vw; /* Chiếm 100% màn hình điện thoại */
+    }
+
+    .search-form { display: none; }
+    .user-name { display: none; }
+    .search-dropdown { width: 280px; }
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"; 
 import { useProduct } from "../../context/ProductContext";
 import { useCart } from "../../context/CartContext";
@@ -13,12 +13,20 @@ const ProductsPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortType, setSortType] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(window.innerWidth > 992);
   const [viewMode, setViewMode] = useState("grid-3");
-  
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]); 
 
   const itemsPerPage = 12;
+
+  useEffect(() => {
+      const handleResize = () => {
+          if (window.innerWidth > 992) setSidebarVisible(true);
+          else setSidebarVisible(false);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getPriceNumber = (price) => {
     if (typeof price === "number") return price;
@@ -108,7 +116,7 @@ const ProductsPage = () => {
 
   const handleAddFromCard = (e, item) => {
     e.preventDefault(); 
-    e.stopPropagation(); // Chặn nút Giỏ hàng chuyển trang
+    e.stopPropagation();
 
     if ((item.stock || 0) <= 0) {
         toast.error("Món này đang cháy hàng mất rồi Boss ơi! 🦊");
@@ -149,7 +157,6 @@ const ProductsPage = () => {
         setTimeout(() => {
             flyingImg.remove();
             addToCart(item, 1); 
-            
             cartIcon.classList.add('shake-cart-anim');
             setTimeout(() => cartIcon.classList.remove('shake-cart-anim'), 400);
         }, 800);
@@ -178,9 +185,10 @@ const ProductsPage = () => {
           <div className="container">
             <div className="shop-toolbar">
               <div className="toolbar-left">
-                <button type="button" onClick={() => setSidebarVisible(!sidebarVisible)}>
-                  {sidebarVisible ? "Ẩn thanh bên" : "Hiện thanh bên"}
-                  <i className="fa-solid fa-bars-staggered"></i>
+                <button type="button" className="btn-toggle-sidebar" onClick={() => setSidebarVisible(!sidebarVisible)}>
+                  <i className="fa-solid fa-filter"></i>
+                  <span className="desktop-text">{sidebarVisible ? "Ẩn thanh bên" : "Hiện thanh bên"}</span>
+                  <span className="mobile-text">Bộ lọc sản phẩm</span>
                 </button>
                 <select value={sortType} onChange={(e) => { setSortType(e.target.value); setCurrentPage(1); }}>
                   <option value="default">Mặc định</option>
@@ -209,8 +217,13 @@ const ProductsPage = () => {
 
             <div className={`shop-layout ${!sidebarVisible ? "sidebar-hidden" : ""}`}>
               
+              {/* SIDEBAR BỘ LỌC */}
               {sidebarVisible && (
                 <aside className="shop-sidebar">
+                  <button className="close-sidebar-mobile" onClick={() => setSidebarVisible(false)}>
+                      <i className="fa-solid fa-xmark"></i> Đóng bộ lọc
+                  </button>
+
                   <div className="sidebar-block">
                     <h3>DANH MỤC</h3>
                     {targetCategories.map((categoryName) => (
@@ -223,9 +236,7 @@ const ProductsPage = () => {
                           />
                           {categoryName}
                         </span>
-                        <span>
-                          ({categoryCounts[categoryName] || 0})
-                        </span>
+                        <span>({categoryCounts[categoryName] || 0})</span>
                       </label>
                     ))}
                   </div>
@@ -264,109 +275,84 @@ const ProductsPage = () => {
                           ))}
                       </div>
                   </div>
-
                 </aside>
               )}
 
               <div className={`shop-products ${viewMode}`}>
                 {currentProducts.length > 0 ? (
                   currentProducts.map((product) => (
+                    
+                    /* 👉 Ép thêm flex column để chữ đẩy nút xuống sát đáy */
                     <article 
                       className="shop-product-card" 
                       key={product.id}
                       onClick={() => navigate(`/product/${product.id}`)}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
                     >
                       <div className="shop-product-image">
                         {product.discount > 0 && (
                           <span className="discount-badge">-{product.discount}%</span>
                         )}
-
                         <img
                           className="front"
                           src={product.imageFront || product.img}
                           alt={product.name}
                           style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }} 
                         />
-
                         <img
                           className="back"
                           src={product.imageBack || product.imageFront || product.img}
                           alt={`${product.name} mặt sau`}
                           style={{ filter: (product.stock || 0) <= 0 ? 'grayscale(80%) opacity(0.8)' : 'none' }}
                         />
-
-                        <div className="product-hover-actions">
-                          <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
-                            <i className="fa-regular fa-heart"></i>
-                          </button>
-                          
-                          <Link 
-                            to={`/product/${product.id}`} 
-                            title="Xem chi tiết"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <i className="fa-regular fa-eye"></i>
-                          </Link>
-                          
-                          <button 
-                            type="button" 
-                            title={(product.stock || 0) <= 0 ? "Hết hàng" : "Thêm vào giỏ"} 
-                            onClick={(e) => handleAddFromCard(e, product)}
-                            style={{ 
-                                opacity: (product.stock || 0) <= 0 ? 0.5 : 1, 
-                                cursor: (product.stock || 0) <= 0 ? 'not-allowed' : 'pointer' 
-                            }}
-                          >
-                            <i className="fa-solid fa-cart-shopping"></i>
-                          </button>
-                        </div>
                       </div>
 
-                      <div className="shop-product-info">
+                      <div className="shop-product-info" style={{ flex: 1 }}>
                         <div className="shop-rating">
                           {[...Array(5)].map((_, index) => (
-                            <i
-                              key={index}
-                              className={index < Number(product.rating || 5) ? "fa-solid fa-star" : "fa-regular fa-star"}
-                            ></i>
+                            <i key={index} className={index < Number(product.rating || 5) ? "fa-solid fa-star" : "fa-regular fa-star"}></i>
                           ))}
                         </div>
-
                         <h3>
-                          <Link 
-                            to={`/product/${product.id}`} 
-                            style={{color: 'inherit'}}
-                            onClick={(e) => e.stopPropagation()}
-                          >
+                          <Link to={`/product/${product.id}`} style={{color: 'inherit'}} onClick={(e) => e.stopPropagation()}>
                             {product.name}
                           </Link>
                         </h3>
-
                         <div className="shop-price">
-                          {product.oldPrice && (
-                            <del>{formatPrice(product.oldPrice)}</del>
-                          )}
+                          {product.oldPrice && (<del>{formatPrice(product.oldPrice)}</del>)}
                           <span>{formatPrice(product.price)}</span>
                         </div>
-
-                        <div style={{ marginTop: '10px', fontSize: '13px', fontWeight: 'bold' }}>
+                        <div className="shop-stock-status">
                           {(product.stock || 0) <= 0 ? (
-                            <span style={{ color: '#fa5252' }}>
-                              <i className="fa-solid fa-xmark"></i> Đã hết hàng
-                            </span>
+                            <span style={{ color: '#fa5252' }}><i className="fa-solid fa-xmark"></i> Đã hết</span>
                           ) : (product.stock || 0) <= 5 ? (
-                            <span style={{ color: '#fd7e14' }}>
-                              <i className="fa-solid fa-triangle-exclamation"></i> Sắp hết (còn {product.stock})
-                            </span>
+                            <span style={{ color: '#fd7e14' }}><i className="fa-solid fa-triangle-exclamation"></i> Sắp hết</span>
                           ) : (
-                            <span style={{ color: '#0ca678' }}>
-                              <i className="fa-solid fa-check"></i> Còn hàng
-                            </span>
+                            <span style={{ color: '#0ca678' }}><i className="fa-solid fa-check"></i> Còn hàng</span>
                           )}
                         </div>
-
                       </div>
+
+                      {/* 👉 ĐÃ DỜI RA NGOÀI XUỐNG DƯỚI CÙNG ĐỂ CHẠM ĐÁY */}
+                      <div className="product-hover-actions">
+                        <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
+                          <i className="fa-regular fa-heart"></i>
+                        </button>
+                        
+                        <Link to={`/product/${product.id}`} title="Xem chi tiết" onClick={(e) => e.stopPropagation()}>
+                          <i className="fa-regular fa-eye"></i>
+                        </Link>
+                        
+                        <button 
+                          type="button" 
+                          title={(product.stock || 0) <= 0 ? "Hết hàng" : "Thêm vào giỏ"} 
+                          onClick={(e) => handleAddFromCard(e, product)}
+                          style={{ opacity: (product.stock || 0) <= 0 ? 0.5 : 1, cursor: (product.stock || 0) <= 0 ? 'not-allowed' : 'pointer' }}
+                        >
+                          <i className="fa-solid fa-cart-shopping"></i>
+                        </button>
+                      </div>
+
                     </article>
                   ))
                 ) : (
@@ -380,21 +366,14 @@ const ProductsPage = () => {
                 <button type="button" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)}>
                   <i className="fa-solid fa-chevron-left"></i>
                 </button>
-
                 {[...Array(totalPages)].map((_, index) => {
                   const page = index + 1;
                   return (
-                    <button
-                      type="button"
-                      key={page}
-                      className={currentPage === page ? "active" : ""}
-                      onClick={() => changePage(page)}
-                    >
+                    <button type="button" key={page} className={currentPage === page ? "active" : ""} onClick={() => changePage(page)}>
                       {page}
                     </button>
                   );
                 })}
-
                 <button type="button" disabled={currentPage === totalPages} onClick={() => changePage(currentPage + 1)}>
                   <i className="fa-solid fa-chevron-right"></i>
                 </button>

@@ -103,7 +103,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     const newErrors = {};
 
     // ===============================================
-    // 👉 LUẬT LỆ KHẮT KHE CHO ĐĂNG KÝ
+    // LUẬT LỆ KHẮT KHE CHO ĐĂNG KÝ
     // ===============================================
     if (mode === 'register') {
         // 1. Check Họ Tên
