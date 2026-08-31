@@ -14,7 +14,7 @@
     "email": "dattranpro4@gmail.com",
     "password": "123456",
     "role": "customer",
-    "avatar": "http://localhost:5000/uploads/avatar_1787924591057_1787932015527.png",
+    "avatar": "http://localhost:5000/uploads/avatars/avatar_1787924591057_1787932015527.png",
     "provider": "local",
     "createdAt": "2026-08-28T13:43:11.057Z"
   },
@@ -25,7 +25,7 @@
     "email": "k@gmail.com",
     "password": "123456",
     "role": "customer",
-    "avatar": "http://localhost:5000/uploads/avatar_1788078301829_1788078459185.jpg",
+    "avatar": "http://localhost:5000/uploads/avatars/avatar_1788078301829_1788078459185.jpg",
     "provider": "local",
     "createdAt": "2026-08-30T08:25:01.829Z"
   },
