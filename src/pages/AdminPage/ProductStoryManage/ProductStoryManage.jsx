@@ -4,95 +4,242 @@ import toast from 'react-hot-toast';
 import '../Dashboard/Dashboard.css'; 
 import './ProductStoryManage.css';  
 
+// 👉 TÍCH HỢP LÕI UPLOAD MỚI (BỌC LÓT 3 LỚP)
+const uploadImageSmart = async (file) => {
+    // 1. THỬ DÙNG BACKEND LOCALHOST CỦA BOSS (XỊN NHẤT)
+    try {
+        const formData = new FormData();
+        // Chú ý: 'image' phải khớp với tên field bên Multer/Backend của Boss
+        formData.append('image', file); 
+
+        // Nếu API Upload của Boss khác đường dẫn này thì sửa lại nhé (VD: /api/upload)
+        const res = await fetch('http://localhost:5000/upload', { 
+            method: 'POST',
+            body: formData
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            // Tùy backend trả về. Nếu chỉ có filename thì ghép với đường dẫn gốc
+            return data.url || `http://localhost:5000/uploads/products/${data.filename || file.name}`; 
+        }
+    } catch (error) {
+        console.warn("Lỗi API Localhost hoặc chưa cấu hình, chuyển sang dùng Cloud ImgBB...");
+    }
+
+    // 2. PHƯƠNG ÁN DỰ PHÒNG: DÙNG CLOUD IMGBB
+    try {
+        const base64Data = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result.split(',')[1]); 
+            reader.readAsDataURL(file);
+        });
+
+        const urlParams = new URLSearchParams();
+        urlParams.append('image', base64Data);
+        const apiKey = '8d27ce09315bce6ba4772b5e2eb22039'; 
+        
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: urlParams.toString()
+        });
+        const data = await res.json();
+        if (data?.data?.url) return data.data.url;
+    } catch (error) {
+        console.error("Cloud ImgBB bị chặn (Có thể do AdBlock). Lùi về Base64...");
+    }
+
+    // 3. PHƯƠNG ÁN CUỐI CÙNG: DÙNG BASE64 (Chống cháy)
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+    });
+};
+
 const ProductStoryManage = () => {
     const { products, formatPrice, updateProductStory } = useProduct();
     const [searchTerm, setSearchTerm] = useState('');
-    
-    // 👉 ĐÃ THÊM: State quản lý trạng thái bộ lọc kho
     const [stockFilter, setStockFilter] = useState('all'); 
 
-    // State cho Modal Viết tiểu sử
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
-    const [storyData, setStoryData] = useState({
-        shortDesc: '',
-        longDesc: ''
-    });
-
     const [isSaving, setIsSaving] = useState(false);
 
-    // 👉 ĐÃ NÂNG CẤP: Lọc theo Tên kết hợp với Tình trạng kho
-    const filteredProducts = products.filter(p => {
-        // 1. Kiểm tra từ khóa tìm kiếm
-        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        // 2. Kiểm tra bộ lọc tình trạng kho
-        let matchStock = true;
-        if (stockFilter === 'low') {
-            matchStock = p.stock > 0 && p.stock < 10;
-        } else if (stockFilter === 'out') {
-            matchStock = !p.stock || p.stock === 0;
-        }
+    const [storyData, setStoryData] = useState({
+        shortDesc: '',
+        gallery: [], 
+        blocks: [] 
+    });
 
-        // 3. Phải thỏa mãn cả 2 mới hiển thị
+    const filteredProducts = products.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+        let matchStock = true;
+        if (stockFilter === 'low') matchStock = p.stock > 0 && p.stock < 10;
+        else if (stockFilter === 'out') matchStock = !p.stock || p.stock === 0;
         return matchSearch && matchStock;
     });
 
     const openEditModal = (product) => {
         setEditingProduct(product);
+        
+        let parsedGallery = [];
+        let parsedBlocks = [];
+        
+        try {
+            if (product.longDesc && product.longDesc.startsWith('{')) {
+                const parsed = JSON.parse(product.longDesc);
+                if (parsed.gallery) parsedGallery = parsed.gallery;
+                if (parsed.blocks) parsedBlocks = parsed.blocks;
+            } else if (product.longDesc) {
+                parsedBlocks = [{ id: Date.now().toString(), type: 'text', content: product.longDesc }];
+            }
+        } catch (e) {
+            if (product.longDesc) {
+                parsedBlocks = [{ id: Date.now().toString(), type: 'text', content: product.longDesc }];
+            }
+        }
+
         setStoryData({
             shortDesc: product.shortDesc || '',
-            longDesc: product.longDesc || ''
+            gallery: parsedGallery,
+            blocks: parsedBlocks
         });
         setIsModalOpen(true);
+    };
+
+    // ================= XỬ LÝ BLOCK EDITOR =================
+    const addBlock = (type) => {
+        setStoryData(prev => ({
+            ...prev,
+            blocks: [...prev.blocks, { id: Date.now().toString(), type, content: '' }]
+        }));
+    };
+
+    const updateBlockContent = (id, content) => {
+        setStoryData(prev => ({
+            ...prev,
+            blocks: prev.blocks.map(b => b.id === id ? { ...b, content } : b)
+        }));
+    };
+
+    const handleFormatText = (blockId, prefix, suffix) => {
+        const textarea = document.getElementById(`text-block-${blockId}`);
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selectedText = text.substring(start, end);
+
+        const newText = text.substring(0, start) + prefix + selectedText + suffix + text.substring(end);
+        updateBlockContent(blockId, newText);
+
+        setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+        }, 0);
+    };
+
+    const moveBlock = (index, direction) => {
+        if (index + direction < 0 || index + direction >= storyData.blocks.length) return;
+        setStoryData(prev => {
+            const newBlocks = [...prev.blocks];
+            const temp = newBlocks[index];
+            newBlocks[index] = newBlocks[index + direction];
+            newBlocks[index + direction] = temp;
+            return { ...prev, blocks: newBlocks };
+        });
+    };
+
+    const deleteBlock = (id) => {
+        setStoryData(prev => ({
+            ...prev,
+            blocks: prev.blocks.filter(b => b.id !== id)
+        }));
+    };
+
+    const handleBlockImageUpload = async (id, e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const toastId = toast.loading("Đang tải ảnh lên...");
+            const imgData = await uploadImageSmart(file);
+            if (imgData) {
+                updateBlockContent(id, imgData);
+                toast.success("Thêm ảnh thành công!", { id: toastId });
+            } else {
+                toast.error("Lỗi khi xử lý ảnh!", { id: toastId });
+            }
+        }
+    };
+
+    const handleGalleryUpload = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const toastId = toast.loading("Đang tải ảnh lên...");
+            const imgData = await uploadImageSmart(file);
+            if (imgData) {
+                setStoryData(prev => ({
+                    ...prev,
+                    gallery: [...prev.gallery, imgData]
+                }));
+                toast.success("Thêm ảnh thành công!", { id: toastId });
+            } else {
+                toast.error("Lỗi khi xử lý ảnh!", { id: toastId });
+            }
+        }
+    };
+
+    const removeGalleryImage = (index) => {
+        setStoryData(prev => {
+            const newGallery = [...prev.gallery];
+            newGallery.splice(index, 1);
+            return { ...prev, gallery: newGallery };
+        });
     };
 
     const handleSaveStory = async (e) => {
         e.preventDefault();
         if (updateProductStory) {
             setIsSaving(true);
-            const success = await updateProductStory(editingProduct.id, storyData.shortDesc, storyData.longDesc);
+            const complexLongDesc = JSON.stringify({
+                gallery: storyData.gallery,
+                blocks: storyData.blocks
+            });
+
+            const success = await updateProductStory(editingProduct.id, storyData.shortDesc, complexLongDesc);
             setIsSaving(false);
 
             if (success) {
-                toast.success(`Đã cập nhật tiểu sử cho: ${editingProduct.name}`);
+                toast.success(`Đã cập nhật bài viết cho: ${editingProduct.name}`);
                 setIsModalOpen(false); 
             } else {
                 toast.error("Lỗi kết nối Server! Không thể lưu dữ liệu.");
             }
-        } else {
-             toast.error("Thiếu hàm updateProductStory trong ProductContext!");
         }
     };
 
     return (
         <div className="admin-dashboard-container">
-            {/* HEADER CHUẨN DASHBOARD */}
             <div className="dashboard-header">
                 <h2 className="dashboard-title">Quản lý Tiểu sử Sản phẩm</h2>
-                <p className="dashboard-subtitle">Thêm câu chuyện, nguồn gốc và hương vị chi tiết cho từng loại cà phê.</p>
+                <p className="dashboard-subtitle">Thiết kế cấu trúc nội dung, hình ảnh và video giới thiệu sinh động.</p>
             </div>
 
             <div className="dashboard-recent-orders">
-                
-                {/* 👉 KHU VỰC TÌM KIẾM & LỌC KHO */}
-                <div className="section-header" style={{ marginBottom: '20px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, minWidth: '200px', maxWidth: '400px' }}>
+                <div className="section-header" style={{ marginBottom: '1.25rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.625rem', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '0.5rem 1rem', borderRadius: '0.5rem', flex: 1, minWidth: '12.5rem', maxWidth: '25rem' }}>
                         <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
                         <input 
-                            type="text" 
-                            placeholder="Tìm theo tên sản phẩm..." 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
+                            type="text" placeholder="Tìm theo tên sản phẩm..." 
+                            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ border: 'none', outline: 'none', width: '100%', fontSize: '0.875rem' }}
                         />
                     </div>
-
-                    {/* Bộ Lọc Dropdown */}
                     <select 
-                        value={stockFilter}
-                        onChange={(e) => setStockFilter(e.target.value)}
-                        style={{ padding: '8px 15px', borderRadius: '8px', border: '1px solid #ddd', outline: 'none', fontSize: '14px', background: '#fff', color: '#555', cursor: 'pointer', minWidth: '160px' }}
+                        value={stockFilter} onChange={(e) => setStockFilter(e.target.value)}
+                        style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid #ddd', outline: 'none', fontSize: '0.875rem', background: '#fff', color: '#555', cursor: 'pointer', minWidth: '10rem' }}
                     >
                         <option value="all">Tất cả tình trạng</option>
                         <option value="low">Sắp hết hàng (&lt;10)</option>
@@ -114,87 +261,177 @@ const ProductStoryManage = () => {
                             {filteredProducts.map(product => (
                                 <tr key={product.id}>
                                     <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                            <img src={product.imageFront || product.img} alt={product.name} style={{ width: '45px', height: '45px', borderRadius: '6px', objectFit: 'cover', border: '1px solid #eee' }} />
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                            <img src={product.imageFront || product.img} alt={product.name} style={{ width: '2.8rem', height: '2.8rem', borderRadius: '0.375rem', objectFit: 'cover', border: '1px solid #eee' }} />
                                             <div>
-                                                <strong style={{ display: 'block', marginBottom: '4px', color: '#333' }}>{product.name}</strong>
-                                                <span style={{ fontSize: '13px', color: '#b23a2c', fontWeight: '600' }}>{formatPrice(product.price)}</span>
+                                                <strong style={{ display: 'block', marginBottom: '0.25rem', color: '#333' }}>{product.name}</strong>
+                                                <span style={{ fontSize: '0.8125rem', color: '#b23a2c', fontWeight: '600' }}>{formatPrice(product.price)}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>{product.category}</td>
                                     <td>
                                         {product.longDesc || product.shortDesc ? (
-                                            <span className="status-badge success"><i className="fa-solid fa-check"></i> Đã viết</span>
+                                            <span className="status-badge success"><i className="fa-solid fa-check"></i> Đã thiết kế</span>
                                         ) : (
                                             <span className="status-badge warning"><i className="fa-solid fa-pen"></i> Chưa có</span>
                                         )}
                                     </td>
                                     <td style={{textAlign: 'center'}}>
                                         <button className="btn-edit-story" onClick={() => openEditModal(product)}>
-                                            <i className="fa-solid fa-book-open"></i> Viết tiểu sử
+                                            <i className="fa-solid fa-wand-magic-sparkles"></i> Build Nội dung
                                         </button>
                                     </td>
                                 </tr>
                             ))}
-                            {filteredProducts.length === 0 && (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: '#888' }}>
-                                        Không tìm thấy sản phẩm nào phù hợp!
-                                    </td>
-                                </tr>
-                            )}
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {/* MODAL VIẾT TIỂU SỬ */}
+            {/* MODAL BLOCK EDITOR CAO CẤP */}
             {isModalOpen && (
-                <div className="story-modal-overlay" style={{ zIndex: 9999 }}>
-                    <div className="story-modal">
-                        <div className="modal-header">
-                            <h3>Tiểu sử: {editingProduct?.name}</h3>
-                            <button className="btn-close" onClick={() => setIsModalOpen(false)}>
+                <div className="news-overlay">
+                    <div className="news-editor-box">
+                        <div className="news-header">
+                            <h3>Soạn Bài: {editingProduct?.name}</h3> 
+                            <button type="button" className="news-close-btn" onClick={() => setIsModalOpen(false)}>
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
-                        
-                        <form onSubmit={handleSaveStory}>
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label>Mô tả ngắn (Hiển thị ngay dưới tên SP)</label>
-                                    <textarea 
-                                        rows="3" 
-                                        value={storyData.shortDesc}
-                                        onChange={(e) => setStoryData({...storyData, shortDesc: e.target.value})}
-                                        placeholder="Ví dụ: Sự kết hợp hoàn hảo giữa đắng và ngọt..."
-                                    ></textarea>
-                                </div>
 
-                                <div className="form-group">
-                                    <label>Câu chuyện chi tiết (Tab Mô Tả)</label>
-                                    <textarea 
-                                        rows="10" 
-                                        value={storyData.longDesc}
-                                        onChange={(e) => setStoryData({...storyData, longDesc: e.target.value})}
-                                        placeholder="Kể câu chuyện về sản phẩm ở đây... Có thể dùng thẻ HTML như <p>, <b>, <br/>..."
-                                    ></textarea>
-                                    <small className="html-hint"><i className="fa-brands fa-html5"></i> Hỗ trợ nhập định dạng HTML để đoạn văn đẹp hơn.</small>
+                        <div className="news-body">
+                            
+                            {/* MÔ TẢ NGẮN */}
+                            <div className="news-form-group">
+                                <label className="news-label">Đoạn mở bài (Lead / Excerpt)</label>
+                                <textarea 
+                                    className="news-textarea short-desc"
+                                    value={storyData.shortDesc}
+                                    onChange={(e) => setStoryData({...storyData, shortDesc: e.target.value})}
+                                    placeholder="Đoạn mở bài in đậm hiển thị dưới tên sản phẩm..."
+                                ></textarea>
+                            </div>
+
+                            {/* THƯ VIỆN ẢNH SẢN PHẨM */}
+                            <div className="news-form-group">
+                                <label className="news-label">Thư viện ảnh giới thiệu (Gallery)</label>
+                                <div className="news-gallery-container">
+                                    {storyData.gallery.map((img, index) => (
+                                        <div className="news-gallery-item" key={index}>
+                                            <img src={img} alt={`Gallery ${index}`} />
+                                            <button type="button" onClick={() => removeGalleryImage(index)} className="btn-remove-gallery">
+                                                <i className="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </div>
+                                    ))}
+                                    
+                                    <label className="news-gallery-upload">
+                                        <input type="file" accept="image/*" onChange={handleGalleryUpload} hidden />
+                                        <i className="fa-solid fa-cloud-arrow-up"></i>
+                                        <span>Tải ảnh lên mây</span>
+                                    </label>
                                 </div>
                             </div>
-                            
-                            <div className="modal-footer">
-                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)} disabled={isSaving}>Hủy</button>
-                                <button type="submit" className="btn-save" disabled={isSaving}>
-                                    {isSaving ? (
-                                        <><i className="fa-solid fa-spinner fa-spin"></i> Đang lưu...</>
-                                    ) : (
-                                        <><i className="fa-solid fa-floppy-disk"></i> Lưu thay đổi</>
-                                    )}
-                                </button>
+
+                            {/* TRÌNH SOẠN THẢO KHỐI */}
+                            <div className="news-form-group" style={{ marginTop: '0.5rem' }}>
+                                <label className="news-label"><i className="fa-solid fa-layer-group"></i> Nội dung bài viết (Xây dựng theo khối)</label>
+                                
+                                <div className="news-block-list">
+                                    {storyData.blocks.map((block, index) => (
+                                        <div className="news-block-item" key={block.id}>
+                                            <div className="news-block-header">
+                                                <span className="block-type">
+                                                    {block.type === 'text' && <><i className="fa-solid fa-paragraph"></i> ĐOẠN VĂN BẢN</>}
+                                                    {block.type === 'image' && <><i className="fa-regular fa-image"></i> HÌNH ẢNH</>}
+                                                    {block.type === 'video' && <><i className="fa-brands fa-youtube"></i> VIDEO YOUTUBE</>}
+                                                </span>
+                                                <div className="news-block-actions">
+                                                    <button type="button" title="Lên" onClick={() => moveBlock(index, -1)} disabled={index === 0}><i className="fa-solid fa-arrow-up"></i></button>
+                                                    <button type="button" title="Xuống" onClick={() => moveBlock(index, 1)} disabled={index === storyData.blocks.length - 1}><i className="fa-solid fa-arrow-down"></i></button>
+                                                    <button type="button" title="Xóa" onClick={() => deleteBlock(block.id)} className="danger"><i className="fa-solid fa-trash-can"></i></button>
+                                                </div>
+                                            </div>
+
+                                            <div className="news-block-body">
+                                                {block.type === 'text' && (
+                                                    <div className="text-block-wrapper">
+                                                        <div className="block-format-toolbar">
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<b>', '</b>')} title="In đậm (Bôi đen chữ rồi bấm)"><i className="fa-solid fa-bold"></i></button>
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<i>', '</i>')} title="In nghiêng"><i className="fa-solid fa-italic"></i></button>
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<u>', '</u>')} title="Gạch chân"><i className="fa-solid fa-underline"></i></button>
+                                                            <div className="toolbar-divider"></div>
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<br/>• ', '')} title="Chấm đầu dòng"><i className="fa-solid fa-list-ul"></i></button>
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<br/>- ', '')} title="Gạch đầu dòng"><i className="fa-solid fa-minus"></i></button>
+                                                            <div className="toolbar-divider"></div>
+                                                            <button type="button" onClick={() => handleFormatText(block.id, '<span style="color:#b23a2c">', '</span>')} title="Chữ màu đỏ Cà phê"><i className="fa-solid fa-droplet" style={{color: '#b23a2c'}}></i></button>
+                                                        </div>
+                                                        <textarea 
+                                                            id={`text-block-${block.id}`}
+                                                            className="block-input text-block"
+                                                            value={block.content}
+                                                            onChange={(e) => updateBlockContent(block.id, e.target.value)}
+                                                            placeholder="Nhập nội dung đoạn văn... (Bôi đen chữ và chọn công cụ ở trên để trang trí)"
+                                                        ></textarea>
+                                                    </div>
+                                                )}
+
+                                                {block.type === 'image' && (
+                                                    <div className="block-image-upload">
+                                                        <input 
+                                                            type="text" 
+                                                            className="block-input url-input"
+                                                            value={block.content}
+                                                            onChange={(e) => updateBlockContent(block.id, e.target.value)}
+                                                            placeholder="Dán link ảnh (URL) vào đây HOẶC bấm nút tải lên ở dưới..."
+                                                            style={{ marginBottom: '10px', border: '1px solid #ddd', padding: '10px', borderRadius: '6px' }}
+                                                        />
+                                                        {block.content ? (
+                                                            <div className="block-img-preview">
+                                                                <img src={block.content} alt="Block" />
+                                                            </div>
+                                                        ) : (
+                                                            <label className="block-upload-area">
+                                                                <input type="file" accept="image/*" onChange={(e) => handleBlockImageUpload(block.id, e)} hidden />
+                                                                <i className="fa-solid fa-cloud-arrow-up"></i>
+                                                                <span>Bấm để tải ảnh lên Cloud</span>
+                                                            </label>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {block.type === 'video' && (
+                                                    <div className="block-video-input">
+                                                        <i className="fa-brands fa-youtube"></i>
+                                                        <input 
+                                                            type="text" 
+                                                            className="block-input"
+                                                            value={block.content}
+                                                            onChange={(e) => updateBlockContent(block.id, e.target.value)}
+                                                            placeholder="Dán đường link YouTube vào đây (VD: https://youtube.com/...)"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <div className="news-add-block-tray">
+                                        <button type="button" className="btn-add-block" onClick={() => addBlock('text')}><i className="fa-solid fa-paragraph"></i> Thêm Đoạn văn</button>
+                                        <button type="button" className="btn-add-block" onClick={() => addBlock('image')}><i className="fa-regular fa-image"></i> Thêm Hình ảnh</button>
+                                        <button type="button" className="btn-add-block" onClick={() => addBlock('video')}><i className="fa-brands fa-youtube"></i> Thêm Video</button>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <div className="news-footer">
+                            <button type="button" className="news-btn-cancel" onClick={() => setIsModalOpen(false)} disabled={isSaving}>Hủy bỏ</button>
+                            <button type="button" className="news-btn-save" onClick={handleSaveStory} disabled={isSaving}>
+                                {isSaving ? <><i className="fa-solid fa-spinner fa-spin"></i> Đang lưu...</> : <><i className="fa-solid fa-floppy-disk"></i> Đăng Bài Viết</>}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -5,23 +5,33 @@ import { useCart } from '../../context/CartContext';
 import toast from 'react-hot-toast';
 import './ProductDetailPage.css';
 
-// 👉 KẾT NỐI FILE SVG TỪ THƯ MỤC ICON CỦA BOSS
 import iconPayment from '../../assets/icon/icon-payment.svg';
 import iconOffer from '../../assets/icon/icon-offer.svg';
 import iconReturn from '../../assets/icon/icon-return.svg';
 
-// ==========================================
-// 👉 HÀM TẠO ĐƯỜNG DẪN URL CHUẨN SEO (Tạo Slug)
-// ==========================================
 export const generateSlug = (str) => {
     if (!str) return '';
     return str.toString().toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Xóa dấu Tiếng Việt
-        .replace(/đ/g, "d").replace(/Đ/g, "D") // Đổi chữ đ
-        .replace(/[^a-z0-9\s-]/g, "-") // Đổi ký tự đặc biệt thành dấu gạch
-        .replace(/\s+/g, "-") // Đổi khoảng trắng thành dấu gạch
-        .replace(/-+/g, "-") // Xóa các dấu gạch trùng lặp
-        .replace(/^-+|-+$/g, ""); // Cắt gạch thừa ở 2 đầu
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d").replace(/Đ/g, "D")
+        .replace(/[^a-z0-9\s-]/g, "-")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+};
+
+// 👉 HÀM NHÚNG VIDEO YOUTUBE
+const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    let videoId = '';
+    if (url.includes('youtube.com/watch?v=')) {
+        videoId = url.split('v=')[1].split('&')[0];
+    } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+    } else if (url.includes('youtube.com/embed/')) {
+        return url;
+    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
 };
 
 const ProductDetailPage = () => {
@@ -41,9 +51,6 @@ const ProductDetailPage = () => {
     const timeoutRef = useRef(null);
     const intervalRef = useRef(null);
 
-    // ==========================================
-    // 👉 ĐÃ DỜI LÊN ĐÂY: HỆ THỐNG ĐÈ NÚT TỰ ĐỘNG TĂNG GIẢM
-    // ==========================================
     const stopContinuousAction = () => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         if (intervalRef.current) clearInterval(intervalRef.current);
@@ -85,9 +92,6 @@ const ProductDetailPage = () => {
         }, 400);
     };
 
-    // ==========================================
-    // LOGIC DỮ LIỆU
-    // ==========================================
     const relatedProducts = useMemo(() => {
         if (!products || !product) return [];
         const availableProducts = products.filter(p => (p?.stock || 0) > 0);
@@ -127,7 +131,27 @@ const ProductDetailPage = () => {
         return () => stopContinuousAction();
     }, []);
 
-    // HIỂN THỊ MÀN HÌNH KHÔNG TÌM THẤY 
+    // 👉 BỘ GIẢI MÃ JSON CỦA BLOCK EDITOR
+    const parsedStory = useMemo(() => {
+        if (!product?.longDesc) return { gallery: [], blocks: [] };
+        
+        try {
+            // Cố gắng dịch JSON
+            const parsed = JSON.parse(product.longDesc);
+            if (parsed.blocks || parsed.gallery) {
+                return {
+                    gallery: parsed.gallery || [],
+                    blocks: parsed.blocks || []
+                };
+            }
+        } catch (e) {
+            // Nếu bị lỗi dịch JSON => Đây là bài viết cũ chứa HTML rác
+            return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: product.longDesc }] };
+        }
+        
+        return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: product.longDesc }] };
+    }, [product?.longDesc]);
+
     if (notFound) {
         return (
             <div className="product-detail-page" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -154,16 +178,14 @@ const ProductDetailPage = () => {
     const safePrice = product?.price || 0;
 
     const defaultShortDesc = "Là sự kết hợp tinh tế giữa hương vị đặc trưng của cà phê nguyên chất và một chút huyền bí, tạo nên một trải nghiệm cà phê độc đáo và say đắm. Hạt cà phê được lựa chọn cẩn thận từ những vùng trồng cà phê nổi tiếng, được rang một cách tỉ mỉ và chuyên nghiệp để giữ nguyên hương vị tự nhiên và đậm đà.";
-    const defaultLongDesc = `<p>Đặc biệt, "Cà phê Ngôn" mang đến một hương thơm quyến rũ, mềm mại và ngọt ngào, như một giấc mơ dịu dàng tựa như làn sương mai lướt qua những cánh đồng cà phê xanh ngát. Khi thưởng thức, bạn sẽ cảm nhận được vị đắng thanh của cà phê hòa quyện với vị ngọt tự nhiên, tạo nên một cảm giác hài hòa và bền vững trên đầu lưỡi.</p><br/><p>"Cà phê Ngôn" không chỉ là một thức uống bình thường mà còn là một trải nghiệm tinh thần, giúp bạn thư giãn sau những giờ làm việc căng thẳng, hoặc đơn giản là để tận hưởng những khoảnh khắc riêng tư và yên bình. Hãy để "Cà phê Ngôn" làm cho mỗi ngày của bạn trở nên đặc biệt hơn, mỗi giọt cà phê là một chuyến phiêu lưu mới đầy mơ mộng và đầy hứng khởi.</p><br/><p>Hãy để "Cà phê Ngôn" là người bạn đồng hành tin cậy, luôn sẵn sàng chia sẻ với bạn những khoảnh khắc đẹp nhất và những cảm xúc tinh tế nhất trong cuộc sống hàng ngày. Mỗi giọt cà phê Dreamy là một chuyến phiêu lưu tinh thần, một cơ hội để tận hưởng hương vị và tận hưởng cuộc sống một cách trọn vẹn và sâu sắc.</p>`;
 
-    const gallery = [product?.imageFront, product?.imageBack].filter(Boolean);
+    // 👉 TỰ ĐỘNG NỐI ẢNH GỐC VÀ ẢNH GALLERY TỪ JSON
+    const baseGallery = [product?.imageFront, product?.imageBack].filter(Boolean);
+    const fullGallery = [...baseGallery, ...parsedStory.gallery];
 
     const scrollNext = () => { if (trackRef.current) trackRef.current.scrollBy({ left: 300, behavior: 'smooth' }); };
     const scrollPrev = () => { if (trackRef.current) trackRef.current.scrollBy({ left: -300, behavior: 'smooth' }); };
 
-    // ==========================================
-    // HIỆU ỨNG BAY VÀO GIỎ HÀNG
-    // ==========================================
     const handleAddToCart = () => {
         if (safeStock <= 0) {
             toast.error("Sản phẩm này đã hết hàng rồi Boss ơi!");
@@ -240,7 +262,8 @@ const ProductDetailPage = () => {
                             <img src={mainImage} alt={safeName} />
                         </div>
                         <div className="thumbnail-list">
-                            {gallery.map((img, idx) => (
+                            {/* 👉 ĐÃ NỐI THÊM ẢNH TỪ GALLERY JSON LÊN ĐÂY */}
+                            {fullGallery.map((img, idx) => (
                                 <div 
                                     key={idx} 
                                     className={`thumb-item ${mainImage === img ? 'active' : ''}`}
@@ -257,7 +280,7 @@ const ProductDetailPage = () => {
                         
                         <div className="short-desc">
                             {product?.shortDesc ? (
-                                 <div dangerouslySetInnerHTML={{ __html: product.shortDesc }} />
+                                 <div dangerouslySetInnerHTML={{ __html: product.shortDesc.replace(/\n/g, '<br/>') }} />
                             ) : (
                                 <p>{defaultShortDesc}</p>
                             )}
@@ -274,7 +297,6 @@ const ProductDetailPage = () => {
 
                         <div className="add-to-cart-area">
                             <div className="quantity-selector">
-                                
                                 <button 
                                     onPointerDown={startDecrease}
                                     onPointerUp={stopContinuousAction}
@@ -359,10 +381,31 @@ const ProductDetailPage = () => {
                     </div>
                     <div className="tab-content">
                         {activeTab === 'description' ? (
-                            <div 
-                                className="desc-content" 
-                                dangerouslySetInnerHTML={{ __html: product?.longDesc || defaultLongDesc }}
-                            ></div>
+                            <div className="desc-content">
+                                {/* 👉 RENDER TỪ BỘ GIẢI MÃ BLOCK EDITOR */}
+                                {parsedStory.blocks.length > 0 ? (
+                                    parsedStory.blocks.map(block => {
+                                        if (block.type === 'text') {
+                                            return <div key={block.id} className="story-block-text" dangerouslySetInnerHTML={{ __html: block.content.replace(/\n/g, '<br/>') }} />;
+                                        }
+                                        if (block.type === 'image') {
+                                            return <div key={block.id} className="story-block-img"><img src={block.content} alt="Story content" /></div>;
+                                        }
+                                        if (block.type === 'video') {
+                                            const embedUrl = getYouTubeEmbedUrl(block.content);
+                                            if (!embedUrl) return null;
+                                            return (
+                                                <div key={block.id} className="story-block-video">
+                                                    <iframe src={embedUrl} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })
+                                ) : (
+                                    <p>Chưa có nội dung mô tả chi tiết.</p>
+                                )}
+                            </div>
                         ) : (
                             <div className="review-content">
                                 <p>Chưa có đánh giá nào cho sản phẩm này.</p>

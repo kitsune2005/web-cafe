@@ -618,3 +618,112 @@
         gap: 10px;
     }
 }
+
+/* =========================================
+   CSS CHO CÁC KHỐI BLOCK EDITOR TRONG TAB MÔ TẢ
+========================================= */
+
+/* Khối Văn Bản */
+.story-block-text {
+    color: #444;
+    line-height: 1.8;
+    font-size: 15px;
+    margin-bottom: 25px;
+}
+
+.story-block-text p {
+    margin-bottom: 15px;
+}
+
+/* Khối Hình Ảnh */
+.story-block-img {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.story-block-img img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* Khối Video YouTube (Responsive 16:9) */
+.story-block-video {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Tỉ lệ chuẩn 16:9 */
+    height: 0;
+    margin: 30px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.story-block-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =========================================
+   SỬA LẠI KHUNG THUMBNAIL GALLERY CHO ĐẸP (Cuộn ngang nếu quá nhiều)
+========================================= */
+.thumbnail-list {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px; /* Thêm tí đệm để tránh lẹm thanh cuộn */
+}
+.thumbnail-list::-webkit-scrollbar {
+    height: 6px;
+}
+.thumbnail-list::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 4px;
+}
+.thumbnail-list::-webkit-scrollbar-thumb {
+    background: #ddd; 
+    border-radius: 4px;
+}
+.thumbnail-list::-webkit-scrollbar-thumb:hover {
+    background: #6f4323; 
+}
+
+.thumb-item {
+    flex-shrink: 0; /* Cấm ảnh bị bóp lại khi thêm nhiều */
+    width: 90px;
+    height: 90px;
+    border: 1px solid #eae5df;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 6px;
+}
+
+/* =========================================
+   BỌC THÉP HIỂN THỊ CHỮ DÀNH CHO TIỂU SỬ SẢN PHẨM
+========================================= */
+.story-block-text b, 
+.story-block-text strong {
+    font-weight: 800;
+    color: #382212; /* Nhấn mạnh màu nâu đậm cho chữ in đậm, đẹp như The Coffee House */
+}
+
+.story-block-text u {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.story-block-text i, 
+.story-block-text em {
+    font-style: italic;
+    color: #555;
+}

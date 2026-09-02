@@ -2,22 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer'); // 👉 THÊM VŨ KHÍ BẮT FILE
 
 const app = express();
 const PORT = 5000;
 
-// Middleware cho phép frontend gọi API
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); // Cho phép gửi file ảnh Base64 lớn
+app.use(express.json({ limit: '50mb' })); 
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// ==========================================
-// CHO PHÉP ĐỌC FILE TỪ FOLDER 'uploads' (Hỗ trợ đọc thư mục con)
-// ==========================================
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // =========================================================================
-// HÀM CHUNG: XỬ LÝ ẢNH & TỰ ĐỘNG CHIA THƯ MỤC (AVATAR, PRODUCT, NEWS)
+// HÀM CHUNG: XỬ LÝ ẢNH & TỰ ĐỘNG CHIA THƯ MỤC CHO BASE64 (DÙNG CHO CÁC FORM CŨ)
 // =========================================================================
 const saveImage = (base64String, subFolder, prefix) => {
   if (!base64String || !base64String.startsWith('data:image')) return base64String;
@@ -32,9 +28,7 @@ const saveImage = (base64String, subFolder, prefix) => {
       const mainUploadPath = path.join(__dirname, 'uploads');
       const subUploadPath = path.join(mainUploadPath, subFolder);
 
-      // Tự động tạo thư mục gốc nếu chưa có
       if (!fs.existsSync(mainUploadPath)) fs.mkdirSync(mainUploadPath);
-      // Tự động chia "chuồng" (tạo thư mục con)
       if (!fs.existsSync(subUploadPath)) fs.mkdirSync(subUploadPath);
 
       fs.writeFileSync(path.join(subUploadPath, filename), base64Data, 'base64');
@@ -46,6 +40,34 @@ const saveImage = (base64String, subFolder, prefix) => {
   }
   return base64String;
 };
+
+// =========================================================================
+// 👉 API MỚI: HỨNG FILE TỪ TRÌNH SOẠN THẢO (BLOCK EDITOR / GALLERY)
+// =========================================================================
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const dir = path.join(__dirname, 'uploads', 'products');
+        // Tự động tạo thư mục nếu chưa có
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        cb(null, `editor_${Date.now()}_${Math.floor(Math.random() * 1000)}${ext}`);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'Không tìm thấy file ảnh đính kèm!' });
+    }
+    
+    // Trả về URL đường dẫn chuẩn xác cho Frontend xài luôn
+    const imageUrl = `http://localhost:${PORT}/uploads/products/${req.file.filename}`;
+    res.status(200).json({ success: true, url: imageUrl, filename: req.file.filename });
+});
 
 // =========================================================================
 // ==================== KHU VỰC API NGƯỜI DÙNG / AUTH ======================
@@ -112,14 +134,13 @@ app.post('/api/google-login', (req, res) => {
 app.put('/api/update-profile', (req, res) => {
   const { id, name, email, avatar } = req.body;
   const users = readUsers();
-  const userIndex = users.findIndex(u => String(u.id) === String(id)); // BỌC THÉP ID
+  const userIndex = users.findIndex(u => String(u.id) === String(id)); 
 
   if (userIndex === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
 
   if (name) users[userIndex].name = name;
   if (email) users[userIndex].email = email;
 
-  // XỬ LÝ AVATAR -> ĐƯA VÀO FOLDER avatars
   if (avatar) {
     if (avatar.startsWith('data:image')) users[userIndex].avatar = saveImage(avatar, 'avatars', `avatar_${id}`);
     else if (avatar.startsWith('http')) users[userIndex].avatar = avatar;
@@ -138,7 +159,7 @@ app.get('/api/users', (req, res) => {
 
 app.delete('/api/users/:id', (req, res) => {
   let users = readUsers();
-  const userToDelete = users.find(u => String(u.id) === String(req.params.id)); // BỌC THÉP ID
+  const userToDelete = users.find(u => String(u.id) === String(req.params.id));
   if (userToDelete && userToDelete.role === 'admin' && users.filter(u => u.role === 'admin').length === 1) {
     return res.status(400).json({ success: false, message: 'Không thể xóa Admin duy nhất!' });
   }
@@ -169,7 +190,6 @@ app.post('/api/products', (req, res) => {
   const products = readProducts();
   let newProduct = req.body;
 
-  // 👉 CHIA CHUỒNG VÀ ĐỒNG BỘ IMG: Chống lỗi phình to Database
   newProduct.imageFront = saveImage(newProduct.imageFront, 'products', 'sp_front');
   newProduct.imageBack = saveImage(newProduct.imageBack, 'products', 'sp_back');
   newProduct.img = newProduct.imageFront;
@@ -181,14 +201,14 @@ app.post('/api/products', (req, res) => {
 
 app.put('/api/products/:id', (req, res) => {
   const products = readProducts();
-  const index = products.findIndex(p => String(p.id) === String(req.params.id)); // BỌC THÉP ID
+  const index = products.findIndex(p => String(p.id) === String(req.params.id)); 
 
   if (index === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm!' });
 
   let updatedProduct = req.body;
   updatedProduct.imageFront = saveImage(updatedProduct.imageFront, 'products', 'sp_front');
   updatedProduct.imageBack = saveImage(updatedProduct.imageBack, 'products', 'sp_back');
-  updatedProduct.img = updatedProduct.imageFront; // Đồng bộ img chống phình rác
+  updatedProduct.img = updatedProduct.imageFront; 
 
   products[index] = updatedProduct;
   writeProducts(products);
@@ -197,7 +217,6 @@ app.put('/api/products/:id', (req, res) => {
 
 app.delete('/api/products/:id', (req, res) => {
   let products = readProducts();
-  // BỌC THÉP ID ĐỂ HÀM FILTER HOẠT ĐỘNG CHUẨN XÁC
   const filteredProducts = products.filter(p => String(p.id) !== String(req.params.id));
   writeProducts(filteredProducts);
   res.status(200).json({ success: true, message: 'Đã xóa thành công' });
@@ -205,7 +224,7 @@ app.delete('/api/products/:id', (req, res) => {
 
 app.patch('/api/products/:id', (req, res) => {
   const products = readProducts();
-  const index = products.findIndex(p => String(p.id) === String(req.params.id)); // BỌC THÉP ID
+  const index = products.findIndex(p => String(p.id) === String(req.params.id));
   if (index === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm!' });
 
   const { shortDesc, longDesc, stock, sold } = req.body;
@@ -234,7 +253,6 @@ const readNews = () => {
 
 const writeNews = (newsList) => { fs.writeFileSync(NEWS_DB_FILE, JSON.stringify(newsList, null, 2), 'utf8'); };
 
-// HÀM QUÉT ẢNH TỪ BLOCK BUILDER TIN TỨC
 const processContentBlocks = (blocks) => {
   if (!Array.isArray(blocks)) return blocks;
   return blocks.map(block => {
@@ -248,7 +266,7 @@ const processContentBlocks = (blocks) => {
 app.get('/api/news', (req, res) => { res.status(200).json(readNews()); });
 
 app.get('/api/news/:id', (req, res) => {
-  const news = readNews().find(item => String(item.id) === String(req.params.id)); // BỌC THÉP ID
+  const news = readNews().find(item => String(item.id) === String(req.params.id));
   if (!news) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
   res.status(200).json(news);
 });
@@ -257,7 +275,6 @@ app.post('/api/news', (req, res) => {
   const { title, excerpt, content, contentBlocks, image, author, status, isFeatured } = req.body;
   const newsList = readNews();
 
-  // CHIA CHUỒNG ẢNH BÌA VÀ ẢNH BÀI VIẾT VÀO FOLDER news
   const savedCoverImage = image ? saveImage(image, 'news', 'news_cover') : '';
   const processedBlocks = processContentBlocks(contentBlocks);
 
@@ -275,7 +292,7 @@ app.post('/api/news', (req, res) => {
 
 app.put('/api/news/:id', (req, res) => {
   const newsList = readNews();
-  const index = newsList.findIndex(item => String(item.id) === String(req.params.id)); // BỌC THÉP ID
+  const index = newsList.findIndex(item => String(item.id) === String(req.params.id));
 
   if (index === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
 
@@ -294,7 +311,7 @@ app.delete('/api/news/:id', (req, res) => {
   let newsList = readNews();
   if (!newsList.some(item => String(item.id) === String(req.params.id))) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
 
-  writeNews(newsList.filter(item => String(item.id) !== String(req.params.id))); // BỌC THÉP ID
+  writeNews(newsList.filter(item => String(item.id) !== String(req.params.id)));
   res.status(200).json({ success: true, message: 'Xóa bài viết thành công!' });
 });
 
@@ -328,7 +345,7 @@ app.get('/api/contacts', (req, res) => { res.status(200).json(readContacts()); }
 
 app.put('/api/contacts/:id/read', (req, res) => {
   const contacts = readContacts();
-  const index = contacts.findIndex(item => String(item.id) === String(req.params.id)); // BỌC THÉP ID
+  const index = contacts.findIndex(item => String(item.id) === String(req.params.id));
   if (index === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
 
   contacts[index].status = 'read';
@@ -340,11 +357,10 @@ app.delete('/api/contacts/:id', (req, res) => {
   let contacts = readContacts();
   if (!contacts.some(item => String(item.id) === String(req.params.id))) return res.status(404).json({ success: false, message: 'Không tìm thấy!' });
 
-  writeContacts(contacts.filter(item => String(item.id) !== String(req.params.id))); // BỌC THÉP ID
+  writeContacts(contacts.filter(item => String(item.id) !== String(req.params.id)));
   res.status(200).json({ success: true, message: 'Đã xóa!' });
 });
 
-// Khởi động server
 app.listen(PORT, () => {
   console.log(`✅ Backend đang chạy tại: http://localhost:${PORT}`);
 });
