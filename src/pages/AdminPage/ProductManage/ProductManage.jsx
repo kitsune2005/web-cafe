@@ -20,7 +20,6 @@ const ProductManage = () => {
         name: '', category: 'Cà phê nguyên chất', price: '', oldPrice: '', stock: '', imageFront: '', imageBack: '', discount: 0, isFeatured: false
     });
 
-    // 👉 BỌC THÉP MẢNG: Nếu chưa có data thì tự hiểu là mảng rỗng để không bị lỗi .length
     const safeProducts = Array.isArray(products) ? products : [];
     
     const totalProducts = safeProducts.length;
@@ -144,9 +143,8 @@ const ProductManage = () => {
         }));
     };
 
-    // 👉 BỌC THÉP TÌM KIẾM: Phòng hờ có sản phẩm bị lỗi mất tên
     const filteredProducts = safeProducts.filter(p => {
-        const pName = p.name || ''; // Chữa cháy nếu p.name bị undefined
+        const pName = p.name || ''; 
         const searchStr = searchTerm || '';
         const matchSearch = pName.toLowerCase().includes(searchStr.toLowerCase());
         
@@ -176,12 +174,12 @@ const ProductManage = () => {
             <div className="product-manage-layout">
                 
                 {/* CỘT TRÁI */}
-                <div className="product-main-area dashboard-recent-orders">
-                    <div className="section-header" style={{ marginBottom: '25px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '15px' }}>
-                        
-                        <div style={{ display: 'flex', gap: '15px', flex: 1, flexWrap: 'wrap' }}>
-                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, minWidth: '200px', maxWidth: '400px' }}>
-                                <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
+                <div className="product-main-area pm-panel">
+                    
+                    <div className="pm-toolbar">
+                        <div className="pm-search-group">
+                            <div className="pm-search-box">
+                                <i className="fa-solid fa-magnifying-glass"></i>
                                 <input 
                                     type="text" 
                                     placeholder="Tìm kiếm tên sản phẩm..." 
@@ -190,7 +188,6 @@ const ProductManage = () => {
                                         setSearchTerm(e.target.value);
                                         setCurrentPage(1); 
                                     }}
-                                    style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
                                 />
                             </div>
 
@@ -200,8 +197,7 @@ const ProductManage = () => {
                                     setStockFilter(e.target.value);
                                     setCurrentPage(1); 
                                 }}
-                                className="fox-custom-select"
-                                style={{ width: '180px' }}
+                                className="pm-filter-select"
                             >
                                 <option value="all">Tất cả trạng thái</option>
                                 <option value="low">Gần hết hàng (&lt;10)</option>
@@ -216,7 +212,7 @@ const ProductManage = () => {
 
                     <div className="admin-product-grid">
                         {currentProducts.length === 0 ? (
-                            <div style={{gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#888'}}>Không tìm thấy món nào!</div>
+                            <div style={{gridColumn: '1 / -1', textAlign: 'center', padding: '2.5rem', color: '#888'}}>Không tìm thấy món nào!</div>
                         ) : (
                             currentProducts.map(product => (
                                 <div className="admin-product-card" key={product.id}>
@@ -288,31 +284,34 @@ const ProductManage = () => {
 
             </div>
 
-            {/* BẢNG MODAL */}
+            {/* BẢNG MODAL (Đã Cách Ly 100% bằng class pm- ) */}
             {isModalOpen && (
                 <div className="product-modal-overlay">
                     <div className="product-modal-box">
-                        <div className="modal-header">
+                        <div className="pm-modal-header">
                             <h3>{editingProduct ? 'Sửa Sản Phẩm' : 'Thêm Món Mới'}</h3>
-                            <button className="close-btn" onClick={() => setIsModalOpen(false)}><i className="fa-solid fa-xmark"></i></button>
+                            <button className="close-btn" onClick={() => setIsModalOpen(false)}>
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="modal-form">
-                            <div className="form-group">
+                        
+                        <form onSubmit={handleSubmit} className="pm-modal-form">
+                            <div className="pm-form-group">
                                 <label>Tên sản phẩm *</label>
                                 <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
                             </div>
                             
-                            <div className="form-group">
+                            <div className="pm-form-group">
                                 <label>Danh mục *</label>
-                                <select name="category" value={formData.category} onChange={handleInputChange} className="fox-custom-select">
+                                <select name="category" value={formData.category} onChange={handleInputChange}>
                                     <option value="Cà phê nguyên chất">Cà phê nguyên chất</option>
                                     <option value="Cà phê đóng gói">Cà phê đóng gói</option>
                                     <option value="Cà phê phin">Cà phê phin</option>
                                 </select>
                             </div>
 
-                            <div className="form-group featured-checkbox-group">
-                                <label className="featured-label">
+                            <div className="pm-form-group pm-featured-group">
+                                <label className="pm-featured-label">
                                     <input 
                                         type="checkbox" 
                                         name="isFeatured" 
@@ -323,52 +322,52 @@ const ProductManage = () => {
                                 </label>
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className="pm-form-row">
+                                <div className="pm-form-group">
                                     <label>Giá gốc (VNĐ) *</label>
                                     <input type="number" name="oldPrice" placeholder="Ví dụ: 250000" value={formData.oldPrice} onChange={handleInputChange} required min="0" />
                                 </div>
-                                <div className="form-group">
+                                <div className="pm-form-group">
                                     <label>% Giảm giá</label>
                                     <input type="number" name="discount" placeholder="Ví dụ: 15" value={formData.discount} onChange={handleInputChange} min="0" max="100" />
                                 </div>
                             </div>
                             
-                            <div className="form-group">
+                            <div className="pm-form-group">
                                 <label>Giá bán thực tế (Tính tự động)</label>
-                                <div className="auto-price-display">
+                                <div className="pm-price-display">
                                     {formatPrice ? formatPrice(formData.price || 0) : `${(formData.price || 0).toLocaleString('vi-VN')}₫`}
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className="pm-form-group">
                                 <label>Số lượng kho *</label>
                                 <input type="number" name="stock" placeholder="Số lượng" value={formData.stock} onChange={handleInputChange} required min="0" />
                             </div>
 
-                            <div className="form-group">
+                            <div className="pm-form-group">
                                 <label>Hình ảnh sản phẩm *</label>
-                                <div className="image-upload-row">
-                                    <div className="upload-box">
+                                <div className="pm-upload-row">
+                                    <div className="pm-upload-box">
                                         <label>
                                             <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageFront')} hidden />
                                             {formData.imageFront ? (
-                                                <img src={formData.imageFront} alt="Mặt trước" className="preview-img" />
+                                                <img src={formData.imageFront} alt="Mặt trước" className="pm-preview-img" />
                                             ) : (
-                                                <div className="upload-placeholder">
+                                                <div className="pm-upload-placeholder">
                                                     <i className="fa-solid fa-cloud-arrow-up"></i>
                                                     <span>Tải ảnh lên<br/>(Ảnh mặt trước)</span>
                                                 </div>
                                             )}
                                         </label>
                                     </div>
-                                    <div className="upload-box">
+                                    <div className="pm-upload-box">
                                         <label>
                                             <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageBack')} hidden />
                                             {formData.imageBack ? (
-                                                <img src={formData.imageBack} alt="Mặt sau" className="preview-img" />
+                                                <img src={formData.imageBack} alt="Mặt sau" className="pm-preview-img" />
                                             ) : (
-                                                <div className="upload-placeholder">
+                                                <div className="pm-upload-placeholder">
                                                     <i className="fa-solid fa-cloud-arrow-up"></i>
                                                     <span>Tải ảnh lên<br/>(Ảnh mặt sau - Hover)</span>
                                                 </div>
@@ -378,9 +377,9 @@ const ProductManage = () => {
                                 </div>
                             </div>
 
-                            <div className="modal-actions">
-                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy bỏ</button>
-                                <button type="submit" className="btn-save">{editingProduct ? 'Cập Nhật' : 'Tạo Sản Phẩm'}</button>
+                            <div className="pm-modal-actions">
+                                <button type="button" className="pm-btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy bỏ</button>
+                                <button type="submit" className="pm-btn-save">{editingProduct ? 'Cập Nhật' : 'Tạo Sản Phẩm'}</button>
                             </div>
                         </form>
                     </div>

@@ -5,7 +5,7 @@
     "oldPrice": 150000,
     "price": 150000,
     "discount": 0,
-    "stock": 38,
+    "stock": 20,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017907155.jpg",
     "isFeatured": true,
@@ -14,7 +14,8 @@
     "id": 2,
     "shortDesc": "test",
     "longDesc": "test",
-    "sold": 2
+    "sold": 20,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg"
   },
   {
     "name": "Cà Phê Decaf ",
@@ -36,14 +37,14 @@
     "oldPrice": 220000,
     "price": 198000,
     "discount": 10,
-    "stock": 15,
+    "stock": 45,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017898872.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017898873.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
     "id": 4,
-    "sold": 10,
+    "sold": 25,
     "img": "http://localhost:5000/uploads/products/sp_front_1788017898872.jpg"
   },
   {
@@ -52,13 +53,15 @@
     "oldPrice": 150000,
     "price": 90000,
     "discount": 40,
-    "stock": 100,
+    "stock": 77,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017141688.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017141689.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 5
+    "id": 5,
+    "sold": 23,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788017141688.jpg"
   },
   {
     "name": "Cà phê Buôn Ma Thuột Moka 500g",
@@ -66,13 +69,15 @@
     "oldPrice": 150000,
     "price": 120000,
     "discount": 20,
-    "stock": 10,
+    "stock": 59988,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788018431963.png",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788018431964.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 6
+    "id": 6,
+    "sold": 30,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788018431963.png"
   },
   {
     "name": "Cà phê hạt Carraro Globo Oro 1000g",
@@ -80,13 +85,15 @@
     "oldPrice": 990000,
     "price": 801900,
     "discount": 19,
-    "stock": 7,
+    "stock": 1000000,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788018975153.png",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788018975154.png",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 7
+    "id": 7,
+    "sold": 7,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788018975153.png"
   },
   {
     "name": "Cà phê chồn 500g",
@@ -94,13 +101,14 @@
     "oldPrice": 200000,
     "price": 200000,
     "discount": 0,
-    "stock": 2,
+    "stock": 99,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788019586570.png",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788019586571.png",
     "isFeatured": false,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 8
+    "id": 8,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788019586570.png"
   },
   {
     "name": "Cà Phê Hạt Rang Mộc Espresso 500g",

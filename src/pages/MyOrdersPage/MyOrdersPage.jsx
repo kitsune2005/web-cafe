@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // 👉 KÉO BỘ NÃO USER VÀO
+import { useAuth } from '../../context/AuthContext'; 
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2'; 
 import './MyOrdersPage.css';
 
 const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [currentTime, setCurrentTime] = useState(Date.now());
+    const [receiptOrder, setReceiptOrder] = useState(null);
 
-    // 👉 LẤY THÔNG TIN NGƯỜI ĐANG ĐĂNG NHẬP
     const { currentUser, loading } = useAuth();
     const navigate = useNavigate();
 
-    // 1. Tải đơn hàng từ LocalStorage khi vào trang
     useEffect(() => {
         if (loading) return;
 
-        // Nếu chưa đăng nhập thì đuổi ra ngoài
         if (!currentUser) {
             toast.error("Boss ơi, phải đăng nhập mới xem được đơn hàng nhé! ");
             navigate('/');
@@ -25,17 +24,12 @@ const MyOrdersPage = () => {
 
         window.scrollTo(0, 0);
         const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
-
-        // 👉 BỘ LỌC MA THUẬT: Chỉ lấy đúng đơn của tài khoản hiện tại
         const myOwnOrders = allOrders.filter(order => order.customerId === currentUser.id);
-
-        // Sắp xếp đơn mới lên đầu
         const sortedOrders = myOwnOrders.sort((a, b) => b.createdAt - a.createdAt);
 
         setOrders(sortedOrders);
     }, [currentUser, loading, navigate]);
 
-    // 2. Vòng lặp đếm ngược thời gian thực (Mỗi giây cập nhật 1 lần)
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(Date.now());
@@ -47,13 +41,12 @@ const MyOrdersPage = () => {
                         const elapsed = Math.floor((Date.now() - order.createdAt) / 1000);
                         if (elapsed >= 60) {
                             hasChanges = true;
-                            return { ...order, status: 'arrived' }; // Chuyển trạng thái Đã tới
+                            return { ...order, status: 'arrived' }; 
                         }
                     }
                     return order;
                 });
 
-                // CẬP NHẬT KHO TỔNG: Chỉ cập nhật đơn của mình, giữ nguyên đơn người khác
                 if (hasChanges) {
                     const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
                     const newAllOrders = allOrders.map(sysOrder => {
@@ -68,18 +61,87 @@ const MyOrdersPage = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // 3. Hàm xử lý khi bấm nút "Đã nhận" hoặc "Chưa nhận"
-    const handleConfirmStatus = (orderId, newStatus) => {
-        // Cập nhật giao diện nội bộ
+    // ==========================================
+    // 👉 HÀM ĐÃ NÂNG CẤP: BẮN LỆNH LÊN DATABASE CHO ADMIN
+    // ==========================================
+    const handleConfirmStatus = async (orderId, newStatus) => {
+        // 1. Cập nhật giao diện nội bộ cho mượt
         const updatedOrders = orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
         setOrders(updatedOrders);
 
-        // CẬP NHẬT KHO TỔNG
+        // 2. Cập nhật LocalStorage
         const allOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
         const newAllOrders = allOrders.map(sysOrder =>
             sysOrder.id === orderId ? { ...sysOrder, status: newStatus } : sysOrder
         );
         localStorage.setItem('my_orders', JSON.stringify(newAllOrders));
+
+        // 3. 👉 PHÓNG API LÊN DATABASE CHO RADAR ADMIN BẮT SÓNG
+        try {
+            await fetch(`http://localhost:5000/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+        } catch (error) {
+            console.error("Lỗi khi đồng bộ lên Database Admin:", error);
+        }
+    };
+
+    // ==========================================
+    // XỬ LÝ: XÁC NHẬN ĐÃ NHẬN HÀNG
+    // ==========================================
+    const handleReceived = (order) => {
+        Swal.fire({
+            title: 'Xác nhận nhận hàng?',
+            text: "Boss xác nhận shipper đã giao đúng và đủ hàng chứ?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0ca678', 
+            cancelButtonColor: '#888',
+            confirmButtonText: 'Đúng, tôi đã nhận!',
+            cancelButtonText: 'Khoan đã'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                handleConfirmStatus(order.id, 'received');
+                toast.success('Đơn hàng hoàn tất! Đã lưu biên lai. ✨', {
+                    position: "bottom-right",
+                    style: { background: '#0ca678', color: '#fff', fontWeight: 600 }
+                });
+            }
+        });
+    };
+
+    // ==========================================
+    // XỬ LÝ: BÁO CÁO CHƯA NHẬN ĐƯỢC HÀNG
+    // ==========================================
+    const handleNotReceived = (order) => {
+        Swal.fire({
+            title: 'Báo cáo sự cố!',
+            text: "Boss chưa nhận được hàng? Hãy ghi chú lại để Admin xử lý ngay nhé:",
+            input: 'textarea',
+            inputPlaceholder: 'Ví dụ: Shipper gọi không nghe máy, báo giao rồi nhưng không thấy hàng...',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#fa5252', 
+            cancelButtonColor: '#888',
+            confirmButtonText: 'Gửi báo cáo',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const reason = result.value || "Không ghi rõ lý do";
+                console.log(`[BÁO ĐỘNG ĐỎ GỬI ADMIN] Đơn hàng ${order.id} gặp sự cố: ${reason}`);
+
+                // Gọi hàm đã bọc API ở trên
+                handleConfirmStatus(order.id, 'not_received');
+                
+                Swal.fire(
+                    'Đã gửi báo cáo!',
+                    'Hệ thống đã gửi báo cáo thẳng lên Admin. Boss cứ yên tâm đợi kết quả nhé!',
+                    'success'
+                );
+            }
+        });
     };
 
     const formatPrice = (price) => price.toLocaleString('vi-VN') + '₫';
@@ -89,7 +151,6 @@ const MyOrdersPage = () => {
         return d.toLocaleTimeString('vi-VN') + ' - ' + d.toLocaleDateString('vi-VN');
     };
 
-    // Chặn hiển thị giao diện khi chưa load xong user
     if (loading || !currentUser) return null;
 
     return (
@@ -110,14 +171,14 @@ const MyOrdersPage = () => {
                 ) : (
                     <div className="orders-list">
                         {orders.map(order => {
-                            // Tính toán thời gian
                             const elapsed = Math.floor((currentTime - order.createdAt) / 1000);
                             const remaining = Math.max(0, 60 - elapsed);
 
+                            const subtotal = order.items?.reduce((s, i) => s + i.price * i.quantity, 0) || 0;
+                            const shippingFee = order.total - subtotal;
+
                             return (
                                 <div key={order.id} className={`order-card status-${order.status}`}>
-
-                                    {/* PHẦN ĐẦU: TRẠNG THÁI & THỜI GIAN */}
                                     <div className="order-header">
                                         <div className="order-id">
                                             <i className="fa-solid fa-receipt"></i> Mã đơn: <strong>{order.id}</strong>
@@ -136,7 +197,6 @@ const MyOrdersPage = () => {
                                         <p><strong>Dự kiến giao:</strong> Trong vòng 60 phút</p>
                                     </div>
 
-                                    {/* BIÊN LAI (HÓA ĐƠN) */}
                                     <div className="order-receipt">
                                         <ul className="receipt-items">
                                             {order.items?.map((item, idx) => (
@@ -152,27 +212,86 @@ const MyOrdersPage = () => {
                                         </div>
                                     </div>
 
-                                    {/* KHU VỰC NÚT BẤM KHI SHIPPER TỚI */}
-                                    {order.status === 'arrived' && (
-                                        <div className="order-actions">
-                                            <h4 className="action-title">Shipper đang đứng trước cửa, Boss vui lòng xác nhận:</h4>
-                                            <div className="action-buttons">
-                                                <button className="btn-confirm success" onClick={() => handleConfirmStatus(order.id, 'received')}>
-                                                    <i className="fa-solid fa-check"></i> ĐÃ NHẬN ĐƯỢC HÀNG
-                                                </button>
-                                                <button className="btn-confirm danger" onClick={() => handleConfirmStatus(order.id, 'not_received')}>
-                                                    <i className="fa-solid fa-xmark"></i> TÔI CHƯA NHẬN ĐƯỢC
+                                    <div className="order-dynamic-actions">
+                                        {order.status === 'arrived' && (
+                                            <div className="order-actions">
+                                                <h4 className="action-title">Shipper đang đứng trước cửa, Boss vui lòng xác nhận:</h4>
+                                                <div className="action-buttons">
+                                                    <button className="btn-confirm success" onClick={() => handleReceived(order)}>
+                                                        <i className="fa-solid fa-check"></i> ĐÃ NHẬN ĐƯỢC HÀNG
+                                                    </button>
+                                                    <button className="btn-confirm danger" onClick={() => handleNotReceived(order)}>
+                                                        <i className="fa-solid fa-xmark"></i> TÔI CHƯA NHẬN ĐƯỢC
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {order.status === 'received' && (
+                                            <div className="action-completed-area">
+                                                <span className="success-msg">Cảm ơn Boss đã mua sắm tại The Coffee!</span>
+                                                <button className="btn-view-receipt" onClick={() => setReceiptOrder({ ...order, shippingFee })} title="Xem biên lai">
+                                                    <i className="fa-regular fa-eye"></i> Xem biên lai
                                                 </button>
                                             </div>
-                                        </div>
-                                    )}
+                                        )}
 
+                                        {order.status === 'not_received' && (
+                                            <div className="action-reported-area">
+                                                <span className="error-msg">
+                                                    <i className="fa-solid fa-shield-halved"></i> Đơn hàng đang bị kẹt. Admin đang trực tiếp điều tra xử lý!
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
                     </div>
                 )}
             </div>
+
+            {/* MODAL BIÊN LAI */}
+            {receiptOrder && (
+                <div className="receipt-modal-overlay" onClick={() => setReceiptOrder(null)}>
+                    <div className="receipt-modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="btn-close-receipt" onClick={() => setReceiptOrder(null)}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                        
+                        <div className="receipt-paper">
+                            <div className="receipt-header">
+                                <h2>THE COFFEE</h2>
+                                <p>HÓA ĐƠN ĐIỆN TỬ</p>
+                                <p>Mã đơn: {receiptOrder.id}</p>
+                            </div>
+                            <div className="receipt-divider"></div>
+                            <div className="receipt-body">
+                                {receiptOrder.items?.map((item, idx) => (
+                                    <div className="receipt-row" key={idx}>
+                                        <span className="r-name">{item.name} x{item.quantity}</span>
+                                        <span className="r-price">{formatPrice(item.price * item.quantity)}</span>
+                                    </div>
+                                ))}
+                                <div className="receipt-row">
+                                    <span className="r-name">Phí vận chuyển</span>
+                                    <span className="r-price">{formatPrice(receiptOrder.shippingFee)}</span>
+                                </div>
+                            </div>
+                            <div className="receipt-divider"></div>
+                            <div className="receipt-footer">
+                                <div className="receipt-row r-total">
+                                    <span>TỔNG THANH TOÁN</span>
+                                    <span>{formatPrice(receiptOrder.total)}</span>
+                                </div>
+                                <p className="r-time">Hoàn tất lúc: {new Date().toLocaleString('vi-VN')}</p>
+                                <p className="r-thankyou">Cảm ơn quý khách!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

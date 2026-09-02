@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext'; 
 import toast from 'react-hot-toast'; 
@@ -8,15 +8,21 @@ import './CartPage.css';
 const CartPage = () => {
     const { cartItems, setCartItems, removeFromCart } = useCart();
 
+    // 👉 CHUẨN BỊ VŨ KHÍ CHO SÚNG LIÊN THANH TRONG GIỎ HÀNG
+    const timeoutRef = useRef(null);
+    const intervalRef = useRef(null);
+
     useEffect(() => {
         window.scrollTo(0, 0);
+        // Dọn dẹp súng liên thanh khi thoát trang
+        return () => stopContinuousAction();
     }, []);
 
     const formatPrice = (price) => {
         return price.toLocaleString('vi-VN') + '₫';
     };
 
-    // HÀM CẬP NHẬT SỐ LƯỢNG
+    // HÀM CẬP NHẬT SỐ LƯỢNG (Bắn 1 phát)
     const updateQuantity = (item, newQuantity) => {
         if (newQuantity < 1) return;
         
@@ -38,25 +44,85 @@ const CartPage = () => {
         });
     };
 
-    // HÀM XÓA 1 MÓN
+    // ==========================================
+    // 👉 HỆ THỐNG ĐÈ NÚT TỰ ĐỘNG TĂNG GIẢM (SÚNG LIÊN THANH)
+    // ==========================================
+    const stopContinuousAction = () => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+
+    const startDecrease = (item) => {
+        // Bắn 1 phát đầu tiên
+        updateQuantity(item, item.quantity - 1);
+        
+        // Đợi 400ms xem có đè chuột không
+        timeoutRef.current = setTimeout(() => {
+            // Nếu đè chuột, lấy quantity hiện tại từ danh sách rồi trừ dần
+            let currentQty = item.quantity - 1;
+            intervalRef.current = setInterval(() => {
+                if (currentQty <= 1) {
+                    clearInterval(intervalRef.current);
+                    return;
+                }
+                currentQty -= 1;
+                updateQuantity(item, currentQty);
+            }, 80); 
+        }, 400); 
+    };
+
+    const startIncrease = (item) => {
+        const maxStock = item.stock || 99;
+        
+        updateQuantity(item, item.quantity + 1);
+        
+        timeoutRef.current = setTimeout(() => {
+            let currentQty = item.quantity + 1;
+            intervalRef.current = setInterval(() => {
+                if (currentQty >= maxStock) {
+                    clearInterval(intervalRef.current);
+                    return;
+                }
+                currentQty += 1;
+                updateQuantity(item, currentQty);
+            }, 80);
+        }, 400);
+    };
+
+    // ==========================================
+    // 👉 HÀM XÓA 1 MÓN (ĐÃ NÂNG CẤP THÊM POPUP XÁC NHẬN)
+    // ==========================================
     const handleRemoveItem = (id, name) => {
-        removeFromCart(id);
-        toast.success(`Đã xóa ${name} khỏi giỏ!`, {
-            position: "bottom-right",
-            icon: '🗑️',
-            style: { fontWeight: 600, color: '#fa5252' }
+        Swal.fire({
+            title: 'Khoan đã Boss ơi!',
+            text: `Boss có chắc chắn muốn bỏ "${name}" ra khỏi giỏ không?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#fa5252', 
+            cancelButtonColor: '#888',     
+            confirmButtonText: 'Bỏ món này!',
+            cancelButtonText: 'Giữ lại'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                removeFromCart(id);
+                toast.success(`Đã xóa ${name} khỏi giỏ!`, {
+                    position: "bottom-right",
+                    icon: '🗑️',
+                    style: { fontWeight: 600, color: '#fa5252' }
+                });
+            }
         });
     };
 
-    // 👉 ĐÃ SỬA: HÀM XÓA SẠCH GIỎ HÀNG BẰNG SWEETALERT2
+    // HÀM XÓA SẠCH GIỎ HÀNG 
     const handleClearCart = () => {
         Swal.fire({
             title: 'Dọn sạch giỏ hàng?',
             text: "Boss có chắc chắn muốn xóa hết tất cả các món trong giỏ không?",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#fa5252', // Màu đỏ cho nút xóa
-            cancelButtonColor: '#888',     // Màu xám cho nút hủy
+            confirmButtonColor: '#fa5252', 
+            cancelButtonColor: '#888',     
             confirmButtonText: 'Xóa sạch!',
             cancelButtonText: 'Giữ lại'
         }).then((result) => {
@@ -115,6 +181,7 @@ const CartPage = () => {
                                         <div className="col-product">
                                             <button
                                                 className="btn-remove-item"
+                                                // 👉 ĐÃ GỌI HÀM CONFIRM SWEETALERT
                                                 onClick={() => handleRemoveItem(item.id, item.name)} 
                                                 title="Xóa sản phẩm này"
                                             >
@@ -135,12 +202,29 @@ const CartPage = () => {
 
                                         <div className="col-qty">
                                             <div className="quantity-selector cart-qty">
-                                                <button onClick={() => updateQuantity(item, item.quantity - 1)}>-</button>
+                                                
+                                                {/* 👉 NÚT TRỪ TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
+                                                <button 
+                                                    onPointerDown={() => startDecrease(item)}
+                                                    onPointerUp={stopContinuousAction}
+                                                    onPointerLeave={stopContinuousAction}
+                                                    onContextMenu={(e) => e.preventDefault()}
+                                                    disabled={item.quantity <= 1}
+                                                    style={{ userSelect: 'none', touchAction: 'none' }}
+                                                >-</button>
+                                                
                                                 <input type="number" value={item.quantity} readOnly />
+                                                
+                                                {/* 👉 NÚT CỘNG TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
                                                 <button
-                                                    onClick={() => updateQuantity(item, item.quantity + 1)}
+                                                    onPointerDown={() => startIncrease(item)}
+                                                    onPointerUp={stopContinuousAction}
+                                                    onPointerLeave={stopContinuousAction}
+                                                    onContextMenu={(e) => e.preventDefault()}
                                                     disabled={item.quantity >= (item.stock || 99)}
+                                                    style={{ userSelect: 'none', touchAction: 'none' }}
                                                 >+</button>
+
                                             </div>
                                         </div>
 

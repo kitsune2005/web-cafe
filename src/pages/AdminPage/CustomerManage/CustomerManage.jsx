@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
-import '../Dashboard/Dashboard.css'; // 👉 Dùng chung layout của Dashboard
-import './CustomerManage.css'; // 👉 CSS riêng cho nút bấm và form
+import '../Dashboard/Dashboard.css'; 
+import './CustomerManage.css'; 
 
 const CustomerManage = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     
-    // State cho Modal tạo tài khoản mới
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,25 +104,28 @@ const CustomerManage = () => {
 
     return (
         <div className="admin-dashboard-container">
-            {/* 👉 HEADER CHUẨN DASHBOARD (NẰM NGOÀI KHỐI TRẮNG) */}
             <div className="dashboard-header">
                 <h2 className="dashboard-title">Quản lý Khách hàng ({users.length} tài khoản)</h2>
                 <p className="dashboard-subtitle">Theo dõi, thêm mới và xóa tài khoản của người dùng trên hệ thống.</p>
             </div>
 
             <div className="dashboard-recent-orders">
-                {/* 👉 THANH CÔNG CỤ ĐỒNG BỘ VỚI TRANG ORDER */}
-                <div className="section-header" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '15px' }}>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '8px 15px', borderRadius: '8px', flex: 1, maxWidth: '400px' }}>
+                
+                {/* 👉 ĐÃ FIX: Né class section-header, dùng Flexbox min/rem để tự co giãn mượt mà */}
+                <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
+                    
+                    {/* Ô Search tự giãn, tối đa 25rem, tối thiểu tự co lại */}
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '0.75rem 1rem', borderRadius: '0.5rem', flex: '1 1 min(100%, 25rem)' }}>
                         <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
                         <input 
                             type="text" 
                             placeholder="Tìm theo tên hoặc email..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{ border: 'none', outline: 'none', width: '100%', fontSize: '14px' }}
+                            style={{ border: 'none', outline: 'none', width: '100%', fontSize: '0.875rem', minWidth: 0 }}
                         />
                     </div>
+
                     <button className="btn-add-customer" onClick={() => setIsModalOpen(true)}>
                         <i className="fa-solid fa-user-plus"></i> Tạo tài khoản mới
                     </button>
@@ -131,7 +133,7 @@ const CustomerManage = () => {
 
                 <div className="table-responsive">
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '50px', color: '#6f4323' }}>
+                        <div style={{ textAlign: 'center', padding: '3rem', color: '#6f4323' }}>
                             <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
                         </div>
                     ) : (
@@ -149,11 +151,11 @@ const CustomerManage = () => {
                                 {filteredUsers.map(user => (
                                     <tr key={user.id}>
                                         <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                <img src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=random`} alt={user.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <img src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=random`} alt={user.name} style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', objectFit: 'cover' }} />
                                                 <div>
                                                     <strong style={{ display: 'block', color: '#333' }}>{user.name}</strong>
-                                                    <span style={{ fontSize: '12px', color: '#888' }}>{user.email}</span>
+                                                    <span style={{ fontSize: '0.75rem', color: '#888' }}>{user.email}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -165,9 +167,8 @@ const CustomerManage = () => {
                                                 <span className="status-badge info">Khách hàng</span>
                                             )}
                                         </td>
-                                        <td style={{ fontSize: '13px', color: '#666' }}>{formatDate(user.createdAt)}</td>
+                                        <td style={{ fontSize: '0.8125rem', color: '#666' }}>{formatDate(user.createdAt)}</td>
                                         <td style={{textAlign: 'center'}}>
-                                            {/* 👉 ĐỔI NÚT XÓA THÀNH CHUẨN Ô VUÔNG */}
                                             <button 
                                                 className="action-btn delete" 
                                                 title="Xóa tài khoản"
@@ -187,7 +188,7 @@ const CustomerManage = () => {
             {/* MODAL TẠO TÀI KHOẢN MỚI */}
             {isModalOpen && (
                 <div className="story-modal-overlay" style={{ zIndex: 9999 }}>
-                    <div className="story-modal" style={{ width: '450px' }}>
+                    <div className="story-modal" style={{ width: '28rem', maxWidth: '95vw' }}>
                         <div className="modal-header">
                             <h3>Tạo tài khoản mới</h3>
                             <button className="btn-close" onClick={() => setIsModalOpen(false)}>

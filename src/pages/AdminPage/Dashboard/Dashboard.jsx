@@ -37,7 +37,7 @@ const Dashboard = () => {
     // TÍNH TOÁN DỮ LIỆU THẬT CHO CÁC THẺ
     // ==========================================
     
-    // 👉 ĐÃ SỬA: Lọc riêng những đơn "Hoàn thành" (received)
+    // Lọc riêng những đơn "Hoàn thành" (received)
     const completedOrders = orders.filter(o => o.status === 'received');
     
     // Doanh thu chỉ cộng tiền từ đơn Hoàn thành
@@ -46,14 +46,14 @@ const Dashboard = () => {
     // Tổng số đơn thì vẫn đếm tất cả để biết lượng traffic
     const totalOrders = orders.length; 
     
-    // 👉 ĐÃ SỬA: Sản phẩm bán ra chỉ đếm từ đơn Hoàn thành
+    // Sản phẩm bán ra chỉ đếm từ đơn Hoàn thành
     const totalProductsSold = completedOrders.reduce((total, order) => {
         if (!order.items) return total;
         const itemsInOrder = order.items.reduce((sum, item) => sum + item.quantity, 0);
         return total + itemsInOrder;
     }, 0);
 
-    // 👉 ĐÃ SỬA: Lấy 4 đơn mới nhất cho bảng gọn gàng
+    // Lấy 4 đơn mới nhất cho bảng gọn gàng
     const recentOrders = orders.slice(0, 4);
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN').format(price) + '₫';
@@ -156,9 +156,9 @@ const Dashboard = () => {
                     <div className="chart-content donut-chart-wrapper">
                         <div className="donut-chart"></div>
                         <div className="donut-legend">
-                            <span><i className="fa-solid fa-circle" style={{color: '#d5c8b8'}}></i> Cà phê Bột</span>
-                            <span><i className="fa-solid fa-circle" style={{color: '#6f4323'}}></i> Cà phê Hạt</span>
-                            <span><i className="fa-solid fa-circle" style={{color: '#b23a2c'}}></i> Dụng cụ pha</span>
+                            <span><i className="fa-solid fa-circle" style={{color: '#d5c8b8'}}></i> Cà phê nguyên chất</span>
+                            <span><i className="fa-solid fa-circle" style={{color: '#6f4323'}}></i> Cà phê đóng gói</span>
+                            <span><i className="fa-solid fa-circle" style={{color: '#b23a2c'}}></i> Dụng cụ phim</span>
                             <span><i className="fa-solid fa-circle" style={{color: '#e0e0e0'}}></i> Khác</span>
                         </div>
                     </div>

@@ -204,3 +204,193 @@
         flex-direction: column;
     }
 }
+
+/* =====================================
+   👉 TRẠNG THÁI HOÀN TẤT & BÁO CÁO 
+===================================== */
+.order-dynamic-actions {
+    margin-top: 5px;
+}
+
+.action-completed-area,
+.action-reported-area {
+    margin-top: 25px;
+    border-top: 1px solid #eae5df;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.success-msg {
+    color: #0ca678;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.error-msg {
+    color: #fa5252;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+    display: block;
+}
+
+.btn-view-receipt {
+    background: #f4f1ec;
+    border: 1px solid #d5c8b8;
+    color: #6f4323;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-view-receipt:hover {
+    background: #6f4323;
+    color: #fff;
+}
+
+/* ==========================================
+   👉 MODAL BIÊN LAI (RECEIPT) CHUẨN MÁY IN
+========================================== */
+.receipt-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.receipt-modal-content {
+    background: transparent;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    animation: billPopUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes billPopUp {
+    0% {
+        transform: scale(0.8) translateY(30px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.btn-close-receipt {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.btn-close-receipt:hover {
+    color: #fa5252;
+}
+
+/* Thiết kế tờ biên lai giấy có răng cưa */
+.receipt-paper {
+    background: #fff;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    position: relative;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.receipt-paper::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(-45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%),
+        linear-gradient(45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%);
+    background-size: 20px 20px;
+    background-position: 0 -10px;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.receipt-header h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 5px;
+    color: #111;
+}
+
+.receipt-header p {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+}
+
+.receipt-divider {
+    border-top: 1px dashed #bbb;
+    margin: 15px 0;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.receipt-row .r-name {
+    max-width: 65%;
+}
+
+.r-total {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.receipt-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.r-time {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.r-thankyou {
+    font-weight: bold;
+    font-size: 15px;
+    color: #111;
+}
+
+@media (max-width: 576px) {
+    .action-completed-area {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
