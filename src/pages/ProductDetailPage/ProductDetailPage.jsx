@@ -10,63 +10,162 @@ import iconPayment from '../../assets/icon/icon-payment.svg';
 import iconOffer from '../../assets/icon/icon-offer.svg';
 import iconReturn from '../../assets/icon/icon-return.svg';
 
+// ==========================================
+// 👉 HÀM TẠO ĐƯỜNG DẪN URL CHUẨN SEO (Tạo Slug)
+// ==========================================
+export const generateSlug = (str) => {
+    if (!str) return '';
+    return str.toString().toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Xóa dấu Tiếng Việt
+        .replace(/đ/g, "d").replace(/Đ/g, "D") // Đổi chữ đ
+        .replace(/[^a-z0-9\s-]/g, "-") // Đổi ký tự đặc biệt thành dấu gạch
+        .replace(/\s+/g, "-") // Đổi khoảng trắng thành dấu gạch
+        .replace(/-+/g, "-") // Xóa các dấu gạch trùng lặp
+        .replace(/^-+|-+$/g, ""); // Cắt gạch thừa ở 2 đầu
+};
+
 const ProductDetailPage = () => {
     const { id } = useParams();
     const { products, formatPrice } = useProduct();
     const { addToCart } = useCart(); 
     
     const [product, setProduct] = useState(null);
+    const [notFound, setNotFound] = useState(false); 
+    
     const [mainImage, setMainImage] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState('description');
-    
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    
     const trackRef = useRef(null);
+    const timeoutRef = useRef(null);
+    const intervalRef = useRef(null);
 
-    // 👉 ĐÃ SỬA: Lọc Sản phẩm liên quan (Chỉ hiện những món CÒN HÀNG)
+    // ==========================================
+    // 👉 ĐÃ DỜI LÊN ĐÂY: HỆ THỐNG ĐÈ NÚT TỰ ĐỘNG TĂNG GIẢM
+    // ==========================================
+    const stopContinuousAction = () => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+
+    const startDecrease = () => {
+        const currentStock = product?.stock || 0;
+        if (currentStock <= 0) return;
+        setQuantity(q => Math.max(1, q - 1));
+        
+        timeoutRef.current = setTimeout(() => {
+            intervalRef.current = setInterval(() => {
+                setQuantity(q => {
+                    if (q <= 2) {
+                        clearInterval(intervalRef.current);
+                        return 1;
+                    }
+                    return q - 1;
+                });
+            }, 80); 
+        }, 400); 
+    };
+
+    const startIncrease = () => {
+        const currentStock = product?.stock || 0;
+        if (currentStock <= 0) return;
+        setQuantity(q => (q < currentStock ? q + 1 : q));
+        
+        timeoutRef.current = setTimeout(() => {
+            intervalRef.current = setInterval(() => {
+                setQuantity(q => {
+                    if (q >= currentStock - 1) {
+                        clearInterval(intervalRef.current);
+                        return currentStock;
+                    }
+                    return q + 1;
+                });
+            }, 80);
+        }, 400);
+    };
+
+    // ==========================================
+    // LOGIC DỮ LIỆU
+    // ==========================================
     const relatedProducts = useMemo(() => {
         if (!products || !product) return [];
-        
-        const availableProducts = products.filter(p => (p.stock || 0) > 0);
-        const sameCategory = availableProducts.filter(p => p.category === product.category && p.id !== product.id);
-        const sourcePool = sameCategory.length >= 4 ? sameCategory : availableProducts.filter(p => p.id !== product.id);
+        const availableProducts = products.filter(p => (p?.stock || 0) > 0);
+        const sameCategory = availableProducts.filter(p => p?.category === product?.category && p?.id !== product?.id);
+        const sourcePool = sameCategory.length >= 4 ? sameCategory : availableProducts.filter(p => p?.id !== product?.id);
         
         return [...sourcePool].sort(() => 0.5 - Math.random()).slice(0, 8);
     }, [products, product]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        
         if (products && products.length > 0) {
-            const foundProduct = products.find(p => p.id === parseInt(id));
+            const foundProduct = products.find(p => 
+                String(p.id) === String(id) || 
+                generateSlug(p.name) === String(id)
+            );
+            
             if (foundProduct) {
                 setProduct(foundProduct);
-                setMainImage(foundProduct.imageFront || foundProduct.img);
-                // 👉 ĐÃ SỬA: Nếu hết hàng thì ô số lượng hiển thị 0, còn hàng thì mặc định là 1
-                setQuantity((foundProduct.stock || 0) > 0 ? 1 : 0);
+                setMainImage(foundProduct?.imageFront || foundProduct?.img || 'https://via.placeholder.com/400x400?text=No+Image');
+                setQuantity((foundProduct?.stock || 0) > 0 ? 1 : 0);
                 setActiveTab('description');
+                setNotFound(false);
+
+                const productSlug = generateSlug(foundProduct.name);
+                if (String(id) !== productSlug) {
+                    window.history.replaceState(null, '', `/product/${productSlug}`);
+                }
+            } else {
+                setNotFound(true); 
             }
         }
     }, [id, products]);
 
-    if (!product) {
-        return <div className="loading-detail">Đang tải dữ liệu sản phẩm...</div>;
+    useEffect(() => {
+        return () => stopContinuousAction();
+    }, []);
+
+    // HIỂN THỊ MÀN HÌNH KHÔNG TÌM THẤY 
+    if (notFound) {
+        return (
+            <div className="product-detail-page" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center', color: '#6f4323' }}>
+                    <i className="fa-solid fa-triangle-exclamation" style={{ fontSize: '50px', marginBottom: '20px' }}></i>
+                    <h2>Sản phẩm không tồn tại hoặc đã bị xóa!</h2>
+                    <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '12px 25px', background: '#6f4323', color: '#fff', textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
+                        Quay về Trang chủ
+                    </Link>
+                </div>
+            </div>
+        );
     }
+
+    if (!product) {
+        return <div className="loading-detail" style={{ textAlign: 'center', padding: '100px', color: '#6f4323', fontWeight: 'bold' }}>
+            <i className="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu sản phẩm...
+        </div>;
+    }
+
+    const safeCategory = product?.category || 'Sản phẩm';
+    const safeName = product?.name || 'Đang cập nhật';
+    const safeStock = product?.stock || 0;
+    const safePrice = product?.price || 0;
 
     const defaultShortDesc = "Là sự kết hợp tinh tế giữa hương vị đặc trưng của cà phê nguyên chất và một chút huyền bí, tạo nên một trải nghiệm cà phê độc đáo và say đắm. Hạt cà phê được lựa chọn cẩn thận từ những vùng trồng cà phê nổi tiếng, được rang một cách tỉ mỉ và chuyên nghiệp để giữ nguyên hương vị tự nhiên và đậm đà.";
     const defaultLongDesc = `<p>Đặc biệt, "Cà phê Ngôn" mang đến một hương thơm quyến rũ, mềm mại và ngọt ngào, như một giấc mơ dịu dàng tựa như làn sương mai lướt qua những cánh đồng cà phê xanh ngát. Khi thưởng thức, bạn sẽ cảm nhận được vị đắng thanh của cà phê hòa quyện với vị ngọt tự nhiên, tạo nên một cảm giác hài hòa và bền vững trên đầu lưỡi.</p><br/><p>"Cà phê Ngôn" không chỉ là một thức uống bình thường mà còn là một trải nghiệm tinh thần, giúp bạn thư giãn sau những giờ làm việc căng thẳng, hoặc đơn giản là để tận hưởng những khoảnh khắc riêng tư và yên bình. Hãy để "Cà phê Ngôn" làm cho mỗi ngày của bạn trở nên đặc biệt hơn, mỗi giọt cà phê là một chuyến phiêu lưu mới đầy mơ mộng và đầy hứng khởi.</p><br/><p>Hãy để "Cà phê Ngôn" là người bạn đồng hành tin cậy, luôn sẵn sàng chia sẻ với bạn những khoảnh khắc đẹp nhất và những cảm xúc tinh tế nhất trong cuộc sống hàng ngày. Mỗi giọt cà phê Dreamy là một chuyến phiêu lưu tinh thần, một cơ hội để tận hưởng hương vị và tận hưởng cuộc sống một cách trọn vẹn và sâu sắc.</p>`;
 
-    const gallery = [product.imageFront, product.imageBack].filter(Boolean);
+    const gallery = [product?.imageFront, product?.imageBack].filter(Boolean);
 
-    const scrollNext = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-    };
-    const scrollPrev = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-    };
+    const scrollNext = () => { if (trackRef.current) trackRef.current.scrollBy({ left: 300, behavior: 'smooth' }); };
+    const scrollPrev = () => { if (trackRef.current) trackRef.current.scrollBy({ left: -300, behavior: 'smooth' }); };
 
+    // ==========================================
+    // HIỆU ỨNG BAY VÀO GIỎ HÀNG
+    // ==========================================
     const handleAddToCart = () => {
-        // Chặn luồng nếu sản phẩm đã hết hàng
-        if (product.stock <= 0) {
+        if (safeStock <= 0) {
             toast.error("Sản phẩm này đã hết hàng rồi Boss ơi!");
             return;
         }
@@ -121,10 +220,10 @@ const ProductDetailPage = () => {
                     <h1>Sản phẩm</h1>
                     <div className="bread-links">
                         <Link to="/">TRANG CHỦ</Link> <span>&gt;</span>
-                        <Link to={`/category/${product.category.toLowerCase().replace(/ /g, '-')}`}>
-                            {product.category.toUpperCase()}
+                        <Link to={`/category/${generateSlug(safeCategory)}`}>
+                            {safeCategory.toUpperCase()}
                         </Link> <span>&gt;</span>
-                        <strong>{product.name.toUpperCase()}</strong>
+                        <strong>{safeName.toUpperCase()}</strong>
                     </div>
                 </div>
             </div>
@@ -138,7 +237,7 @@ const ProductDetailPage = () => {
                             style={{ cursor: 'zoom-in' }}
                             title="Nhấn để phóng to"
                         >
-                            <img src={mainImage} alt={product.name} />
+                            <img src={mainImage} alt={safeName} />
                         </div>
                         <div className="thumbnail-list">
                             {gallery.map((img, idx) => (
@@ -154,10 +253,10 @@ const ProductDetailPage = () => {
                     </div>
 
                     <div className="detail-info">
-                        <h2 className="product-title">{product.name}</h2>
+                        <h2 className="product-title">{safeName}</h2>
                         
                         <div className="short-desc">
-                            {product.shortDesc ? (
+                            {product?.shortDesc ? (
                                  <div dangerouslySetInnerHTML={{ __html: product.shortDesc }} />
                             ) : (
                                 <p>{defaultShortDesc}</p>
@@ -165,7 +264,7 @@ const ProductDetailPage = () => {
                         </div>
                         
                         <div className="product-price-large">
-                            {formatPrice ? formatPrice(product.price) : `${product.price.toLocaleString('vi-VN')}₫`}
+                            {formatPrice ? formatPrice(safePrice) : `${safePrice.toLocaleString('vi-VN')}₫`}
                         </div>
 
                         <div className="action-buttons">
@@ -175,9 +274,14 @@ const ProductDetailPage = () => {
 
                         <div className="add-to-cart-area">
                             <div className="quantity-selector">
+                                
                                 <button 
-                                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                    disabled={quantity <= 1 || product.stock <= 0}
+                                    onPointerDown={startDecrease}
+                                    onPointerUp={stopContinuousAction}
+                                    onPointerLeave={stopContinuousAction}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    disabled={quantity <= 1 || safeStock <= 0}
+                                    style={{ userSelect: 'none', touchAction: 'none' }}
                                 >-</button>
                                 
                                 <input 
@@ -187,19 +291,23 @@ const ProductDetailPage = () => {
                                     style={{ textAlign: 'center', fontWeight: 'bold' }} 
                                 />
                                 
-                                {/* 👉 ĐÃ SỬA: Khóa nút + khi quantity đã chạm mốc tồn kho */}
                                 <button 
-                                    onClick={() => setQuantity(q => q < product.stock ? q + 1 : q)}
-                                    disabled={quantity >= product.stock || product.stock <= 0}
+                                    onPointerDown={startIncrease}
+                                    onPointerUp={stopContinuousAction}
+                                    onPointerLeave={stopContinuousAction}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    disabled={quantity >= safeStock || safeStock <= 0}
+                                    style={{ userSelect: 'none', touchAction: 'none' }}
                                 >+</button>
                             </div>
+
                             <button 
                                 className="btn-add-cart" 
                                 onClick={handleAddToCart}
-                                disabled={product.stock <= 0}
-                                style={{ opacity: product.stock <= 0 ? 0.5 : 1, cursor: product.stock <= 0 ? 'not-allowed' : 'pointer' }}
+                                disabled={safeStock <= 0}
+                                style={{ opacity: safeStock <= 0 ? 0.5 : 1, cursor: safeStock <= 0 ? 'not-allowed' : 'pointer' }}
                             >
-                                {product.stock <= 0 ? 'HẾT HÀNG' : 'Thêm Vào Giỏ Hàng'}
+                                {safeStock <= 0 ? 'HẾT HÀNG' : 'Thêm Vào Giỏ Hàng'}
                             </button>
                         </div>
 
@@ -219,15 +327,14 @@ const ProductDetailPage = () => {
                         </div>
 
                         <div className="product-meta">
-                            {/* 👉 ĐÃ SỬA: Lấy dữ liệu Đã bán và Còn hàng thật từ CSDL, tô màu đỏ nếu hết hàng */}
                             <p>
-                                Đã bán: <strong>{product.sold || 0}</strong> 
+                                Đã bán: <strong>{product?.sold || 0}</strong> 
                                 <span className="divider" style={{ margin: '0 8px', color: '#ddd' }}>|</span> 
-                                Còn hàng: <strong style={{ color: product.stock > 0 ? '#0ca678' : '#fa5252' }}>{product.stock || 0}</strong>
+                                Còn hàng: <strong style={{ color: safeStock > 0 ? '#0ca678' : '#fa5252' }}>{safeStock}</strong>
                             </p>
                             <div className="meta-grid">
-                                <div><span className="meta-label">Sku:</span> TOY05432-2-1-2-1-1-2-{product.id}</div>
-                                <div><span className="meta-label">Danh mục:</span> {product.category}</div>
+                                <div><span className="meta-label">Sku:</span> TOY05432-2-1-2-1-1-2-{product?.id || 'XXX'}</div>
+                                <div><span className="meta-label">Danh mục:</span> {safeCategory}</div>
                                 <div><span className="meta-label">Từ khóa:</span> Cà phê ngon, Cà phê sạch</div>
                             </div>
                         </div>
@@ -254,7 +361,7 @@ const ProductDetailPage = () => {
                         {activeTab === 'description' ? (
                             <div 
                                 className="desc-content" 
-                                dangerouslySetInnerHTML={{ __html: product.longDesc || defaultLongDesc }}
+                                dangerouslySetInnerHTML={{ __html: product?.longDesc || defaultLongDesc }}
                             ></div>
                         ) : (
                             <div className="review-content">
@@ -277,12 +384,12 @@ const ProductDetailPage = () => {
                         
                         <div className="related-carousel" ref={trackRef}>
                             {relatedProducts.map(item => (
-                                <Link to={`/product/${item.id}`} key={item.id} className="related-card">
+                                <Link to={`/product/${generateSlug(item?.name)}`} key={item.id} className="related-card">
                                     <div className="related-img">
-                                        <img src={item.imageFront || item.img} alt={item.name} />
+                                        <img src={item?.imageFront || item?.img} alt={item?.name} />
                                         <div className="related-hover">
-                                            <button className="icon-btn" aria-label="Xem"><i className="fa-regular fa-eye"></i></button>
-                                            <button className="icon-btn" aria-label="Mua"><i className="fa-solid fa-cart-shopping"></i></button>
+                                            <button className="icon-btn" aria-label="Xem" onClick={(e) => e.preventDefault()}><i className="fa-regular fa-eye"></i></button>
+                                            <button className="icon-btn" aria-label="Mua" onClick={(e) => e.preventDefault()}><i className="fa-solid fa-cart-shopping"></i></button>
                                         </div>
                                     </div>
                                     <div className="related-info">
@@ -293,8 +400,8 @@ const ProductDetailPage = () => {
                                             <i className="fa-solid fa-star" style={{color: '#f2b200'}}></i>
                                             <i className="fa-solid fa-star" style={{color: '#eae5df'}}></i>
                                         </div>
-                                        <h4>{item.name}</h4>
-                                        <p className="price">{formatPrice ? formatPrice(item.price) : `${item.price.toLocaleString('vi-VN')}₫`}</p>
+                                        <h4>{item?.name || 'Đang cập nhật'}</h4>
+                                        <p className="price">{formatPrice ? formatPrice(item?.price || 0) : `${(item?.price || 0).toLocaleString('vi-VN')}₫`}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -310,7 +417,7 @@ const ProductDetailPage = () => {
                         <i className="fa-solid fa-xmark"></i>
                     </button>
                     <div className="image-zoom-content" onClick={(e) => e.stopPropagation()}>
-                        <img src={mainImage} alt={product.name} />
+                        <img src={mainImage} alt={safeName} />
                     </div>
                 </div>
             )}
