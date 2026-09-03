@@ -585,3 +585,38 @@
         width: 100%;
     }
 }
+
+/* =========================================
+   BỌC THÉP RESPONSIVE CHO BẢNG QUẢN LÝ (MOBILE)
+========================================= */
+
+/* 1. Ép bảng giữ nguyên form, tạo thanh cuộn ngang mượt mà trên Mobile */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Vuốt ngang mượt trên iOS */
+    padding-bottom: 0.5rem; /* Tránh lẹm bóng đổ */
+}
+
+/* Đảm bảo bảng không bao giờ bị bóp méo dưới 700px */
+.admin-table {
+    width: 100%;
+    min-width: 45rem; 
+    border-collapse: collapse;
+}
+
+/* 2. Ép Thanh tìm kiếm & Bộ lọc rớt dòng gọn gàng */
+@media (max-width: 48em) { /* Dưới 768px (Điện thoại, Tablet dọc) */
+    .dashboard-recent-orders .section-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+    }
+
+    .dashboard-recent-orders .section-header > div:first-child,
+    .dashboard-recent-orders .section-header select {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+}

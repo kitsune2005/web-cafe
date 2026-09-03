@@ -12,7 +12,6 @@ const NewsManage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  // 👉 ĐÃ SỬA: Thay `content` thường bằng `contentBlocks` (Chứa các đoạn văn, ảnh, video)
   const [formData, setFormData] = useState({
     title: "", excerpt: "", image: "", author: "Admin", status: "published", isFeatured: false,
     contentBlocks: [] 
@@ -37,7 +36,7 @@ const NewsManage = () => {
     setEditingId(null);
     setFormData({
       title: "", excerpt: "", image: "", author: "Admin", status: "published", isFeatured: false,
-      contentBlocks: [{ id: Date.now(), type: 'text', value: '' }] // Mặc định mở ra có sẵn 1 ô gõ chữ
+      contentBlocks: [{ id: Date.now(), type: 'text', value: '' }] 
     });
     setIsModalOpen(true);
   };
@@ -45,7 +44,6 @@ const NewsManage = () => {
   const handleOpenEdit = (news) => {
     setEditingId(news.id);
     
-    // Convert bài cũ (text thường) sang bài mới (Block) để ko bị lỗi
     let parsedBlocks = news.contentBlocks || [];
     if (!news.contentBlocks && news.content) {
         parsedBlocks = [{ id: Date.now(), type: 'text', value: news.content }];
@@ -83,6 +81,28 @@ const NewsManage = () => {
       }));
   };
 
+  // 👉 THÊM VŨ KHÍ MỚI: Xử lý Bôi đen & Gắn thẻ HTML cho chữ
+  const handleFormatText = (blockId, prefix, suffix) => {
+      const textarea = document.getElementById(`news-text-block-${blockId}`);
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selectedText = text.substring(start, end);
+
+      const newText = text.substring(0, start) + prefix + selectedText + suffix + text.substring(end);
+      
+      // Update vào field 'value' của block
+      updateBlock(blockId, 'value', newText);
+
+      // Giữ con trỏ mượt mà
+      setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+      }, 0);
+  };
+
   const removeBlock = (id) => {
       setFormData(prev => ({
           ...prev,
@@ -100,7 +120,6 @@ const NewsManage = () => {
       setFormData(prev => ({ ...prev, contentBlocks: blocks }));
   };
 
-  // Upload Ảnh Bìa (Cover)
   const handleCoverUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -109,7 +128,6 @@ const NewsManage = () => {
     reader.readAsDataURL(file);
   };
 
-  // Upload Ảnh cho từng Block
   const handleBlockImageUpload = (id, e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -303,8 +321,27 @@ const NewsManage = () => {
                                 <button type="button" className="btn-del-block" onClick={() => removeBlock(block.id)}><i className="fa-solid fa-trash-can"></i></button>
                             </div>
 
+                            {/* 👉 ĐÃ NÂNG CẤP TEXT BLOCK CÓ TOOLBAR */}
                             {block.type === 'text' && (
-                                <textarea placeholder="Nhập nội dung đoạn văn..." value={block.value} onChange={(e) => updateBlock(block.id, 'value', e.target.value)} />
+                                <div className="news-text-block-wrapper">
+                                    <div className="news-block-format-toolbar">
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<b>', '</b>')} title="In đậm (Bôi đen chữ rồi bấm)"><i className="fa-solid fa-bold"></i></button>
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<i>', '</i>')} title="In nghiêng"><i className="fa-solid fa-italic"></i></button>
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<u>', '</u>')} title="Gạch chân"><i className="fa-solid fa-underline"></i></button>
+                                        <div className="news-toolbar-divider"></div>
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<br/>• ', '')} title="Chấm đầu dòng"><i className="fa-solid fa-list-ul"></i></button>
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<br/>- ', '')} title="Gạch đầu dòng"><i className="fa-solid fa-minus"></i></button>
+                                        <div className="news-toolbar-divider"></div>
+                                        <button type="button" onClick={() => handleFormatText(block.id, '<span style="color:#b23a2c">', '</span>')} title="Chữ màu đỏ Cà phê"><i className="fa-solid fa-droplet" style={{color: '#b23a2c'}}></i></button>
+                                    </div>
+                                    <textarea 
+                                        id={`news-text-block-${block.id}`}
+                                        className="news-block-input-text"
+                                        placeholder="Nhập nội dung đoạn văn... (Bôi đen chữ và chọn công cụ ở trên để trang trí)" 
+                                        value={block.value} 
+                                        onChange={(e) => updateBlock(block.id, 'value', e.target.value)} 
+                                    />
+                                </div>
                             )}
 
                             {block.type === 'image' && (

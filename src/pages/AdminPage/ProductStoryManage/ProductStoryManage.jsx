@@ -4,15 +4,11 @@ import toast from 'react-hot-toast';
 import '../Dashboard/Dashboard.css'; 
 import './ProductStoryManage.css';  
 
-// 👉 TÍCH HỢP LÕI UPLOAD MỚI (BỌC LÓT 3 LỚP)
 const uploadImageSmart = async (file) => {
-    // 1. THỬ DÙNG BACKEND LOCALHOST CỦA BOSS (XỊN NHẤT)
     try {
         const formData = new FormData();
-        // Chú ý: 'image' phải khớp với tên field bên Multer/Backend của Boss
         formData.append('image', file); 
 
-        // Nếu API Upload của Boss khác đường dẫn này thì sửa lại nhé (VD: /api/upload)
         const res = await fetch('http://localhost:5000/upload', { 
             method: 'POST',
             body: formData
@@ -20,14 +16,12 @@ const uploadImageSmart = async (file) => {
 
         if (res.ok) {
             const data = await res.json();
-            // Tùy backend trả về. Nếu chỉ có filename thì ghép với đường dẫn gốc
             return data.url || `http://localhost:5000/uploads/products/${data.filename || file.name}`; 
         }
     } catch (error) {
         console.warn("Lỗi API Localhost hoặc chưa cấu hình, chuyển sang dùng Cloud ImgBB...");
     }
 
-    // 2. PHƯƠNG ÁN DỰ PHÒNG: DÙNG CLOUD IMGBB
     try {
         const base64Data = await new Promise((resolve) => {
             const reader = new FileReader();
@@ -47,10 +41,9 @@ const uploadImageSmart = async (file) => {
         const data = await res.json();
         if (data?.data?.url) return data.data.url;
     } catch (error) {
-        console.error("Cloud ImgBB bị chặn (Có thể do AdBlock). Lùi về Base64...");
+        console.error("Cloud ImgBB bị chặn. Lùi về Base64...");
     }
 
-    // 3. PHƯƠNG ÁN CUỐI CÙNG: DÙNG BASE64 (Chống cháy)
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);
@@ -87,16 +80,27 @@ const ProductStoryManage = () => {
         let parsedGallery = [];
         let parsedBlocks = [];
         
+        // 👉 ĐÃ SỬA: Đọc dữ liệu thông minh, nhận diện cả Object lẫn String cũ
         try {
-            if (product.longDesc && product.longDesc.startsWith('{')) {
-                const parsed = JSON.parse(product.longDesc);
-                if (parsed.gallery) parsedGallery = parsed.gallery;
-                if (parsed.blocks) parsedBlocks = parsed.blocks;
-            } else if (product.longDesc) {
-                parsedBlocks = [{ id: Date.now().toString(), type: 'text', content: product.longDesc }];
+            if (product.longDesc) {
+                if (typeof product.longDesc === 'object') {
+                    // Nếu là chuẩn mới (Object)
+                    if (product.longDesc.gallery) parsedGallery = product.longDesc.gallery;
+                    if (product.longDesc.blocks) parsedBlocks = product.longDesc.blocks;
+                } else if (typeof product.longDesc === 'string') {
+                    // Nếu là chuẩn cũ (String bị stringify)
+                    if (product.longDesc.startsWith('{')) {
+                        const parsed = JSON.parse(product.longDesc);
+                        if (parsed.gallery) parsedGallery = parsed.gallery;
+                        if (parsed.blocks) parsedBlocks = parsed.blocks;
+                    } else {
+                        // Nếu là HTML rác cũ
+                        parsedBlocks = [{ id: Date.now().toString(), type: 'text', content: product.longDesc }];
+                    }
+                }
             }
         } catch (e) {
-            if (product.longDesc) {
+            if (typeof product.longDesc === 'string') {
                 parsedBlocks = [{ id: Date.now().toString(), type: 'text', content: product.longDesc }];
             }
         }
@@ -109,7 +113,6 @@ const ProductStoryManage = () => {
         setIsModalOpen(true);
     };
 
-    // ================= XỬ LÝ BLOCK EDITOR =================
     const addBlock = (type) => {
         setStoryData(prev => ({
             ...prev,
@@ -203,10 +206,12 @@ const ProductStoryManage = () => {
         e.preventDefault();
         if (updateProductStory) {
             setIsSaving(true);
-            const complexLongDesc = JSON.stringify({
+            
+            // 👉 ĐÃ SỬA: Không biến thành String nữa, truyền thẳng Object để Backend tự động format xuống dòng!
+            const complexLongDesc = {
                 gallery: storyData.gallery,
                 blocks: storyData.blocks
-            });
+            };
 
             const success = await updateProductStory(editingProduct.id, storyData.shortDesc, complexLongDesc);
             setIsSaving(false);
@@ -302,7 +307,6 @@ const ProductStoryManage = () => {
 
                         <div className="news-body">
                             
-                            {/* MÔ TẢ NGẮN */}
                             <div className="news-form-group">
                                 <label className="news-label">Đoạn mở bài (Lead / Excerpt)</label>
                                 <textarea 
@@ -313,7 +317,6 @@ const ProductStoryManage = () => {
                                 ></textarea>
                             </div>
 
-                            {/* THƯ VIỆN ẢNH SẢN PHẨM */}
                             <div className="news-form-group">
                                 <label className="news-label">Thư viện ảnh giới thiệu (Gallery)</label>
                                 <div className="news-gallery-container">
@@ -329,12 +332,11 @@ const ProductStoryManage = () => {
                                     <label className="news-gallery-upload">
                                         <input type="file" accept="image/*" onChange={handleGalleryUpload} hidden />
                                         <i className="fa-solid fa-cloud-arrow-up"></i>
-                                        <span>Tải ảnh lên mây</span>
+                                        <span>Tải ảnh lên</span>
                                     </label>
                                 </div>
                             </div>
 
-                            {/* TRÌNH SOẠN THẢO KHỐI */}
                             <div className="news-form-group" style={{ marginTop: '0.5rem' }}>
                                 <label className="news-label"><i className="fa-solid fa-layer-group"></i> Nội dung bài viết (Xây dựng theo khối)</label>
                                 

@@ -20,9 +20,8 @@ export const generateSlug = (str) => {
         .replace(/^-+|-+$/g, "");
 };
 
-// 👉 HÀM NHÚNG VIDEO YOUTUBE
 const getYouTubeEmbedUrl = (url) => {
-    if (!url) return '';
+    if (!url || typeof url !== 'string') return '';
     let videoId = '';
     if (url.includes('youtube.com/watch?v=')) {
         videoId = url.split('v=')[1].split('&')[0];
@@ -131,25 +130,32 @@ const ProductDetailPage = () => {
         return () => stopContinuousAction();
     }, []);
 
-    // 👉 BỘ GIẢI MÃ JSON CỦA BLOCK EDITOR
     const parsedStory = useMemo(() => {
         if (!product?.longDesc) return { gallery: [], blocks: [] };
         
         try {
-            // Cố gắng dịch JSON
-            const parsed = JSON.parse(product.longDesc);
-            if (parsed.blocks || parsed.gallery) {
+            if (typeof product.longDesc === 'object') {
                 return {
-                    gallery: parsed.gallery || [],
-                    blocks: parsed.blocks || []
+                    gallery: Array.isArray(product.longDesc.gallery) ? product.longDesc.gallery : [],
+                    blocks: Array.isArray(product.longDesc.blocks) ? product.longDesc.blocks : []
                 };
             }
+            
+            if (typeof product.longDesc === 'string') {
+                if (product.longDesc.startsWith('{')) {
+                    const parsed = JSON.parse(product.longDesc);
+                    return {
+                        gallery: Array.isArray(parsed.gallery) ? parsed.gallery : [],
+                        blocks: Array.isArray(parsed.blocks) ? parsed.blocks : []
+                    };
+                }
+                return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: product.longDesc }] };
+            }
         } catch (e) {
-            // Nếu bị lỗi dịch JSON => Đây là bài viết cũ chứa HTML rác
-            return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: product.longDesc }] };
+            return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: String(product.longDesc || '') }] };
         }
         
-        return { gallery: [], blocks: [{ id: 'legacy', type: 'text', content: product.longDesc }] };
+        return { gallery: [], blocks: [] };
     }, [product?.longDesc]);
 
     if (notFound) {
@@ -179,7 +185,6 @@ const ProductDetailPage = () => {
 
     const defaultShortDesc = "Là sự kết hợp tinh tế giữa hương vị đặc trưng của cà phê nguyên chất và một chút huyền bí, tạo nên một trải nghiệm cà phê độc đáo và say đắm. Hạt cà phê được lựa chọn cẩn thận từ những vùng trồng cà phê nổi tiếng, được rang một cách tỉ mỉ và chuyên nghiệp để giữ nguyên hương vị tự nhiên và đậm đà.";
 
-    // 👉 TỰ ĐỘNG NỐI ẢNH GỐC VÀ ẢNH GALLERY TỪ JSON
     const baseGallery = [product?.imageFront, product?.imageBack].filter(Boolean);
     const fullGallery = [...baseGallery, ...parsedStory.gallery];
 
@@ -262,7 +267,6 @@ const ProductDetailPage = () => {
                             <img src={mainImage} alt={safeName} />
                         </div>
                         <div className="thumbnail-list">
-                            {/* 👉 ĐÃ NỐI THÊM ẢNH TỪ GALLERY JSON LÊN ĐÂY */}
                             {fullGallery.map((img, idx) => (
                                 <div 
                                     key={idx} 
@@ -280,7 +284,7 @@ const ProductDetailPage = () => {
                         
                         <div className="short-desc">
                             {product?.shortDesc ? (
-                                 <div dangerouslySetInnerHTML={{ __html: product.shortDesc.replace(/\n/g, '<br/>') }} />
+                                 <div dangerouslySetInnerHTML={{ __html: String(product.shortDesc).replace(/\n/g, '<br/>') }} />
                             ) : (
                                 <p>{defaultShortDesc}</p>
                             )}
@@ -382,20 +386,23 @@ const ProductDetailPage = () => {
                     <div className="tab-content">
                         {activeTab === 'description' ? (
                             <div className="desc-content">
-                                {/* 👉 RENDER TỪ BỘ GIẢI MÃ BLOCK EDITOR */}
                                 {parsedStory.blocks.length > 0 ? (
-                                    parsedStory.blocks.map(block => {
+                                    parsedStory.blocks.map((block, index) => {
+                                        const blockKey = block.id || `block-${index}`;
+                                        
                                         if (block.type === 'text') {
-                                            return <div key={block.id} className="story-block-text" dangerouslySetInnerHTML={{ __html: block.content.replace(/\n/g, '<br/>') }} />;
+                                            // 👉 LỚP GIÁP BẢO VỆ: Nếu content không phải chữ, biến nó thành rỗng để không bị sập hàm replace()
+                                            const safeContent = typeof block.content === 'string' ? block.content : String(block.content || '');
+                                            return <div key={blockKey} className="story-block-text" dangerouslySetInnerHTML={{ __html: safeContent.replace(/\n/g, '<br/>') }} />;
                                         }
                                         if (block.type === 'image') {
-                                            return <div key={block.id} className="story-block-img"><img src={block.content} alt="Story content" /></div>;
+                                            return <div key={blockKey} className="story-block-img"><img src={block.content} alt="Story content" /></div>;
                                         }
                                         if (block.type === 'video') {
                                             const embedUrl = getYouTubeEmbedUrl(block.content);
                                             if (!embedUrl) return null;
                                             return (
-                                                <div key={block.id} className="story-block-video">
+                                                <div key={blockKey} className="story-block-video">
                                                     <iframe src={embedUrl} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                                                 </div>
                                             );

@@ -11,6 +11,7 @@ const CustomerManage = () => {
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
+    const [errors, setErrors] = useState({ name: '', username: '', email: '', password: '' }); 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const API_URL = 'http://localhost:5000/api';
@@ -65,8 +66,76 @@ const CustomerManage = () => {
         });
     };
 
+    // 👉 BỘ LỌC THÉP: BỔ SUNG KIỂM TRA MẬT KHẨU CÓ CHỮ + SỐ
+    const validateForm = () => {
+        let newErrors = { name: '', username: '', email: '', password: '' };
+        let isValid = true;
+
+        const nameVal = formData.name.trim();
+        const userVal = formData.username.trim();
+        const emailVal = formData.email.trim();
+        const passVal = formData.password; // Mật khẩu thì không dùng .trim() lỡ họ thích khoảng trắng
+
+        // 1. Kiểm tra Họ Tên
+        if (!nameVal) {
+            newErrors.name = "Vui lòng nhập họ và tên.";
+            isValid = false;
+        } else if (!/^\p{L}/u.test(nameVal)) {
+            newErrors.name = "Họ tên bắt buộc phải bắt đầu bằng chữ cái.";
+            isValid = false;
+        } else if (/\d/.test(nameVal)) {
+            newErrors.name = "Họ tên tuyệt đối không được chứa chữ số.";
+            isValid = false;
+        } else if (/[^\p{L}\s]/u.test(nameVal)) {
+            newErrors.name = "Họ tên không được chứa ký tự đặc biệt (@, #, $...).";
+            isValid = false;
+        }
+
+        // 2. Kiểm tra Username
+        if (!userVal) {
+            newErrors.username = "Vui lòng nhập tên đăng nhập.";
+            isValid = false;
+        } else if (!/^[a-zA-Z0-9]/.test(userVal)) {
+            newErrors.username = "Username không được bắt đầu bằng ký tự đặc biệt.";
+            isValid = false;
+        } else if (/[^a-zA-Z0-9]/.test(userVal)) {
+            newErrors.username = "Username chỉ được chứa chữ không dấu và số.";
+            isValid = false;
+        } else if (!/[a-zA-Z]/.test(userVal) || !/\d/.test(userVal)) {
+            newErrors.username = "Username bắt buộc phải bao gồm CẢ CHỮ VÀ SỐ.";
+            isValid = false;
+        }
+
+        // 3. Kiểm tra Email
+        if (!emailVal) {
+            newErrors.email = "Vui lòng nhập Email.";
+            isValid = false;
+        }
+
+        // 4. Kiểm tra Mật khẩu (Có chữ, có số, độ dài tối thiểu 6)
+        if (!passVal) {
+            newErrors.password = "Vui lòng nhập mật khẩu.";
+            isValid = false;
+        } else if (passVal.length < 6) {
+            newErrors.password = "Mật khẩu quá ngắn, phải có ít nhất 6 ký tự.";
+            isValid = false;
+        } else if (!/[a-zA-Z]/.test(passVal) || !/\d/.test(passVal)) {
+            newErrors.password = "Mật khẩu yếu! Bắt buộc phải bao gồm CẢ CHỮ VÀ SỐ.";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleCreateUser = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error("Boss ơi, điền sai hoặc thiếu form rồi! Sửa lại mấy chỗ màu đỏ nhé.");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const response = await fetch(`${API_URL}/register`, {
@@ -80,6 +149,7 @@ const CustomerManage = () => {
                 toast.success("Tạo tài khoản mới thành công!");
                 setIsModalOpen(false);
                 setFormData({ name: '', username: '', email: '', password: '' });
+                setErrors({ name: '', username: '', email: '', password: '' });
                 fetchUsers();
             } else {
                 toast.error(data.message || "Lỗi khi tạo tài khoản!");
@@ -89,6 +159,19 @@ const CustomerManage = () => {
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleInputChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: '' }));
+        }
+    };
+
+    const openModal = () => {
+        setFormData({ name: '', username: '', email: '', password: '' });
+        setErrors({ name: '', username: '', email: '', password: '' });
+        setIsModalOpen(true);
     };
 
     const filteredUsers = users.filter(u => 
@@ -110,11 +193,7 @@ const CustomerManage = () => {
             </div>
 
             <div className="dashboard-recent-orders">
-                
-                {/* 👉 ĐÃ FIX: Né class section-header, dùng Flexbox min/rem để tự co giãn mượt mà */}
                 <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
-                    
-                    {/* Ô Search tự giãn, tối đa 25rem, tối thiểu tự co lại */}
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: '#fff', border: '1px solid #ddd', padding: '0.75rem 1rem', borderRadius: '0.5rem', flex: '1 1 min(100%, 25rem)' }}>
                         <i className="fa-solid fa-magnifying-glass" style={{ color: '#888' }}></i>
                         <input 
@@ -126,7 +205,7 @@ const CustomerManage = () => {
                         />
                     </div>
 
-                    <button className="btn-add-customer" onClick={() => setIsModalOpen(true)}>
+                    <button className="btn-add-customer" onClick={openModal}>
                         <i className="fa-solid fa-user-plus"></i> Tạo tài khoản mới
                     </button>
                 </div>
@@ -185,40 +264,67 @@ const CustomerManage = () => {
                 </div>
             </div>
 
-            {/* MODAL TẠO TÀI KHOẢN MỚI */}
             {isModalOpen && (
-                <div className="story-modal-overlay" style={{ zIndex: 9999 }}>
-                    <div className="story-modal" style={{ width: '28rem', maxWidth: '95vw' }}>
-                        <div className="modal-header">
+                <div className="cm-modal-overlay">
+                    <div className="cm-modal-box">
+                        <div className="cm-modal-header">
                             <h3>Tạo tài khoản mới</h3>
-                            <button className="btn-close" onClick={() => setIsModalOpen(false)}>
+                            <button className="cm-btn-close" onClick={() => setIsModalOpen(false)}>
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
                         
-                        <form onSubmit={handleCreateUser}>
-                            <div className="modal-body">
-                                <div className="form-group">
+                        <form onSubmit={handleCreateUser} noValidate>
+                            <div className="cm-modal-body">
+                                
+                                <div className="cm-form-group">
                                     <label>Họ và tên</label>
-                                    <input type="text" required placeholder="Nhập tên hiển thị..." value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="input-box" />
+                                    <input 
+                                        type="text" required placeholder="Nhập tên hiển thị..." 
+                                        value={formData.name} 
+                                        onChange={(e) => handleInputChange('name', e.target.value)} 
+                                        className={`input-box ${errors.name ? 'error-border' : ''}`} 
+                                    />
+                                    {errors.name && <span className="cm-error-text"><i className="fa-solid fa-circle-exclamation"></i> {errors.name}</span>}
                                 </div>
-                                <div className="form-group">
+                                
+                                <div className="cm-form-group">
                                     <label>Tên đăng nhập (Username)</label>
-                                    <input type="text" required placeholder="Viết liền không dấu..." value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} className="input-box" />
+                                    <input 
+                                        type="text" required placeholder="Viết liền không dấu..." 
+                                        value={formData.username} 
+                                        onChange={(e) => handleInputChange('username', e.target.value)} 
+                                        className={`input-box ${errors.username ? 'error-border' : ''}`} 
+                                    />
+                                    {errors.username && <span className="cm-error-text"><i className="fa-solid fa-circle-exclamation"></i> {errors.username}</span>}
                                 </div>
-                                <div className="form-group">
+                                
+                                <div className="cm-form-group">
                                     <label>Email</label>
-                                    <input type="email" required placeholder="example@gmail.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="input-box" />
+                                    <input 
+                                        type="email" required placeholder="example@gmail.com" 
+                                        value={formData.email} 
+                                        onChange={(e) => handleInputChange('email', e.target.value)} 
+                                        className={`input-box ${errors.email ? 'error-border' : ''}`} 
+                                    />
+                                    {errors.email && <span className="cm-error-text"><i className="fa-solid fa-circle-exclamation"></i> {errors.email}</span>}
                                 </div>
-                                <div className="form-group">
+                                
+                                <div className="cm-form-group">
                                     <label>Mật khẩu</label>
-                                    <input type="password" required placeholder="Nhập mật khẩu..." value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} className="input-box" />
+                                    <input 
+                                        type="password" required placeholder="Nhập mật khẩu..." 
+                                        value={formData.password} 
+                                        onChange={(e) => handleInputChange('password', e.target.value)} 
+                                        className={`input-box ${errors.password ? 'error-border' : ''}`} 
+                                    />
+                                    {errors.password && <span className="cm-error-text"><i className="fa-solid fa-circle-exclamation"></i> {errors.password}</span>}
                                 </div>
                             </div>
                             
-                            <div className="modal-footer">
-                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                                <button type="submit" className="btn-save" disabled={isSubmitting}>
+                            <div className="cm-modal-footer">
+                                <button type="button" className="cm-btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
+                                <button type="submit" className="cm-btn-save" disabled={isSubmitting}>
                                     {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-user-plus"></i>} Tạo ngay
                                 </button>
                             </div>

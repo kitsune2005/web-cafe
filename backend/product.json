@@ -13,7 +13,34 @@
     "status": "Còn hàng",
     "id": 2,
     "shortDesc": "Cà phê Robusta Honey 250g là sự kết hợp hoàn hảo giữa độ đậm truyền thống và vị ngọt mượt mà từ lớp mật đường tự nhiên của hạt cà phê chín mọng. Với trọng lượng 250g nhỏ gọn, đây là lựa chọn lý tưởng để giữ trọn vẹn độ tươi mới của từng mẻ rang, phù hợp cho cả pha Phin đậm nét Việt Nam lẫn pha máy Espresso hiện đại.",
-    "longDesc": "{\"gallery\":[\"http://localhost:5000/uploads/products/editor_1788386212653_52.png\",\"http://localhost:5000/uploads/products/editor_1788386232066_394.jpg\"],\"blocks\":[{\"id\":\"1788384003237\",\"type\":\"text\",\"content\":\"Nếu bạn từng quen thuộc với một Robusta đắng đậm truyền thống, Robusta Honey sẽ mang đến một trải nghiệm hoàn toàn mới lạ. Từng hạt cà phê chín mọng được tuyển chọn thủ công, giữ lại trọn vẹn lớp thịt quả giàu đường tự nhiên trước khi bước vào quy trình phơi nắng tỉ mỉ. Nhờ phương pháp sơ chế Honey (bán ướt), hạt cà phê thẩm thấu vị ngọt thanh nhẹ, làm dịu hẳn nốt đắng gắt, để lại tầng hương mộc mạc của chocolate đen, chút thơm béo của caramel và hậu vị ngọt sâu lắng kéo dài nơi cuống họng.\\n\\nDung tích 250g nhỏ gọn, thiết kế túi zip van một chiều cao cấp giúp bạn dễ dàng bảo quản trọn vẹn độ tươi mới của từng mẻ rang — vừa đủ cho khoảng 10–12 ngày thưởng thức chuẩn vị, phù hợp cho cả pha Phin đậm đà lẫn pha máy Espresso êm mượt.\"},{\"id\":\"1788384230977\",\"type\":\"text\",\"content\":\"<b>THÔNG TIN CHI TIẾT SẢN PHẨM</b>\\n<b>Thành phần:</b> 100% hạt Robusta chín cây tuyển chọn\\n<b>Phương pháp chế biến</b>: Honey process (Chế biến mật ong / bán ướt)\\n<b>Mức độ rang</b>: Rang vừa đậm (Medium Dark) – hạt mộc, không tẩm ướp phụ gia hay chất bảo quản\\n<b>Hương vị đặc trưng</b>: Đậm đà, thơm nốt chocolate đen, hạt rang (nutty), caramel thoảng nhẹ và hậu vị ngọt thanh tự nhiên\\n<b>Quy cách đóng gói</b>: Túi 250g có van thở 1 chiều giúp thoát khí $CO_2$ và khóa zip tiện lợiHạn sử dụng: 12 tháng kể từ ngày rang (dùng ngon nhất trong vòng 30 ngày sau khi mở túi)\"},{\"id\":\"1788386240422\",\"type\":\"image\",\"content\":\"http://localhost:5000/uploads/products/editor_1788386246114_986.jpg\"},{\"id\":\"1788384317701\",\"type\":\"text\",\"content\":\"<b>ĐIỂM KHÁC BIỆT CỦA PHƯƠNG PHÁP CHẾ BIẾN HONEY</b>\\n\\nKhác với cách chế biến khô truyền thống, phương pháp Honey giữ lại một phần hoặc toàn bộ lớp chất nhầy (chứa nhiều đường tự nhiên của quả chín) trên hạt thóc trong quá trình phơi nắng. Khi phơi khô tự nhiên:\\n\\nĐường tự nhiên ngấm dần vào nhân hạt, giúp cà phê có độ êm mượt tự nhiên mà không cần pha thêm đường.\\n\\nKhử bỏ vị chát đắng gắt của hạt xanh non, mang lại vị êm, dễ uống, không gây cảm giác cồn cào hay gắt cổ.\"}]}",
+    "longDesc": {
+      "gallery": [
+        "http://localhost:5000/uploads/products/editor_1788386212653_52.png",
+        "http://localhost:5000/uploads/products/editor_1788386232066_394.jpg"
+      ],
+      "blocks": [
+        {
+          "id": "1788384003237",
+          "type": "text",
+          "content": "Nếu bạn từng quen thuộc với một Robusta đắng đậm truyền thống, Robusta Honey sẽ mang đến một trải nghiệm hoàn toàn mới lạ. Từng hạt cà phê chín mọng được tuyển chọn thủ công, giữ lại trọn vẹn lớp thịt quả giàu đường tự nhiên trước khi bước vào quy trình phơi nắng tỉ mỉ. Nhờ phương pháp sơ chế Honey (bán ướt), hạt cà phê thẩm thấu vị ngọt thanh nhẹ, làm dịu hẳn nốt đắng gắt, để lại tầng hương mộc mạc của chocolate đen, chút thơm béo của caramel và hậu vị ngọt sâu lắng kéo dài nơi cuống họng.\n\nDung tích 250g nhỏ gọn, thiết kế túi zip van một chiều cao cấp giúp bạn dễ dàng bảo quản trọn vẹn độ tươi mới của từng mẻ rang — vừa đủ cho khoảng 10–12 ngày thưởng thức chuẩn vị, phù hợp cho cả pha Phin đậm đà lẫn pha máy Espresso êm mượt."
+        },
+        {
+          "id": "1788384230977",
+          "type": "text",
+          "content": "<b>THÔNG TIN CHI TIẾT SẢN PHẨM</b>\n<b>Thành phần:</b> 100% hạt Robusta chín cây tuyển chọn\n<b>Phương pháp chế biến</b>: Honey process (Chế biến mật ong / bán ướt)\n<b>Mức độ rang</b>: Rang vừa đậm (Medium Dark) – hạt mộc, không tẩm ướp phụ gia hay chất bảo quản\n<b>Hương vị đặc trưng</b>: Đậm đà, thơm nốt chocolate đen, hạt rang (nutty), caramel thoảng nhẹ và hậu vị ngọt thanh tự nhiên\n<b>Quy cách đóng gói</b>: Túi 250g có van thở 1 chiều giúp thoát khí $CO_2$ và khóa zip tiện lợiHạn sử dụng: 12 tháng kể từ ngày rang (dùng ngon nhất trong vòng 30 ngày sau khi mở túi)"
+        },
+        {
+          "id": "1788386240422",
+          "type": "image",
+          "content": "http://localhost:5000/uploads/products/editor_1788386246114_986.jpg"
+        },
+        {
+          "id": "1788384317701",
+          "type": "text",
+          "content": "<b>ĐIỂM KHÁC BIỆT CỦA PHƯƠNG PHÁP CHẾ BIẾN HONEY</b>\n\nKhác với cách chế biến khô truyền thống, phương pháp Honey giữ lại một phần hoặc toàn bộ lớp chất nhầy (chứa nhiều đường tự nhiên của quả chín) trên hạt thóc trong quá trình phơi nắng. Khi phơi khô tự nhiên:\n\nĐường tự nhiên ngấm dần vào nhân hạt, giúp cà phê có độ êm mượt tự nhiên mà không cần pha thêm đường.\n\nKhử bỏ vị chát đắng gắt của hạt xanh non, mang lại vị êm, dễ uống, không gây cảm giác cồn cào hay gắt cổ."
+        }
+      ]
+    },
     "sold": 20,
     "img": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg"
   },
