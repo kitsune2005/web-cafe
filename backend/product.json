@@ -5,7 +5,7 @@
     "oldPrice": 150000,
     "price": 150000,
     "discount": 0,
-    "stock": 20,
+    "stock": 0,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017907155.jpg",
     "isFeatured": true,
@@ -41,7 +41,7 @@
         }
       ]
     },
-    "sold": 20,
+    "sold": 40,
     "img": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg"
   },
   {
@@ -50,13 +50,15 @@
     "oldPrice": 225000,
     "price": 191250,
     "discount": 15,
-    "stock": 39,
+    "stock": 38,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788014386676.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788014386677.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 3
+    "id": 3,
+    "sold": 1,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788014386676.jpg"
   },
   {
     "name": "Arabica Cầu Đất 250g ",
@@ -64,14 +66,14 @@
     "oldPrice": 220000,
     "price": 198000,
     "discount": 10,
-    "stock": 45,
+    "stock": 44,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017898872.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017898873.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
     "id": 4,
-    "sold": 25,
+    "sold": 26,
     "img": "http://localhost:5000/uploads/products/sp_front_1788017898872.jpg"
   },
   {
