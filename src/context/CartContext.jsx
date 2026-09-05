@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
         setCartItems(savedCart);
     }, []);
 
-    //   HÀM THÊM VÀO GIỎ HÀNG (ĐÃ BỌC THÉP CHỐNG MUA LỐ TỒN KHO)
+    //   HÀM THÊM VÀO GIỎ HÀNG
     const addToCart = (product, quantity = 1) => {
         setCartItems(prev => {
             const existingItem = prev.find(item => item.id === product.id);
@@ -26,7 +26,7 @@ export const CartProvider = ({ children }) => {
                 
                 if (newTotalQuantity > product.stock) {
                     // Cảnh báo nếu mua lố
-                    toast.error(`Kho chỉ còn đúng ${product.stock} sản phẩm thôi Boss ơi! 🦊`, { 
+                    toast.error(`Kho chỉ còn đúng ${product.stock} sản phẩm thôi Boss ơi!`, { 
                         id: 'over-stock',
                         position: "bottom-right",
                         style: { fontWeight: 600 }
@@ -49,7 +49,7 @@ export const CartProvider = ({ children }) => {
             } else {
                 // Trường hợp mua mới tinh mà lại ráng nhập số lố hơn tồn kho
                 if (quantity > product.stock) {
-                    toast.error(`Kho chỉ còn ${product.stock} sản phẩm thôi! 🦊`, { 
+                    toast.error(`Kho chỉ còn ${product.stock} sản phẩm thôi! `, { 
                         id: 'over-stock',
                         position: "bottom-right",
                         style: { fontWeight: 600 }

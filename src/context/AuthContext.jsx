@@ -31,16 +31,17 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       return { success: false, message: 'Không thể kết nối đến máy chủ Backend!' };
     }
+    
   };
 
   // ================= ĐĂNG NHẬP API =================
-  // Đã sửa lại nhận username thay vì email
+  // nhận username 
   const login = async (username, password) => {
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Gửi username lên API (chú ý: Backend của Boss cũng phải đọc 'username' nhé)
+        // Gửi username lên API 
         body: JSON.stringify({ username, password }),
       });
       

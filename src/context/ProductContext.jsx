@@ -14,7 +14,7 @@ export const ProductProvider = ({ children }) => {
       const response = await fetch(API_URL);
       if (response.ok) {
         const data = await response.json();
-        // Ép kiểu an toàn 100%
+        // Ép kiểu
         setProducts(Array.isArray(data) ? data : (data.products || [])); 
       }
     } catch (error) {

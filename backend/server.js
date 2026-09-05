@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer'); //   THÊM VŨ KHÍ BẮT FILE
+const multer = require('multer'); 
 
 const app = express();
 const PORT = 5000;
