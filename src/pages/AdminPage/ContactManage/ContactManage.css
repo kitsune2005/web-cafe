@@ -2,7 +2,7 @@
    CSS BẢNG LIÊN HỆ (Layout ngoài dùng chung)
 ========================================== */
 
-/* 👉 ĐÃ NÂNG CẤP: Bọc thép lớp vỏ ngoài cho phép cuộn ngang trên Mobile */
+/*   ĐÃ NÂNG CẤP: Bọc thép lớp vỏ ngoài cho phép cuộn ngang trên Mobile */
 .contact-table-wrap {
   background: #fff;
   border-radius: 0.5rem;
@@ -12,7 +12,7 @@
   box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.03); /* Tút lại tí bóng đổ cho sang */
 }
 
-/* 👉 ĐÃ NÂNG CẤP: Ép cứng min-width không cho bảng bị bóp méo */
+/*   ĐÃ NÂNG CẤP: Ép cứng min-width không cho bảng bị bóp méo */
 .contact-table {
   width: 100%;
   border-collapse: collapse;

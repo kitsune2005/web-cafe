@@ -7,7 +7,7 @@ import "./NewsPage.css";
 const NewsPage = () => {
   const { newsList, loading } = useNews();
 
-  // 👉 THÊM STATE QUẢN LÝ PHÂN TRANG
+  //   THÊM STATE QUẢN LÝ PHÂN TRANG
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9; // Tối đa 9 bài một trang
 
@@ -19,7 +19,7 @@ const NewsPage = () => {
   const safeNewsList = Array.isArray(newsList) ? newsList : [];
   const publishedNews = safeNewsList.filter(news => news.status === "published");
 
-  // 👉 THUẬT TOÁN CẮT MẢNG THEO SỐ TRANG
+  //   THUẬT TOÁN CẮT MẢNG THEO SỐ TRANG
   const totalPages = Math.ceil(publishedNews.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentNews = publishedNews.slice(startIndex, startIndex + itemsPerPage);

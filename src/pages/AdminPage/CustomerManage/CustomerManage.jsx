@@ -66,7 +66,7 @@ const CustomerManage = () => {
         });
     };
 
-    // 👉 BỘ LỌC THÉP: BỔ SUNG KIỂM TRA MẬT KHẨU CÓ CHỮ + SỐ
+    //   BỘ LỌC THÉP: BỔ SUNG KIỂM TRA MẬT KHẨU CÓ CHỮ + SỐ
     const validateForm = () => {
         let newErrors = { name: '', username: '', email: '', password: '' };
         let isValid = true;

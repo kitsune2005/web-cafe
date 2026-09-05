@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useParams, Link } from 'react-router-dom';
 import { useContact } from "../../context/ContactContext";
-import toast from 'react-hot-toast'; // 👉 Thêm Toasts báo lỗi
-import Swal from 'sweetalert2'; // 👉 Thêm SweetAlert2 báo thành công xịn xò
+import toast from 'react-hot-toast'; //   Thêm Toasts báo lỗi
+import Swal from 'sweetalert2'; //   Thêm SweetAlert2 báo thành công xịn xò
 import "./ContactPage.css";
 
 const ContactPage = () => {
@@ -19,7 +19,7 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 👉 THAY THẾ ALERT BẰNG TOAST KHI NHẬP THIẾU
+    //   THAY THẾ ALERT BẰNG TOAST KHI NHẬP THIẾU
     if (
       !formData.name ||
       !formData.phone ||
@@ -38,7 +38,7 @@ const ContactPage = () => {
 
       await sendContact(formData);
 
-      // 👉 THAY THẾ ALERT BẰNG POPUP SWEETALERT2 KHI THÀNH CÔNG
+      //   THAY THẾ ALERT BẰNG POPUP SWEETALERT2 KHI THÀNH CÔNG
       Swal.fire({
         title: 'Gửi thành công! 🎉',
         text: 'Cảm ơn Boss đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!',

@@ -24,13 +24,13 @@
     position: relative;
 }
 
-/* 👉 ĐỔI MÀU KHUNG KHI ĐÃ NHẬN (XANH LÁ) */
+/*   ĐỔI MÀU KHUNG KHI ĐÃ NHẬN (XANH LÁ) */
 .order-card.status-received {
     border-color: #0ca678;
     background-color: #e6fcf5;
 }
 
-/* 👉 ĐỔI MÀU KHUNG KHI CHƯA NHẬN (ĐỎ) */
+/*   ĐỔI MÀU KHUNG KHI CHƯA NHẬN (ĐỎ) */
 .order-card.status-not_received {
     border-color: #fa5252;
     background-color: #fff5f5;
@@ -206,7 +206,7 @@
 }
 
 /* =====================================
-   👉 TRẠNG THÁI HOÀN TẤT & BÁO CÁO 
+     TRẠNG THÁI HOÀN TẤT & BÁO CÁO 
 ===================================== */
 .order-dynamic-actions {
     margin-top: 5px;
@@ -257,7 +257,7 @@
 }
 
 /* ==========================================
-   👉 MODAL BIÊN LAI (RECEIPT) CHUẨN MÁY IN
+     MODAL BIÊN LAI (RECEIPT) CHUẨN MÁY IN
 ========================================== */
 .receipt-modal-overlay {
     position: fixed;

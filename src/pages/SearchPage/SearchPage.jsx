@@ -9,7 +9,7 @@ const SearchPage = () => {
     const { products, formatPrice } = useProduct();
     const navigate = useNavigate();
 
-    // 👉 STATE CHO PHÂN TRANG (15 Sản phẩm/Trang)
+    //   STATE CHO PHÂN TRANG (15 Sản phẩm/Trang)
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 15;
 
@@ -24,7 +24,7 @@ const SearchPage = () => {
                p.category.toLowerCase().includes(query.toLowerCase());
     });
 
-    // 👉 LOGIC TÍNH TOÁN PHÂN TRANG
+    //   LOGIC TÍNH TOÁN PHÂN TRANG
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -68,7 +68,7 @@ const SearchPage = () => {
                         </div>
                     ) : (
                         <>
-                            {/* 👉 LƯỚI 3 SẢN PHẨM / HÀNG */}
+                            {/*   LƯỚI 3 SẢN PHẨM / HÀNG */}
                             <div className="search-products-grid">
                                 {currentProducts.map(product => (
                                     <div className="search-product-card" key={product.id} onClick={() => navigate(`/product/${product.id}`)}>
@@ -94,7 +94,7 @@ const SearchPage = () => {
                                 ))}
                             </div>
 
-                            {/* 👉 BỘ PHÂN TRANG (PAGINATION) */}
+                            {/*   BỘ PHÂN TRANG (PAGINATION) */}
                             {totalPages > 1 && (
                                 <div className="search-pagination">
                                     <button 

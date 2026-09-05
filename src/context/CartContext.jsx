@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
         setCartItems(savedCart);
     }, []);
 
-    // 👉 HÀM THÊM VÀO GIỎ HÀNG (ĐÃ BỌC THÉP CHỐNG MUA LỐ TỒN KHO)
+    //   HÀM THÊM VÀO GIỎ HÀNG (ĐÃ BỌC THÉP CHỐNG MUA LỐ TỒN KHO)
     const addToCart = (product, quantity = 1) => {
         setCartItems(prev => {
             const existingItem = prev.find(item => item.id === product.id);

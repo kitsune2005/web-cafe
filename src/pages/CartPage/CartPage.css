@@ -4,7 +4,7 @@
     padding: 120px 0 50px;
     position: relative;
     border-bottom: 1px solid #eae5df;
-    /* 👉 ĐÃ SỬA: Đẩy khối nội dung giỏ hàng cách xa cái Banner phía trên */
+    /*   ĐÃ SỬA: Đẩy khối nội dung giỏ hàng cách xa cái Banner phía trên */
     margin-bottom: 60px !important;
 }
 
@@ -49,7 +49,7 @@
     font-weight: 600;
 }
 
-/* 👉 ĐÃ SỬA: Ép khoảng cách để tránh dính Footer ở dưới */
+/*   ĐÃ SỬA: Ép khoảng cách để tránh dính Footer ở dưới */
 .cart-content-wrapper {
     padding: 0 24px 100px !important; 
     margin-bottom: 100px !important;

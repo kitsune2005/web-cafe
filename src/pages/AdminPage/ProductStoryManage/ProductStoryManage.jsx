@@ -80,7 +80,7 @@ const ProductStoryManage = () => {
         let parsedGallery = [];
         let parsedBlocks = [];
         
-        // 👉 ĐÃ SỬA: Đọc dữ liệu thông minh, nhận diện cả Object lẫn String cũ
+        //   ĐÃ SỬA: Đọc dữ liệu thông minh, nhận diện cả Object lẫn String cũ
         try {
             if (product.longDesc) {
                 if (typeof product.longDesc === 'object') {
@@ -207,7 +207,7 @@ const ProductStoryManage = () => {
         if (updateProductStory) {
             setIsSaving(true);
             
-            // 👉 ĐÃ SỬA: Không biến thành String nữa, truyền thẳng Object để Backend tự động format xuống dòng!
+            //   ĐÃ SỬA: Không biến thành String nữa, truyền thẳng Object để Backend tự động format xuống dòng!
             const complexLongDesc = {
                 gallery: storyData.gallery,
                 blocks: storyData.blocks

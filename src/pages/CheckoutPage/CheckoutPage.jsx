@@ -71,7 +71,7 @@ const CheckoutPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // 👉 ĐÃ SỬA: Hàm Đặt hàng BẮT BUỘC ĐỢI (async/await)
+    //   ĐÃ SỬA: Hàm Đặt hàng BẮT BUỘC ĐỢI (async/await)
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
         
@@ -83,10 +83,10 @@ const CheckoutPage = () => {
         setIsProcessing(true);
 
         try {
-            // 👉 CHỐT CHẶN TỬ THẦN: Bắt buộc đợi Database báo cáo "Đã Trừ Kho Xong"
+            //   CHỐT CHẶN TỬ THẦN: Bắt buộc đợi Database báo cáo "Đã Trừ Kho Xong"
             await deductStock(cartItems);
 
-            // 👉 Trừ kho thành công 100% rồi, giờ mới cho hiển thị hiệu ứng Loading và chuyển trang
+            //   Trừ kho thành công 100% rồi, giờ mới cho hiển thị hiệu ứng Loading và chuyển trang
             setTimeout(() => {
                 setIsProcessing(false);
                 isOrderSuccess.current = true; 

@@ -62,7 +62,7 @@ const MyOrdersPage = () => {
     }, []);
 
     // ==========================================
-    // 👉 HÀM ĐÃ NÂNG CẤP: BẮN LỆNH LÊN DATABASE CHO ADMIN
+    //   HÀM ĐÃ NÂNG CẤP: BẮN LỆNH LÊN DATABASE CHO ADMIN
     // ==========================================
     const handleConfirmStatus = async (orderId, newStatus) => {
         // 1. Cập nhật giao diện nội bộ cho mượt
@@ -76,7 +76,7 @@ const MyOrdersPage = () => {
         );
         localStorage.setItem('my_orders', JSON.stringify(newAllOrders));
 
-        // 3. 👉 PHÓNG API LÊN DATABASE CHO RADAR ADMIN BẮT SÓNG
+        // 3.   PHÓNG API LÊN DATABASE CHO RADAR ADMIN BẮT SÓNG
         try {
             await fetch(`http://localhost:5000/orders/${orderId}`, {
                 method: 'PATCH',

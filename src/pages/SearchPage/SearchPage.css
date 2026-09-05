@@ -4,7 +4,7 @@
     padding-bottom: 60px;
 }
 
-/* 👉 ĐÃ SỬA: Đẩy padding-top lên 160px để Header không chọc thủng chữ Banner */
+/*   ĐÃ SỬA: Đẩy padding-top lên 160px để Header không chọc thủng chữ Banner */
 .search-banner {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../../assets/img/banner_coffee.jpg') center/cover no-repeat;
     padding: 160px 0 70px;
@@ -41,7 +41,7 @@
     margin: 0 10px;
 }
 
-/* 👉 ĐÃ SỬA: Bỏ cột trái, ép Container vào giữa màn hình */
+/*   ĐÃ SỬA: Bỏ cột trái, ép Container vào giữa màn hình */
 .search-layout-container {
     display: block;
     max-width: 1050px;
@@ -66,7 +66,7 @@
     border-bottom: 1px solid #eee;
 }
 
-/* 👉 ĐÃ SỬA: Lưới sản phẩm đúng 3 cột */
+/*   ĐÃ SỬA: Lưới sản phẩm đúng 3 cột */
 .search-products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -167,7 +167,7 @@
     color: #666;
 }
 
-/* 👉 CSS CHO BỘ PHÂN TRANG NẰM Ở ĐÁY */
+/*   CSS CHO BỘ PHÂN TRANG NẰM Ở ĐÁY */
 .search-pagination {
     display: flex;
     justify-content: center;

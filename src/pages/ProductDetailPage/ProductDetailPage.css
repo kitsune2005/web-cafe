@@ -224,7 +224,7 @@
     margin: 0;
 }
 
-/* 👉 BÍ KÍP ĐÂY: Ẩn mũi tên tăng giảm tàng hình của trình duyệt làm lệch form */
+/*   BÍ KÍP ĐÂY: Ẩn mũi tên tăng giảm tàng hình của trình duyệt làm lệch form */
 .quantity-selector input[type="number"]::-webkit-inner-spin-button,
 .quantity-selector input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

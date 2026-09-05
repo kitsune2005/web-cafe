@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer'); // 👉 THÊM VŨ KHÍ BẮT FILE
+const multer = require('multer'); //   THÊM VŨ KHÍ BẮT FILE
 
 const app = express();
 const PORT = 5000;
@@ -42,7 +42,7 @@ const saveImage = (base64String, subFolder, prefix) => {
 };
 
 // =========================================================================
-// 👉 API MỚI: HỨNG FILE TỪ TRÌNH SOẠN THẢO (BLOCK EDITOR / GALLERY)
+//   API MỚI: HỨNG FILE TỪ TRÌNH SOẠN THẢO (BLOCK EDITOR / GALLERY)
 // =========================================================================
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

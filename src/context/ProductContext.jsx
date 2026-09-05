@@ -57,7 +57,7 @@ export const ProductProvider = ({ children }) => {
     const safeProducts = Array.isArray(products) ? products : [];
     const oldProduct = safeProducts.find(p => String(p.id) === String(updatedFields.id)) || {};
 
-    // 👉 Bí kíp: Lấy đồ mới của Admin đè lên đồ cũ (Số sold cũ sẽ được giữ nguyên an toàn)
+    //   Bí kíp: Lấy đồ mới của Admin đè lên đồ cũ (Số sold cũ sẽ được giữ nguyên an toàn)
     const finalPayload = { ...oldProduct, ...updatedFields };
 
     await fetch(`${API_URL}/${updatedFields.id}`, {

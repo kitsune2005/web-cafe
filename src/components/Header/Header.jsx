@@ -34,7 +34,7 @@ const Header = () => {
   const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact") || location.pathname.startsWith("/search");
   const isLightMode = !isDarkBannerPage;
 
-  // 👉 HÀM MỚI: Chỉ bám theo thẻ Active, phớt lờ Hover
+  //   HÀM MỚI: Chỉ bám theo thẻ Active, phớt lờ Hover
   const updateActiveIndicator = () => {
     if (!navListRef.current || !indicatorRef.current) return;
     
@@ -113,7 +113,7 @@ const Header = () => {
                 <i className="fa-solid fa-xmark"></i>
             </button>
 
-            {/* 👉 Đã xóa sự kiện onMouseLeave ở thẻ ul */}
+            {/*   Đã xóa sự kiện onMouseLeave ở thẻ ul */}
             <ul ref={navListRef} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.link || (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
@@ -121,7 +121,7 @@ const Header = () => {
                   <li
                     key={index}
                     className={`${item.dropdown ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}
-                    // 👉 Đã xóa sự kiện onMouseEnter ở thẻ li
+                    //   Đã xóa sự kiện onMouseEnter ở thẻ li
                   >
                     <Link
                       to={item.link || '#'}

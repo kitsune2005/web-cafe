@@ -10,7 +10,7 @@ const NewsDetailPage = () => {
   // URL trả id dạng string nên phải Number
   const news = newsList.find((item) => String(item.id) === String(id));
   
-  // 👉 THUẬT TOÁN: RANDOM NHƯNG ƯU TIÊN BÀI MỚI NHẤT
+  //   THUẬT TOÁN: RANDOM NHƯNG ƯU TIÊN BÀI MỚI NHẤT
   const otherNews = [...newsList]
     // 1. Loại bỏ bài đang đọc và chỉ lấy bài đã xuất bản
     .filter((item) => String(item.id) !== String(id) && item.status === "published")

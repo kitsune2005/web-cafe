@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useProduct } from '../../../context/ProductContext'; 
-import { useCart } from '../../../context/CartContext'; // 👉 THÊM IMPORT
+import { useCart } from '../../../context/CartContext'; //   THÊM IMPORT
 import './PackagedProducts.css';
 
 const PackagedProducts = () => {
@@ -9,7 +9,7 @@ const PackagedProducts = () => {
     const [currentPage, setCurrentPage] = useState(1);
     
     const { products, formatPrice, loading } = useProduct();
-    const { addToCart } = useCart(); // 👉 KÉO HÀM TỪ CONTEXT
+    const { addToCart } = useCart(); //   KÉO HÀM TỪ CONTEXT
 
     const displayProducts = products
         .filter(product => product.isFeatured !== false || product.category === 'Cà phê đóng gói')
@@ -43,7 +43,7 @@ const PackagedProducts = () => {
         }
     };
 
-    // 👉 HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
+    //   HÀM THÊM GIỎ HÀNG CÓ HIỆU ỨNG BAY MỚI NHẤT
     const handleAddFromCard = (e, item) => {
         e.preventDefault(); 
         e.stopPropagation(); 
@@ -139,7 +139,7 @@ const PackagedProducts = () => {
                                                 <Link to={`/product/${product.id}`} className="action-btn" aria-label="Xem chi tiết">
                                                     <i className="fa-regular fa-eye"></i>
                                                 </Link>
-                                                {/* 👉 GẮN HÀM MỚI VÀO NÚT NÀY */}
+                                                {/*   GẮN HÀM MỚI VÀO NÚT NÀY */}
                                                 <button className="action-btn" aria-label="Thêm vào giỏ" onClick={(e) => handleAddFromCard(e, product)}>
                                                     <i className="fa-solid fa-cart-shopping"></i>
                                                 </button>

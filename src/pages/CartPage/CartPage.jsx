@@ -8,7 +8,7 @@ import './CartPage.css';
 const CartPage = () => {
     const { cartItems, setCartItems, removeFromCart } = useCart();
 
-    // 👉 CHUẨN BỊ VŨ KHÍ CHO SÚNG LIÊN THANH TRONG GIỎ HÀNG
+    //   CHUẨN BỊ VŨ KHÍ CHO SÚNG LIÊN THANH TRONG GIỎ HÀNG
     const timeoutRef = useRef(null);
     const intervalRef = useRef(null);
 
@@ -45,7 +45,7 @@ const CartPage = () => {
     };
 
     // ==========================================
-    // 👉 HỆ THỐNG ĐÈ NÚT TỰ ĐỘNG TĂNG GIẢM (SÚNG LIÊN THANH)
+    //   HỆ THỐNG ĐÈ NÚT TỰ ĐỘNG TĂNG GIẢM (SÚNG LIÊN THANH)
     // ==========================================
     const stopContinuousAction = () => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -90,7 +90,7 @@ const CartPage = () => {
     };
 
     // ==========================================
-    // 👉 HÀM XÓA 1 MÓN (ĐÃ NÂNG CẤP THÊM POPUP XÁC NHẬN)
+    //   HÀM XÓA 1 MÓN (ĐÃ NÂNG CẤP THÊM POPUP XÁC NHẬN)
     // ==========================================
     const handleRemoveItem = (id, name) => {
         Swal.fire({
@@ -181,7 +181,7 @@ const CartPage = () => {
                                         <div className="col-product">
                                             <button
                                                 className="btn-remove-item"
-                                                // 👉 ĐÃ GỌI HÀM CONFIRM SWEETALERT
+                                                //   ĐÃ GỌI HÀM CONFIRM SWEETALERT
                                                 onClick={() => handleRemoveItem(item.id, item.name)} 
                                                 title="Xóa sản phẩm này"
                                             >
@@ -203,7 +203,7 @@ const CartPage = () => {
                                         <div className="col-qty">
                                             <div className="quantity-selector cart-qty">
                                                 
-                                                {/* 👉 NÚT TRỪ TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
+                                                {/*   NÚT TRỪ TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
                                                 <button 
                                                     onPointerDown={() => startDecrease(item)}
                                                     onPointerUp={stopContinuousAction}
@@ -215,7 +215,7 @@ const CartPage = () => {
                                                 
                                                 <input type="number" value={item.quantity} readOnly />
                                                 
-                                                {/* 👉 NÚT CỘNG TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
+                                                {/*   NÚT CỘNG TRONG GIỎ HÀNG ĐÃ NÂNG CẤP LÊN SÚNG LIÊN THANH */}
                                                 <button
                                                     onPointerDown={() => startIncrease(item)}
                                                     onPointerUp={stopContinuousAction}

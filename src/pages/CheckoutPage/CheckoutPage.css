@@ -48,7 +48,7 @@
     font-weight: 600;
 }
 
-/* 👉 TRỊ BỆNH KẸP GIỮA HEADER VÀ FOOTER */
+/*   TRỊ BỆNH KẸP GIỮA HEADER VÀ FOOTER */
 .checkout-content-wrapper {
     padding: 0 24px 100px !important;
     margin-bottom: 120px !important;

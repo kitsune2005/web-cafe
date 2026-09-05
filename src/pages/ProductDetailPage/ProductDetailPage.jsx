@@ -391,7 +391,7 @@ const ProductDetailPage = () => {
                                         const blockKey = block.id || `block-${index}`;
                                         
                                         if (block.type === 'text') {
-                                            // 👉 LỚP GIÁP BẢO VỆ: Nếu content không phải chữ, biến nó thành rỗng để không bị sập hàm replace()
+                                            //   LỚP GIÁP BẢO VỆ: Nếu content không phải chữ, biến nó thành rỗng để không bị sập hàm replace()
                                             const safeContent = typeof block.content === 'string' ? block.content : String(block.content || '');
                                             return <div key={blockKey} className="story-block-text" dangerouslySetInnerHTML={{ __html: safeContent.replace(/\n/g, '<br/>') }} />;
                                         }

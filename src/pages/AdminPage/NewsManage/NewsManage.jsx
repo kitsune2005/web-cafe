@@ -81,7 +81,7 @@ const NewsManage = () => {
       }));
   };
 
-  // 👉 THÊM VŨ KHÍ MỚI: Xử lý Bôi đen & Gắn thẻ HTML cho chữ
+  //   THÊM VŨ KHÍ MỚI: Xử lý Bôi đen & Gắn thẻ HTML cho chữ
   const handleFormatText = (blockId, prefix, suffix) => {
       const textarea = document.getElementById(`news-text-block-${blockId}`);
       if (!textarea) return;
@@ -321,7 +321,7 @@ const NewsManage = () => {
                                 <button type="button" className="btn-del-block" onClick={() => removeBlock(block.id)}><i className="fa-solid fa-trash-can"></i></button>
                             </div>
 
-                            {/* 👉 ĐÃ NÂNG CẤP TEXT BLOCK CÓ TOOLBAR */}
+                            {/*   ĐÃ NÂNG CẤP TEXT BLOCK CÓ TOOLBAR */}
                             {block.type === 'text' && (
                                 <div className="news-text-block-wrapper">
                                     <div className="news-block-format-toolbar">

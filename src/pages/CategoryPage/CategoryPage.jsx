@@ -140,7 +140,7 @@ const CategoryPage = () => {
           <div className="shop-products grid-3">
             {filteredProducts.map(product => (
               
-              /* 👉 Ép thẻ nằm dọc giống hệt bên ProductsPage */
+              /*   Ép thẻ nằm dọc giống hệt bên ProductsPage */
               <article 
                 className="shop-product-card" 
                 key={product.id}
@@ -208,7 +208,7 @@ const CategoryPage = () => {
                   </div>
                 </div>
 
-                {/* 👉 DỜI NHÓM NÚT XUỐNG DƯỚI ĐÁY */}
+                {/*   DỜI NHÓM NÚT XUỐNG DƯỚI ĐÁY */}
                 <div className="product-hover-actions">
                   <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
                     <i className="fa-regular fa-heart"></i>
