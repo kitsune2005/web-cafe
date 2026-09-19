@@ -84,7 +84,7 @@ const Dashboard = () => {
         <div className="admin-dashboard-container">
             <div className="dashboard-header">
                 <h2 className="dashboard-title">Tổng quan hệ thống</h2>
-                <p className="dashboard-subtitle">Chào mừng Boss Kitsune quay trở lại! Hôm nay doanh thu rất tốt. ☕📈</p>
+                <p className="dashboard-subtitle">Chào mừng Bạn Kitsune quay trở lại! Hôm nay doanh thu rất tốt. ☕📈</p>
             </div>
 
             {/* TẦNG 1: 4 THẺ THỐNG KÊ */}

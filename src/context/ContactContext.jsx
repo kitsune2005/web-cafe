@@ -40,6 +40,7 @@ export const ContactProvider = ({ children }) => {
       throw new Error(data.message || "Không thể gửi liên hệ");
     }
 
+    // Đẩy phản hồi mới lên đầu danh sách State
     setContacts((prev) => [data.contact, ...prev]);
 
     return data;
@@ -57,6 +58,7 @@ export const ContactProvider = ({ children }) => {
       throw new Error(data.message || "Không thể cập nhật");
     }
 
+    // Cập nhật trạng thái 'read' cho bản ghi tương ứng trong mảng State
     setContacts((prev) =>
       prev.map((item) => (item.id === id ? data.contact : item))
     );
@@ -74,6 +76,7 @@ export const ContactProvider = ({ children }) => {
       throw new Error(data.message || "Không thể xóa");
     }
 
+     // Lọc bỏ liên hệ ra khỏi mảng State
     setContacts((prev) => prev.filter((item) => item.id !== id));
   };
 

@@ -159,7 +159,7 @@ const NewsManage = () => {
   const handleDelete = (id, title) => {
     Swal.fire({
         title: 'Xóa bài viết?',
-        text: `Boss có chắc muốn xóa tin tức "${title}" không?`,
+        text: `Bạn có chắc muốn xóa tin tức "${title}" không?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#fa5252',

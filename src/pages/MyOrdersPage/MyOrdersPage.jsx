@@ -17,7 +17,7 @@ const MyOrdersPage = () => {
         if (loading) return;
 
         if (!currentUser) {
-            toast.error("Boss ơi, phải đăng nhập mới xem được đơn hàng nhé! ");
+            toast.error("Bạn ơi, phải đăng nhập mới xem được đơn hàng nhé! ");
             navigate('/');
             return;
         }
@@ -94,7 +94,7 @@ const MyOrdersPage = () => {
     const handleReceived = (order) => {
         Swal.fire({
             title: 'Xác nhận nhận hàng?',
-            text: "Boss xác nhận shipper đã giao đúng và đủ hàng chứ?",
+            text: "Bạn xác nhận shipper đã giao đúng và đủ hàng chứ?",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#0ca678', 
@@ -118,7 +118,7 @@ const MyOrdersPage = () => {
     const handleNotReceived = (order) => {
         Swal.fire({
             title: 'Báo cáo sự cố!',
-            text: "Boss chưa nhận được hàng? Hãy ghi chú lại để Admin xử lý ngay nhé:",
+            text: "Bạn chưa nhận được hàng? Hãy ghi chú lại để Admin xử lý ngay nhé:",
             input: 'textarea',
             inputPlaceholder: 'Ví dụ: Shipper gọi không nghe máy, báo giao rồi nhưng không thấy hàng...',
             icon: 'warning',
@@ -137,7 +137,7 @@ const MyOrdersPage = () => {
                 
                 Swal.fire(
                     'Đã gửi báo cáo!',
-                    'Hệ thống đã gửi báo cáo thẳng lên Admin. Boss cứ yên tâm đợi kết quả nhé!',
+                    'Hệ thống đã gửi báo cáo thẳng lên Admin. Bạn cứ yên tâm đợi kết quả nhé!',
                     'success'
                 );
             }
@@ -215,7 +215,7 @@ const MyOrdersPage = () => {
                                     <div className="order-dynamic-actions">
                                         {order.status === 'arrived' && (
                                             <div className="order-actions">
-                                                <h4 className="action-title">Shipper đang đứng trước cửa, Boss vui lòng xác nhận:</h4>
+                                                <h4 className="action-title">Shipper đang đứng trước cửa, Bạn vui lòng xác nhận:</h4>
                                                 <div className="action-buttons">
                                                     <button className="btn-confirm success" onClick={() => handleReceived(order)}>
                                                         <i className="fa-solid fa-check"></i> ĐÃ NHẬN ĐƯỢC HÀNG
@@ -229,7 +229,7 @@ const MyOrdersPage = () => {
 
                                         {order.status === 'received' && (
                                             <div className="action-completed-area">
-                                                <span className="success-msg">Cảm ơn Boss đã mua sắm tại The Coffee!</span>
+                                                <span className="success-msg">Cảm ơn Bạn đã mua sắm tại The Coffee!</span>
                                                 <button className="btn-view-receipt" onClick={() => setReceiptOrder({ ...order, shippingFee })} title="Xem biên lai">
                                                     <i className="fa-regular fa-eye"></i> Xem biên lai
                                                 </button>

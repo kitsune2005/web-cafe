@@ -5,13 +5,21 @@ import { useCart } from "../../context/CartContext";
 import toast from "react-hot-toast";
 import "./ProductsPage.css";
 
+const targetCategories = ["Cà phê nguyên chất", "Cà phê đóng gói", "Cà phê phin"];
+const priceRanges = [
+  { id: "under-100", label: "Dưới 100.000đ", min: 0, max: 100000 },
+  { id: "100-300", label: "100.000đ - 300.000đ", min: 100000, max: 300000 },
+  { id: "300-500", label: "300.000đ - 500.000đ", min: 300000, max: 500000 },
+  { id: "over-500", label: "Trên 500.000đ", min: 500000, max: Infinity },
+];
+
 const ProductsPage = () => {
   const { products, formatPrice } = useProduct();
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [sortType, setSortType] = useState("default");
+  const [sortType, setSortType] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarVisible, setSidebarVisible] = useState(window.innerWidth > 992);
   const [viewMode, setViewMode] = useState("grid-3");
@@ -19,23 +27,26 @@ const ProductsPage = () => {
 
   const itemsPerPage = 12;
 
-  // Tự động ẩn/hiện sidebar theo kích thước màn hình
   useEffect(() => {
+    let timeoutId;
     const handleResize = () => {
-      if (window.innerWidth > 992) setSidebarVisible(true);
-      else setSidebarVisible(false);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setSidebarVisible(window.innerWidth > 992);
+      }, 150);
     };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
-  // Chuẩn hóa giá về dạng number để so sánh/sắp xếp
   const getPriceNumber = (price) => {
     if (typeof price === "number") return price;
     return Number(String(price).replace(/[^\d]/g, ""));
   };
 
-  // Đếm số lượng sản phẩm theo từng danh mục (hiển thị cạnh checkbox)
   const categoryCounts = useMemo(() => {
     const counts = {};
     products.forEach((product) => {
@@ -44,16 +55,6 @@ const ProductsPage = () => {
     return counts;
   }, [products]);
 
-  const targetCategories = ["Cà phê nguyên chất", "Cà phê đóng gói", "Cà phê phin"];
-
-  const priceRanges = [
-    { id: "under-100", label: "Dưới 100.000đ", min: 0, max: 100000 },
-    { id: "100-300", label: "100.000đ - 300.000đ", min: 100000, max: 300000 },
-    { id: "300-500", label: "300.000đ - 500.000đ", min: 300000, max: 500000 },
-    { id: "over-500", label: "Trên 500.000đ", min: 500000, max: Infinity },
-  ];
-
-  // Chọn/bỏ chọn danh mục lọc
   const handleCategoryChange = (categoryName) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryName) ? prev.filter((c) => c !== categoryName) : [...prev, categoryName]
@@ -61,7 +62,6 @@ const ProductsPage = () => {
     setCurrentPage(1);
   };
 
-  // Chọn/bỏ chọn khoảng giá lọc
   const handlePriceChange = (rangeId) => {
     setSelectedPriceRanges((prev) =>
       prev.includes(rangeId) ? prev.filter((id) => id !== rangeId) : [...prev, rangeId]
@@ -69,7 +69,9 @@ const ProductsPage = () => {
     setCurrentPage(1);
   };
 
-  // Lọc + sắp xếp danh sách sản phẩm theo danh mục, khoảng giá và kiểu sort
+  // ==========================================
+  // 1. LỌC VÀ SẮP XẾP SẢN PHẨM CHÍNH (ĐẨY HÀNG HẾT XUỐNG ĐÁY)
+  // ==========================================
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -87,25 +89,52 @@ const ProductsPage = () => {
       });
     }
 
-    if (sortType === "price-low") {
-      result.sort((a, b) => getPriceNumber(a.price) - getPriceNumber(b.price));
-    }
-    if (sortType === "price-high") {
-      result.sort((a, b) => getPriceNumber(b.price) - getPriceNumber(a.price));
-    }
-    if (sortType === "name-az") {
-      result.sort((a, b) => a.name.localeCompare(b.name, "vi"));
-    }
+    result.sort((a, b) => {
+      // Lớp 1: Kiểm tra tồn kho (Hết hàng bị đẩy xuống)
+      const isAOut = (a.stock || 0) <= 0;
+      const isBOut = (b.stock || 0) <= 0;
+
+      if (isAOut && !isBOut) return 1;  // a hết hàng, b còn -> a xếp sau
+      if (!isAOut && isBOut) return -1; // a còn, b hết hàng -> a xếp trước
+
+      // Lớp 2: Nếu cả 2 cùng còn hàng (hoặc cùng hết), sắp xếp theo tùy chọn
+      if (sortType === "newest") {
+        const valA = a.createdAt ? new Date(a.createdAt).getTime() : a.id;
+        const valB = b.createdAt ? new Date(b.createdAt).getTime() : b.id;
+        return valB - valA;
+      } else if (sortType === "price-low") {
+        return getPriceNumber(a.price) - getPriceNumber(b.price);
+      } else if (sortType === "price-high") {
+        return getPriceNumber(b.price) - getPriceNumber(a.price);
+      } else if (sortType === "name-az") {
+        return a.name.localeCompare(b.name, "vi");
+      }
+      return 0;
+    });
 
     return result;
   }, [products, selectedCategories, sortType, selectedPriceRanges]);
 
-  // Lấy 3 sản phẩm mới nhất hiển thị ở sidebar
+  // ==========================================
+  // 2. LẤY 3 SẢN PHẨM CHO SIDEBAR (ĐẨY HÀNG HẾT XUỐNG ĐÁY)
+  // ==========================================
   const newestProducts = useMemo(() => {
-    return [...products].reverse().slice(0, 3);
+    return [...products].sort((a, b) => {
+      // Ưu tiên 1: Hết hàng đẩy xuống đáy
+      const isAOut = (a.stock || 0) <= 0;
+      const isBOut = (b.stock || 0) <= 0;
+
+      if (isAOut && !isBOut) return 1;
+      if (!isAOut && isBOut) return -1;
+
+      // Ưu tiên 2: Mới nhất lên đầu
+      const valA = a.createdAt ? new Date(a.createdAt).getTime() : a.id;
+      const valB = b.createdAt ? new Date(b.createdAt).getTime() : b.id;
+      return valB - valA;
+    }).slice(0, 3);
   }, [products]);
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
@@ -113,13 +142,12 @@ const ProductsPage = () => {
   const displayStart = filteredProducts.length === 0 ? 0 : startIndex + 1;
   const displayEnd = Math.min(endIndex, filteredProducts.length);
 
-  // Thêm vào giỏ hàng kèm hiệu ứng bay ảnh sản phẩm vào icon giỏ hàng
   const handleAddFromCard = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
 
     if ((item.stock || 0) <= 0) {
-      toast.error("Món này đang cháy hàng mất rồi Boss ơi!");
+      toast.error("Món này đang cháy hàng mất rồi bạn ơi!");
       return;
     }
 
@@ -165,7 +193,6 @@ const ProductsPage = () => {
     }
   };
 
-  // Chuyển trang và cuộn lên đầu danh sách sản phẩm
   const changePage = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 180, behavior: "smooth" });
@@ -192,7 +219,7 @@ const ProductsPage = () => {
                   <span className="mobile-text">Bộ lọc sản phẩm</span>
                 </button>
                 <select value={sortType} onChange={(e) => { setSortType(e.target.value); setCurrentPage(1); }}>
-                  <option value="default">Mặc định</option>
+                  <option value="newest">Mới nhất</option>
                   <option value="price-low">Giá thấp đến cao</option>
                   <option value="price-high">Giá cao đến thấp</option>
                   <option value="name-az">Tên A - Z</option>
@@ -217,7 +244,6 @@ const ProductsPage = () => {
             </div>
 
             <div className={`shop-layout ${!sidebarVisible ? "sidebar-hidden" : ""}`}>
-              {/* Sidebar bộ lọc: danh mục, khoảng giá, sản phẩm mới nhất */}
               {sidebarVisible && (
                 <aside className="shop-sidebar">
                   <button className="close-sidebar-mobile" onClick={() => setSidebarVisible(false)}>
@@ -283,11 +309,9 @@ const ProductsPage = () => {
                 </aside>
               )}
 
-              {/* Danh sách sản phẩm hiển thị theo chế độ xem (list / grid-2 / grid-3) */}
               <div className={`shop-products ${viewMode}`}>
                 {currentProducts.length > 0 ? (
                   currentProducts.map((product) => (
-                    // flex column để phần nút hành động luôn nằm sát đáy card
                     <article
                       className="shop-product-card"
                       key={product.id}
@@ -339,7 +363,6 @@ const ProductsPage = () => {
                         </div>
                       </div>
 
-                      {/* Nút hành động nhanh: yêu thích / xem chi tiết / thêm vào giỏ */}
                       <div className="product-hover-actions">
                         <button type="button" title="Yêu thích" onClick={(e) => e.stopPropagation()}>
                           <i className="fa-regular fa-heart"></i>
@@ -369,7 +392,6 @@ const ProductsPage = () => {
               </div>
             </div>
 
-            {/* Phân trang */}
             {totalPages > 1 && (
               <div className="pagination">
                 <button type="button" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)}>

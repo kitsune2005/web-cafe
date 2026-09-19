@@ -193,7 +193,7 @@ const ProductDetailPage = () => {
 
     const handleAddToCart = () => {
         if (safeStock <= 0) {
-            toast.error("Sản phẩm này đã hết hàng rồi Boss ơi!");
+            toast.error("Sản phẩm này đã hết hàng rồi Bạn ơi!");
             return;
         }
 

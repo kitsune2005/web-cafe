@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Giữ nguyên đường dẫn API xịn của Boss
+// Giữ nguyên đường dẫn API 
 const API_BASE_URL = 'http://localhost:5000/api';
 
 export const AuthContext = createContext();

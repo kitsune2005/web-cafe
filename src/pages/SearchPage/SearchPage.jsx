@@ -64,7 +64,7 @@ const SearchPage = () => {
                         <div className="search-no-products">
                             <i className="fa-solid fa-box-open" style={{fontSize: '50px', color: '#ccc', marginBottom: '15px'}}></i>
                             <h3>Không tìm thấy sản phẩm nào phù hợp!</h3>
-                            <p>Thử tìm với từ khóa khác nhé Boss.</p>
+                            <p>Thử tìm với từ khóa khác nhé Bạn.</p>
                         </div>
                     ) : (
                         <>

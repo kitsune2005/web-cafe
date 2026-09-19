@@ -27,7 +27,7 @@ const ContactManage = () => {
   const handleDelete = (id, name) => {
     Swal.fire({
       title: 'Xóa liên hệ?',
-      text: `Boss có chắc muốn xóa tin nhắn của "${name}" không?`,
+      text: `Bạn có chắc muốn xóa tin nhắn của "${name}" không?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#fa5252',

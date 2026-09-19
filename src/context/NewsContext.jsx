@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 
 const NewsContext = createContext();
 
-// Đổi port theo đúng server.js của Boss (hiện tại là 5000)
+
 const API_URL = "http://localhost:5000/api/news";
 
 export const NewsProvider = ({ children }) => {
@@ -78,7 +78,8 @@ export const NewsProvider = ({ children }) => {
     if (!response.ok) {
       throw new Error(data.message || "Không thể xóa bài viết");
     }
-
+    
+    // Lọc bỏ bài viết khỏi State
     setNewsList((prev) => prev.filter((item) => item.id !== id));
   };
 

@@ -1,16 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useHeaderLogic } from './useHeaderLogic.js';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 import AuthModal from '../AuthModal/AuthModal';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
 import SettingsModal from '../SettingsModal/SettingsModal';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logoFox from '../../assets/img/logo_fox_coffee.png';
-import './Header.css';
-
+import { useHeaderLogic } from './useHeaderLogic.js';
 import { useCart } from '../../context/CartContext';
 import { useProduct } from '../../context/ProductContext';
 
+import logoFox from '../../assets/img/logo_fox_coffee.png';
+import './Header.css';
+
 const Header = () => {
+  // Trích xuất state và handler điều khiển header từ custom hook
   const {
     currentUser, loading, scrolled, searchOpen, setSearchOpen,
     mobileMenuOpen, setMobileMenuOpen, authModalOpen, setAuthModalOpen,
@@ -22,23 +24,30 @@ const Header = () => {
   const { cartItems, removeFromCart } = useCart();
   const { products, formatPrice } = useProduct();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const location = useLocation();
-  const navListRef = useRef(null);
-  
-  // Dùng Ref để thao tác trực tiếp mượt mà
-  const indicatorRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const isDarkBannerPage = location.pathname === '/' || location.pathname.startsWith('/category') || location.pathname.startsWith("/news") || location.pathname.startsWith("/contact") || location.pathname.startsWith("/search");
+  // Refs điều khiển vị trí active indicator trên menu
+  const navListRef = useRef(null);
+  const indicatorRef = useRef(null);
+
+  // Xác định theme hiển thị của header dựa trên route hiện tại
+  const isDarkBannerPage = 
+    location.pathname === '/' || 
+    location.pathname.startsWith('/category') || 
+    location.pathname.startsWith('/news') || 
+    location.pathname.startsWith('/contact') || 
+    location.pathname.startsWith('/search');
   const isLightMode = !isDarkBannerPage;
 
-  //   HÀM MỚI: Chỉ bám theo thẻ Active, phớt lờ Hover
+  /**
+   * Tính toán và đồng bộ vị trí gạch chân (indicator) theo mục menu đang active
+   */
   const updateActiveIndicator = () => {
     if (!navListRef.current || !indicatorRef.current) return;
     
-    // Tìm thằng nào đang có class 'active'
     const activeEl = navListRef.current.querySelector('li.active');
     
     if (activeEl) {
@@ -49,35 +58,23 @@ const Header = () => {
       indicatorRef.current.style.width = `${elRect.width}px`;
       indicatorRef.current.style.opacity = '1';
     } else {
-      // Nếu không trang nào active (ví dụ trang Giỏ hàng) thì giấu thanh line đi
       indicatorRef.current.style.opacity = '0';
     }
   };
 
+  // Cập nhật indicator khi thay đổi route hoặc resize màn hình
   useEffect(() => {
     setNavDropdown(null);
-    // Chạy khi vừa vào trang hoặc đổi trang
     const timer = setTimeout(updateActiveIndicator, 150);
-    
-    // Cập nhật lại thanh line khi xoay màn hình hoặc đổi size
     window.addEventListener('resize', updateActiveIndicator);
     
     return () => {
-        clearTimeout(timer);
-        window.removeEventListener('resize', updateActiveIndicator);
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateActiveIndicator);
     };
   }, [location.pathname, menuItems]);
 
-  const totalQuantity = cartItems.length; 
-  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-
-  const searchResults = searchTerm.trim() === ''
-    ? []
-    : products.filter(p =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 5);
-
+  // Đóng dropdown tìm kiếm khi click ra ngoài vùng form
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -87,6 +84,18 @@ const Header = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchRef, setSearchOpen]);
+
+  // Tính toán tóm tắt giỏ hàng
+  const totalQuantity = cartItems.length; 
+  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+  // Lọc nhanh sản phẩm theo từ khóa (giới hạn 5 kết quả)
+  const searchResults = searchTerm.trim() === ''
+    ? []
+    : products.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase())
+      ).slice(0, 5);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -104,33 +113,36 @@ const Header = () => {
       <header className={`site-header ${scrolled ? 'scrolled' : ''} ${isLightMode ? 'light-mode' : ''}`}>
         <div className="container header-inner">
 
+          {/* Lớp phủ cho mobile navigation drawer */}
           {mobileMenuOpen && (
-              <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}></div>
+            <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}></div>
           )}
 
+          {/* Navigation Bar chính */}
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`} ref={navRef}>
             <button className="close-mobile-menu" onClick={() => setMobileMenuOpen(false)}>
-                <i className="fa-solid fa-xmark"></i>
+              <i className="fa-solid fa-xmark"></i>
             </button>
 
-            {/*   Đã xóa sự kiện onMouseLeave ở thẻ ul */}
             <ul ref={navListRef} style={{ position: 'relative' }}>
               {menuItems.map((item, index) => {
-                const isActive = location.pathname === item.link || (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
+                const isActive = 
+                  location.pathname === item.link || 
+                  (item.label.toLowerCase() === 'sản phẩm' && location.pathname.startsWith('/category'));
+                
                 return (
                   <li
                     key={index}
                     className={`${item.dropdown ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}
-                    //   Đã xóa sự kiện onMouseEnter ở thẻ li
                   >
                     <Link
                       to={item.link || '#'}
                       onClick={() => {
                         if (item.label.toLowerCase() === 'giới thiệu') window.scrollTo({ top: 0, behavior: 'smooth' });
                         if (item.dropdown) {
-                            setNavDropdown(navDropdown === item.label ? null : item.label);
+                          setNavDropdown(navDropdown === item.label ? null : item.label);
                         } else {
-                            setMobileMenuOpen(false);
+                          setMobileMenuOpen(false);
                         }
                       }}
                     >
@@ -158,37 +170,41 @@ const Header = () => {
                 );
               })}
               
-              {/* Thanh gạch dưới chỉ di chuyển khi state Active thay đổi */}
               <div className="nav-indicator" ref={indicatorRef}></div>
             </ul>
 
+            {/* Thông tin tài khoản người dùng trên Mobile Drawer */}
             <div className="mobile-user-bottom">
-                {currentUser ? (
-                    <div className="mobile-user-card" onClick={() => { setMobileMenuOpen(false); setProfileOpen(true); }}>
-                        {currentUser.avatar ? (
-                            <img src={currentUser.avatar} alt="Avatar" />
-                        ) : (
-                            <div className="m-avatar-placeholder">{currentUser.name.charAt(0).toUpperCase()}</div>
-                        )}
-                        <div className="m-user-info">
-                            <span className="m-greeting">Xin chào,</span>
-                            <span className="m-name">{currentUser.name}</span>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="mobile-user-card login-btn" onClick={() => { setMobileMenuOpen(false); setAuthModalOpen(true); }}>
-                        <div className="m-avatar-placeholder"><i className="fa-regular fa-user"></i></div>
-                        <span className="m-name">Đăng nhập / Đăng ký</span>
-                    </div>
-                )}
+              {currentUser ? (
+                <div className="mobile-user-card" onClick={() => { setMobileMenuOpen(false); setProfileOpen(true); }}>
+                  {currentUser.avatar ? (
+                    <img src={currentUser.avatar} alt="Avatar" />
+                  ) : (
+                    <div className="m-avatar-placeholder">{currentUser.name.charAt(0).toUpperCase()}</div>
+                  )}
+                  <div className="m-user-info">
+                    <span className="m-greeting">Xin chào,</span>
+                    <span className="m-name">{currentUser.name}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="mobile-user-card login-btn" onClick={() => { setMobileMenuOpen(false); setAuthModalOpen(true); }}>
+                  <div className="m-avatar-placeholder"><i className="fa-regular fa-user"></i></div>
+                  <span className="m-name">Đăng nhập / Đăng ký</span>
+                </div>
+              )}
             </div>
           </nav>
 
+          {/* Logo thương hiệu */}
           <Link to="/" className="logo">
-            <img src={logoFox} alt="Logo" />
+            <img src={logoFox} alt="Fox Coffee Logo" />
           </Link>
 
+          {/* Khu vực Action Tools: Tìm kiếm, Wishlist, Tài khoản & Giỏ hàng */}
           <div className="header-actions">
+            
+            {/* Thanh tìm kiếm & Quick suggestions */}
             <div className={`search-wrap ${searchOpen ? 'active' : ''}`} ref={searchRef}>
               <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
                 <input
@@ -250,8 +266,12 @@ const Header = () => {
               )}
             </div>
 
-            <Link to="/favorites" className="icon-btn" aria-label="Yêu thích"><i className="fa-regular fa-heart"></i></Link>
+            {/* Nút danh sách yêu thích */}
+            <Link to="/favorites" className="icon-btn" aria-label="Yêu thích">
+              <i className="fa-regular fa-heart"></i>
+            </Link>
 
+            {/* Menu người dùng / Nút đăng nhập */}
             {currentUser ? (
               <div className={`user-menu ${userDropdownOpen ? 'open' : ''}`} ref={userMenuRef}>
                 <button className="icon-btn user-btn" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
@@ -302,6 +322,7 @@ const Header = () => {
               </button>
             )}
 
+            {/* Giỏ hàng & Mini-Cart dropdown */}
             <div className="cart-wrap">
               <Link to="/cart" className="icon-btn cart-btn" aria-label="Giỏ hàng">
                 <i className="fa-solid fa-cart-shopping"></i>
@@ -344,12 +365,14 @@ const Header = () => {
 
           </div>
 
+          {/* Nút mở Menu trên Mobile */}
           <button className="menu-toggle" aria-label="Menu" onClick={() => setMobileMenuOpen(true)}>
             <i className="fa-solid fa-bars"></i>
           </button>
         </div>
       </header>
 
+      {/* Các Modal tiện ích hệ thống */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
       <UserProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />

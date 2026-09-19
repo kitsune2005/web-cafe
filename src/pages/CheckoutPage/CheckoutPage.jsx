@@ -46,7 +46,7 @@ const CheckoutPage = () => {
         window.scrollTo(0, 0);
 
         if (!currentUser) {
-            toast.error("Boss ơi, phải đăng nhập mới được chốt đơn nhé!", { 
+            toast.error("Bạn ơi, phải đăng nhập mới được chốt đơn nhé!", { 
                 id: 'chot-don-error', 
                 duration: 4000 
             });
@@ -91,7 +91,7 @@ const CheckoutPage = () => {
                 setIsProcessing(false);
                 isOrderSuccess.current = true; 
 
-                toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Boss.", { 
+                toast.success("🎉 Đặt hàng thành công! Đơn hàng đang được giao đến Bạn.", { 
                     id: 'order-success', 
                     duration: 4000 
                 });

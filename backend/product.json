@@ -5,7 +5,7 @@
     "oldPrice": 150000,
     "price": 150000,
     "discount": 0,
-    "stock": 0,
+    "stock": 19,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788017907155.jpg",
     "isFeatured": true,
@@ -41,7 +41,7 @@
         }
       ]
     },
-    "sold": 40,
+    "sold": 41,
     "img": "http://localhost:5000/uploads/products/sp_front_1788017907153.jpg"
   },
   {
@@ -50,14 +50,14 @@
     "oldPrice": 225000,
     "price": 191250,
     "discount": 15,
-    "stock": 38,
+    "stock": 13,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788014386676.jpg",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788014386677.jpg",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
     "id": 3,
-    "sold": 1,
+    "sold": 26,
     "img": "http://localhost:5000/uploads/products/sp_front_1788014386676.jpg"
   },
   {
@@ -663,12 +663,29 @@
     "oldPrice": 202000,
     "price": 202000,
     "discount": 0,
-    "stock": 44,
+    "stock": 36,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788034011915.webp",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788034011917.webp",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 46
+    "id": 46,
+    "sold": 8,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788034011915.webp"
+  },
+  {
+    "name": "Test cafe",
+    "category": "Cà phê đóng gói",
+    "price": 400000,
+    "oldPrice": 500000,
+    "stock": 25,
+    "discount": 20,
+    "img": "http://localhost:5000/uploads/products/sp_front_1789054357265_413.png",
+    "imageFront": "http://localhost:5000/uploads/products/sp_front_1789054357265_413.png",
+    "imageBack": "http://localhost:5000/uploads/products/sp_back_1789054357266_986.jpg",
+    "isFeatured": true,
+    "id": "47",
+    "rating": 5,
+    "sold": 7
   }
 ]

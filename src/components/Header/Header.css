@@ -1,19 +1,20 @@
-/* =========================================
-   MỤC LỤC
-   1. SITE HEADER & STICKY
-   2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
-   3. LOGO
-   4. HEADER ACTIONS & ICONS
-   5. SEARCH BAR & DROPDOWN
-   6. USER MENU & DROPDOWN
-   7. MINI CART DROPDOWN
-   8. RESPONSIVE & MOBILE
-   9. LIGHT MODE (TRANG SẢN PHẨM)
-   ========================================= */
+/* ==========================================================================
+   SITE HEADER COMPONENT STYLES
+   ==========================================================================
+   1. Header Base & Sticky States
+   2. Desktop Navigation & Active Indicator
+   3. Brand Logo
+   4. Action Controls & Badges
+   5. Search Bar & Suggestions Dropdown
+   6. User Profile Dropdown
+   7. Mini-Cart Dropdown & Shake Animation
+   8. Light Mode Theme Overrides
+   9. Mobile Navigation Drawer & Breakpoints
+   ========================================================================== */
 
-/* =========================================
-   1. SITE HEADER & STICKY
-   ========================================= */
+/* --------------------------------------------------------------------------
+   1. Header Base & Sticky States
+   -------------------------------------------------------------------------- */
    .site-header {
     position: absolute;
     top: 0;
@@ -40,9 +41,9 @@
     padding: 10px 24px;
 }
 
-/* =========================================
-   2. MAIN NAVIGATION, DROPDOWN & MAGIC LINE
-   ========================================= */
+/* --------------------------------------------------------------------------
+   2. Desktop Navigation & Active Indicator
+   -------------------------------------------------------------------------- */
 .main-nav {
     flex: 1;
 }
@@ -70,23 +71,25 @@
     transition: color 0.25s ease;
 }
 
-.main-nav ul li:hover>a,
-.main-nav ul li.active>a {
+.main-nav ul li:hover > a,
+.main-nav ul li.active > a {
     color: #c99a6b;
 }
 
+/* Thanh trượt chỉ báo mục menu đang được kích hoạt */
 .nav-indicator {
     position: absolute;
     bottom: -2px;
     height: 3px;
     background: #c99a6b;
     border-radius: 4px;
-   transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+    transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
                 width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
                 opacity 0.3s ease;
     pointer-events: none;
 }
 
+/* Dropdown menu cấp 2 trên Desktop */
 .main-nav .nav-dropdown {
     position: absolute;
     top: 130%;
@@ -150,9 +153,9 @@
     padding-left: 22px;
 }
 
-/* =========================================
-   3. LOGO
-   ========================================= */
+/* --------------------------------------------------------------------------
+   3. Brand Logo
+   -------------------------------------------------------------------------- */
 .logo img {
     width: 200px;
     height: 80px;
@@ -161,9 +164,9 @@
     transition: filter 0.3s ease;
 }
 
-/* =========================================
-   4. HEADER ACTIONS & ICONS
-   ========================================= */
+/* --------------------------------------------------------------------------
+   4. Action Controls & Badges
+   -------------------------------------------------------------------------- */
 .header-actions {
     flex: 1;
     display: flex;
@@ -204,9 +207,9 @@
     justify-content: center;
 }
 
-/* =========================================
-   5. SEARCH BAR & DROPDOWN
-   ========================================= */
+/* --------------------------------------------------------------------------
+   5. Search Bar & Suggestions Dropdown
+   -------------------------------------------------------------------------- */
 .search-wrap {
     position: relative;
 }
@@ -266,8 +269,8 @@
     visibility: hidden;
     transform: translateY(8px);
     transition: opacity var(--transition, 0.25s ease),
-        visibility var(--transition, 0.25s ease),
-        transform var(--transition, 0.25s ease);
+                visibility var(--transition, 0.25s ease),
+                transform var(--transition, 0.25s ease);
     z-index: 9999;
 }
 
@@ -380,9 +383,9 @@
     font-size: 14px;
 }
 
-/* =========================================
-   6. USER MENU & DROPDOWN
-   ========================================= */
+/* --------------------------------------------------------------------------
+   6. User Profile Dropdown
+   -------------------------------------------------------------------------- */
 .user-menu {
     position: relative;
     display: flex;
@@ -517,9 +520,9 @@
     background: #fdecea;
 }
 
-/* =========================================
-   7. MINI CART DROPDOWN
-   ========================================= */
+/* --------------------------------------------------------------------------
+   7. Mini-Cart Dropdown & Shake Animation
+   -------------------------------------------------------------------------- */
 .cart-wrap {
     position: relative;
     display: inline-flex;
@@ -720,6 +723,7 @@
     border-color: #55331a !important;
 }
 
+/* Hiệu ứng rung icon giỏ hàng khi thêm sản phẩm */
 .shake-cart-anim {
     animation: shakeCart 0.4s ease-in-out;
     color: #b23a2c !important;
@@ -733,14 +737,13 @@
     100% { transform: scale(1) rotate(0deg); }
 }
 
-/* =========================================
-   8. ẨN CÁC THÀNH PHẦN MOBILE TRÊN DESKTOP
-   ========================================= */
+/* Ẩn các nút điều khiển mobile trên viewport máy tính */
 .close-mobile-menu, 
 .mobile-user-bottom, 
 .mobile-menu-overlay {
     display: none;
 }
+
 .menu-toggle {
     display: none;
     background: none;
@@ -751,9 +754,9 @@
     transition: 0.2s;
 }
 
-/* =========================================
-   9. LIGHT MODE (TRANG SẢN PHẨM)
-   ========================================= */
+/* --------------------------------------------------------------------------
+   8. Light Mode Theme Overrides (Trang nền sáng)
+   -------------------------------------------------------------------------- */
 .site-header.light-mode {
     color: #2b1a10 !important;
 }
@@ -768,7 +771,7 @@
 }
 
 .site-header.light-mode .main-nav a:hover,
-.site-header.light-mode .main-nav li.active>a {
+.site-header.light-mode .main-nav li.active > a {
     color: #c99a6b !important;
 }
 
@@ -799,22 +802,23 @@
     color: rgba(43, 26, 16, 0.55) !important;
 }
 
+/* --------------------------------------------------------------------------
+   9. Mobile Navigation Drawer & Breakpoints
+   -------------------------------------------------------------------------- */
 
-/* =========================================
-   10. RESPONSIVE & MOBILE (Giao diện chuẩn App)
-   🔥 BỌC THÉP VŨ KHÍ HẠT NHÂN FIX LỖI TỐI THUI
-   ========================================= */
-
+/* Tablet & Mobile Layouts (<= 992px) */
 @media (max-width: 992px) {
     .menu-toggle {
         display: block;
     }
 
-    /* Màn hình mờ đen che phía sau khi mở menu */
     .mobile-menu-overlay {
         display: block;
         position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: rgba(0, 0, 0, 0.6);
         z-index: 998;
         backdrop-filter: blur(3px);
@@ -830,12 +834,12 @@
         visibility: visible;
     }
 
-    /* PANEL MENU TRƯỢT TỪ BÊN PHẢI SANG - Sửa lại 50vw cho Tablet */
+    /* Drawer menu trượt từ cạnh phải */
     .main-nav {
         position: fixed;
         top: 0;
         right: -100%; 
-        width: 50vw; /* Bề ngang 1 Nửa màn hình trên Tablet */
+        width: 50vw;
         height: 100vh;
         background: #111; 
         z-index: 999;
@@ -849,7 +853,6 @@
         right: 0; 
     }
 
-    /* Nút X tắt menu */
     .close-mobile-menu {
         display: block;
         position: absolute;
@@ -863,9 +866,12 @@
         z-index: 10;
         transition: 0.2s;
     }
-    .close-mobile-menu:hover { color: #c99a6b; transform: rotate(90deg); }
 
-    /* Container của các nút menu chính */
+    .close-mobile-menu:hover { 
+        color: #c99a6b; 
+        transform: rotate(90deg); 
+    }
+
     .main-nav ul {
         flex-direction: column;
         gap: 0;
@@ -877,19 +883,14 @@
 
     .main-nav ul li {
         padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* Dọn rác: Giấu luôn cái mũi tên (tam giác trắng) thừa thãi */
     .main-nav .nav-dropdown::before {
         display: none !important;
     }
 
-    /* ====================================================
-       🔥 VŨ KHÍ HẠT NHÂN: Ép màu chữ Menu trên Mobile (Bất chấp Light Mode)
-       ==================================================== */
-    
-    /* Ép chữ các mục chính (Giới thiệu, Sản phẩm, Tin tức...) thành Trắng */
+    /* Ghi đè màu text menu trên nền tối mobile (ưu tiên cao hơn light-mode) */
     #root .site-header .main-nav a,
     #root .site-header.light-mode .main-nav a {
         display: block !important;
@@ -904,7 +905,7 @@
         padding-left: 10px !important;
     }
 
-    /* Sub-menu trên Mobile xổ thẳng xuống */
+    /* Dropdown danh mục con trên Mobile */
     .main-nav .nav-dropdown {
         position: static !important;
         box-shadow: none !important;
@@ -916,7 +917,7 @@
         border: none !important;
         border-left: 2px solid #c99a6b !important;
         min-width: auto !important;
-        display: none; /* Ẩn đi chờ toggle */
+        display: none;
     }
 
     .main-nav .has-dropdown.active .nav-dropdown,
@@ -924,7 +925,6 @@
         display: flex !important;
     }
 
-    /* Ép chữ các mục con (Cà phê phin, Đóng gói...) thành Xám sáng */
     #root .site-header .main-nav ul li .nav-dropdown a,
     #root .site-header.light-mode .main-nav ul li .nav-dropdown a {
         padding: 10px 0 !important;
@@ -938,15 +938,12 @@
         color: #c99a6b !important;
     }
 
-
-    /* ====================================================
-       THÔNG TIN USER Ở ĐÁY MENU
-       ==================================================== */
+    /* Vùng thông tin tài khoản ở đáy mobile menu */
     .mobile-user-bottom {
         display: block;
         padding: 20px 30px 30px;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        background: rgba(0,0,0,0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.2);
     }
 
     .mobile-user-card {
@@ -957,14 +954,16 @@
     }
 
     .mobile-user-card img {
-        width: 45px; height: 45px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #c99a6b;
     }
 
     .m-avatar-placeholder {
-        width: 45px; height: 45px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         background: #c99a6b;
         color: #fff;
@@ -997,12 +996,10 @@
     }
 }
 
-/* =========================================
-   ÉP FULL MÀN HÌNH CHO ĐIỆN THOẠI 
-   ========================================= */
+/* Smartphone Layouts (<= 768px) */
 @media (max-width: 768px) {
     .main-nav {
-        width: 100vw; /* Chiếm 100% màn hình điện thoại */
+        width: 100vw;
     }
 
     .search-form { display: none; }

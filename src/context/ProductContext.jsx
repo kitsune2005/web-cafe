@@ -29,7 +29,7 @@ export const ProductProvider = ({ children }) => {
     fetchProducts();
   }, []);
 
-  // 2. THÊM SẢN PHẨM MỚI (Bọc thép)
+  // 2. THÊM SẢN PHẨM MỚI 
   const addProduct = async (newProduct) => {
     const safeProducts = Array.isArray(products) ? products : [];
     const newId = safeProducts.length > 0 ? Math.max(...safeProducts.map(p => Number(p.id) || 0)) + 1 : 1;
@@ -45,7 +45,7 @@ export const ProductProvider = ({ children }) => {
     await fetchProducts(); 
   };
 
-  // 3. XÓA SẢN PHẨM (Bọc thép)
+  // 3. XÓA SẢN PHẨM 
   const deleteProduct = async (id) => {
     await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
     await fetchProducts();
@@ -57,7 +57,7 @@ export const ProductProvider = ({ children }) => {
     const safeProducts = Array.isArray(products) ? products : [];
     const oldProduct = safeProducts.find(p => String(p.id) === String(updatedFields.id)) || {};
 
-    //   Bí kíp: Lấy đồ mới của Admin đè lên đồ cũ (Số sold cũ sẽ được giữ nguyên an toàn)
+    // Lấy đồ mới của Admin đè lên đồ cũ (Số sold cũ sẽ được giữ nguyên an toàn)
     const finalPayload = { ...oldProduct, ...updatedFields };
 
     await fetch(`${API_URL}/${updatedFields.id}`, {
@@ -91,7 +91,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // 6. TRỪ KHO BỌC THÉP CHO CHECKOUT
+  // 6. TRỪ KHO CHECKOUT
   const deductStock = async (cartItems) => {
     try {
       const safeProducts = Array.isArray(products) ? products : [];
@@ -128,7 +128,7 @@ export const ProductProvider = ({ children }) => {
 
   return (
     <ProductContext.Provider value={{ 
-      products: Array.isArray(products) ? products : [], // Rào cuối cùng chống sập
+      products: Array.isArray(products) ? products : [], 
       loading, 
       addProduct, 
       deleteProduct, 

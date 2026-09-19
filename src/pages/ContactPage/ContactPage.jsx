@@ -26,7 +26,7 @@ const ContactPage = () => {
       !formData.email ||
       !formData.message
     ) {
-      toast.error("Boss vui lòng điền đầy đủ thông tin nhé!", {
+      toast.error("Bạn vui lòng điền đầy đủ thông tin nhé!", {
         position: "bottom-right",
         style: { fontWeight: 600 }
       });
@@ -41,7 +41,7 @@ const ContactPage = () => {
       //   THAY THẾ ALERT BẰNG POPUP SWEETALERT2 KHI THÀNH CÔNG
       Swal.fire({
         title: 'Gửi thành công! 🎉',
-        text: 'Cảm ơn Boss đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!',
+        text: 'Cảm ơn Bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!',
         icon: 'success',
         confirmButtonText: 'Tuyệt vời!',
         confirmButtonColor: '#6f4323', // Màu nâu cafe tone-sur-tone

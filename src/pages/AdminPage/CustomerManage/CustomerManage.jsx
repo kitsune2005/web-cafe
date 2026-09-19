@@ -36,13 +36,13 @@ const CustomerManage = () => {
 
     const handleDeleteUser = (id, name, role) => {
         if (role === 'admin') {
-            toast.error("Boss ơi! Đừng tự xóa chính mình chứ!");
+            toast.error("Bạn ơi! Đừng tự xóa chính mình chứ!");
             return;
         }
 
         Swal.fire({
             title: 'Tiễn khách?',
-            text: `Boss có chắc muốn xóa tài khoản của "${name}" vĩnh viễn không?`,
+            text: `Bạn có chắc muốn xóa tài khoản của "${name}" vĩnh viễn không?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#fa5252',
@@ -132,7 +132,7 @@ const CustomerManage = () => {
         e.preventDefault();
 
         if (!validateForm()) {
-            toast.error("Boss ơi, điền sai hoặc thiếu form rồi! Sửa lại mấy chỗ màu đỏ nhé.");
+            toast.error("Bạn ơi, điền sai hoặc thiếu form rồi! Sửa lại mấy chỗ màu đỏ nhé.");
             return;
         }
 
@@ -241,7 +241,7 @@ const CustomerManage = () => {
                                         <td>@{user.username}</td>
                                         <td>
                                             {user.role === 'admin' ? (
-                                                <span className="status-badge danger">Quyền Boss (Admin)</span>
+                                                <span className="status-badge danger">Quyền Bạn (Admin)</span>
                                             ) : (
                                                 <span className="status-badge info">Khách hàng</span>
                                             )}

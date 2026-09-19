@@ -26,7 +26,7 @@ export const CartProvider = ({ children }) => {
                 
                 if (newTotalQuantity > product.stock) {
                     // Cảnh báo nếu mua lố
-                    toast.error(`Kho chỉ còn đúng ${product.stock} sản phẩm thôi Boss ơi!`, { 
+                    toast.error(`Kho chỉ còn đúng ${product.stock} sản phẩm thôi Bạn ơi!`, { 
                         id: 'over-stock',
                         position: "bottom-right",
                         style: { fontWeight: 600 }
@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
                         item.id === product.id ? { ...item, quantity: product.stock } : item
                     );
                 } else {
-                    // Nếu không lố, cộng dồn bình thường và giữ nguyên style nâu của Boss
+                    // Nếu không lố, cộng dồn bình thường và giữ nguyên style nâu của Bạn
                     toast.success(`Đã thêm ${quantity} x ${product.name} vào giỏ!`, {
                         id: 'add-success',
                         position: "bottom-right",

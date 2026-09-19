@@ -79,7 +79,7 @@ const ProductManage = () => {
         e.preventDefault();
         
         if (!formData.imageFront) {
-            toast.error("Boss quên tải ảnh mặt trước kìa!");
+            toast.error("Bạn quên tải ảnh mặt trước kìa!");
             return;
         }
 
@@ -104,12 +104,13 @@ const ProductManage = () => {
                 
                 if (stockFilter === 'out' && payload.stock > 0) {
                     setTimeout(() => {
-                        toast("Sản phẩm đã được nạp kho nên dời về tab 'Tất cả' nhé Boss!", { icon: '📦' });
+                        toast("Sản phẩm đã được nạp kho nên dời về tab 'Tất cả' nhé Bạn!", { icon: '📦' });
                     }, 500);
                 }
             } else {
                 if (addProduct) await addProduct({ ...payload, id: String(Date.now()) }); 
                 toast.success("Thêm sản phẩm mới thành công! ", { id: 'add-prod-success' });
+                setCurrentPage(1); // Ép quay về trang 1 để thấy hàng mới thêm ngay lập tức
             }
             setIsModalOpen(false);
         } catch (error) {
@@ -121,7 +122,7 @@ const ProductManage = () => {
     const handleDelete = (id, name) => {
         Swal.fire({
             title: 'Xóa sản phẩm?',
-            text: `Boss có chắc muốn xóa "${name}" khỏi Menu không?`,
+            text: `Bạn có chắc muốn xóa "${name}" khỏi Menu không?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#fa5252',
@@ -143,6 +144,7 @@ const ProductManage = () => {
         }));
     };
 
+    // 👉 ĐÃ BỌC THÉP HÀM SẮP XẾP (.sort): SẢN PHẨM MỚI LÊN ĐẦU
     const filteredProducts = safeProducts.filter(p => {
         const pName = p.name || ''; 
         const searchStr = searchTerm || '';
@@ -155,6 +157,11 @@ const ProductManage = () => {
             matchStock = !p.stock || Number(p.stock) === 0;
         }
         return matchSearch && matchStock;
+    }).sort((a, b) => {
+        // Ưu tiên xếp theo ngày tạo (nếu có), không thì lấy theo ID (Số to nằm trên)
+        const timeA = new Date(a.createdAt || a.id).getTime();
+        const timeB = new Date(b.createdAt || b.id).getTime();
+        return timeB - timeA;
     });
 
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -284,7 +291,7 @@ const ProductManage = () => {
 
             </div>
 
-            {/* BẢNG MODAL (Đã Cách Ly 100% bằng class pm- ) */}
+            {/* BẢNG MODAL */}
             {isModalOpen && (
                 <div className="product-modal-overlay">
                     <div className="product-modal-box">

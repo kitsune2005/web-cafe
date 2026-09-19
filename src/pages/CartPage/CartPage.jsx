@@ -27,7 +27,7 @@ const CartPage = () => {
         if (newQuantity < 1) return;
         
         if (newQuantity > (item.stock || 99)) {
-            toast.error(`Kho chỉ còn đúng ${item.stock} sản phẩm thôi Boss ơi!`, { 
+            toast.error(`Kho chỉ còn đúng ${item.stock} sản phẩm thôi Bạn ơi!`, { 
                 id: 'over-stock-cart',
                 position: "bottom-right",
                 style: { fontWeight: 600 }
@@ -94,8 +94,8 @@ const CartPage = () => {
     // ==========================================
     const handleRemoveItem = (id, name) => {
         Swal.fire({
-            title: 'Khoan đã Boss ơi!',
-            text: `Boss có chắc chắn muốn bỏ "${name}" ra khỏi giỏ không?`,
+            title: 'Khoan đã Bạn ơi!',
+            text: `Bạn có chắc chắn muốn bỏ "${name}" ra khỏi giỏ không?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#fa5252', 
@@ -118,7 +118,7 @@ const CartPage = () => {
     const handleClearCart = () => {
         Swal.fire({
             title: 'Dọn sạch giỏ hàng?',
-            text: "Boss có chắc chắn muốn xóa hết tất cả các món trong giỏ không?",
+            text: "Bạn có chắc chắn muốn xóa hết tất cả các món trong giỏ không?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#fa5252', 

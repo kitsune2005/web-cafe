@@ -1,12 +1,20 @@
-.search-page {
+/* ==========================================================================
+   SEARCH PAGE STYLES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Page Layout & Hero Banner
+   -------------------------------------------------------------------------- */
+   .search-page {
     background: #fcfbf9;
     min-height: 100vh;
     padding-bottom: 60px;
 }
 
-/*   ĐÃ SỬA: Đẩy padding-top lên 160px để Header không chọc thủng chữ Banner */
+/* Khoảng đệm trên bù trừ cho fixed/sticky Header */
 .search-banner {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../../assets/img/banner_coffee.jpg') center/cover no-repeat;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url('../../assets/img/banner_coffee.jpg') center/cover no-repeat;
     padding: 160px 0 70px;
     color: #fff;
     text-align: center;
@@ -30,7 +38,7 @@
 .bread-links a {
     color: #fff;
     text-decoration: none;
-    transition: 0.2s;
+    transition: color 0.2s ease;
 }
 
 .bread-links a:hover {
@@ -41,15 +49,15 @@
     margin: 0 10px;
 }
 
-/*   ĐÃ SỬA: Bỏ cột trái, ép Container vào giữa màn hình */
+/* --------------------------------------------------------------------------
+   2. Main Container & Results Content
+   -------------------------------------------------------------------------- */
 .search-layout-container {
     display: block;
     max-width: 1050px;
-    /* Chiều rộng vừa đủ để 3 thẻ không bị bẹp */
     margin: 0 auto;
 }
 
-/* Khối chính hiển thị kết quả */
 .search-results-main {
     background: #fff;
     padding: 35px;
@@ -66,14 +74,15 @@
     border-bottom: 1px solid #eee;
 }
 
-/*   ĐÃ SỬA: Lưới sản phẩm đúng 3 cột */
+/* --------------------------------------------------------------------------
+   3. Product Grid & Cards
+   -------------------------------------------------------------------------- */
 .search-products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 }
 
-/* Thẻ Sản phẩm (Được nới rộng và cao hơn) */
 .search-product-card {
     border: 1px solid #eae5df;
     border-radius: 12px;
@@ -107,7 +116,6 @@
 
 .card-img-wrap {
     height: 220px;
-    /* Cơi nới vùng ảnh cho to rỏ */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -167,7 +175,9 @@
     color: #666;
 }
 
-/*   CSS CHO BỘ PHÂN TRANG NẰM Ở ĐÁY */
+/* --------------------------------------------------------------------------
+   4. Pagination Controls
+   -------------------------------------------------------------------------- */
 .search-pagination {
     display: flex;
     justify-content: center;
@@ -188,7 +198,7 @@
     cursor: pointer;
     font-weight: 700;
     font-size: 15px;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -212,7 +222,9 @@
     background: #f1f1f1;
 }
 
-/* Reponsive tự động co màn hình */
+/* --------------------------------------------------------------------------
+   5. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
     .search-products-grid {
         grid-template-columns: repeat(2, 1fr);
