@@ -621,13 +621,15 @@
     "oldPrice": 129000,
     "price": 129000,
     "discount": 0,
-    "stock": 121,
+    "stock": 90,
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1788033666782.webp",
     "imageBack": "http://localhost:5000/uploads/products/sp_back_1788033666783.webp",
     "isFeatured": true,
     "rating": 5,
     "status": "Còn hàng",
-    "id": 43
+    "id": 43,
+    "sold": 31,
+    "img": "http://localhost:5000/uploads/products/sp_front_1788033666782.webp"
   },
   {
     "name": "Cà Phê Hữu Cơ Phin Giấy Arabica",
@@ -678,7 +680,7 @@
     "category": "Cà phê đóng gói",
     "price": 400000,
     "oldPrice": 500000,
-    "stock": 25,
+    "stock": 0,
     "discount": 20,
     "img": "http://localhost:5000/uploads/products/sp_front_1789054357265_413.png",
     "imageFront": "http://localhost:5000/uploads/products/sp_front_1789054357265_413.png",
@@ -686,6 +688,6 @@
     "isFeatured": true,
     "id": "47",
     "rating": 5,
-    "sold": 7
+    "sold": 32
   }
 ]
