@@ -19,7 +19,7 @@ const Dashboard = () => {
         // 2. RÚT DỮ LIỆU SỐ LƯỢNG TÀI KHOẢN KHÁCH HÀNG TỪ SERVER
         const fetchCustomerCount = async () => {
             try {
-                const response = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/users');
+                const response = await fetch('http://localhost:5000/api/users');
                 if (response.ok) {
                     const data = await response.json();
                     // Lọc ra những người có role là 'customer' (tránh đếm nhầm Admin)

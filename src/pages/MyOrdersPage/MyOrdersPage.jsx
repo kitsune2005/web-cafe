@@ -78,7 +78,7 @@ const MyOrdersPage = () => {
 
         // 3.   PHÓNG API LÊN DATABASE CHO RADAR ADMIN BẮT SÓNG
         try {
-            await fetch(`[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/orders/${orderId}`, {
+            await fetch(`http://localhost:5000/orders/${orderId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })

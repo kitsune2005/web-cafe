@@ -61,9 +61,9 @@ const AdminLayout = () => {
     const scanSystem = async () => {
       let currentIssues = [];
 
-      const apiOrders = await fetchSafe('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/orders');
-      const allUsers = await fetchSafe('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/users');
-      const allContacts = await fetchSafe('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/contacts');
+      const apiOrders = await fetchSafe('http://localhost:5000/orders');
+      const allUsers = await fetchSafe('http://localhost:5000/users');
+      const allContacts = await fetchSafe('http://localhost:5000/contacts');
 
       const localMyOrders = JSON.parse(localStorage.getItem('my_orders')) || [];
       const localOrders = JSON.parse(localStorage.getItem('orders')) || [];

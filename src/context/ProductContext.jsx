@@ -6,7 +6,7 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = '[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/products'; 
+  const API_URL = 'http://localhost:5000/api/products'; 
 
   // 1. LẤY DỮ LIỆU TỪ BACKEND
   const fetchProducts = async () => {

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 const ContactContext = createContext();
 
-const API_URL = "[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/contacts";
+const API_URL = "http://localhost:5000/api/contacts";
 
 export const ContactProvider = ({ children }) => {
   const [contacts, setContacts] = useState([]);

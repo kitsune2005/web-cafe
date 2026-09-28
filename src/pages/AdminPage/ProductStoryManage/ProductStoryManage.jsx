@@ -9,14 +9,14 @@ const uploadImageSmart = async (file) => {
         const formData = new FormData();
         formData.append('image', file); 
 
-        const res = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/upload', { 
+        const res = await fetch('http://localhost:5000/upload', { 
             method: 'POST',
             body: formData
         });
 
         if (res.ok) {
             const data = await res.json();
-            return data.url || `[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/uploads/products/${data.filename || file.name}`; 
+            return data.url || `http://localhost:5000/uploads/products/${data.filename || file.name}`; 
         }
     } catch (error) {
         console.warn("Lỗi API Localhost hoặc chưa cấu hình, chuyển sang dùng Cloud ImgBB...");

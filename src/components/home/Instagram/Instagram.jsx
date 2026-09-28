@@ -19,7 +19,7 @@ const Instagram = ({ images: propImages }) => {
 
     const fetchInstagram = async () => {
       try {
-        const res = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/instagram');
+        const res = await fetch('http://localhost:5000/api/instagram');
         if (res.ok) {
           const data = await res.json();
           setImages(data.images || data);

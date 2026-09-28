@@ -360,16 +360,7 @@ app.delete('/api/contacts/:id', (req, res) => {
   writeContacts(contacts.filter(item => String(item.id) !== String(req.params.id)));
   res.status(200).json({ success: true, message: 'Đã xóa!' });
 });
-// 1. Chỉ định thư mục chứa giao diện đã build của React
-app.use(express.static(path.join(__dirname, '../dist')));
-
-// 2. Với mọi đường dẫn (trừ API), trả về file index.html của React
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
-});
 
 app.listen(PORT, () => {
   console.log(`✅ Backend đang chạy tại: http://localhost:${PORT}`);
 });
-
-

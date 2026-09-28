@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 const NewsContext = createContext();
 
 
-const API_URL = "[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/news";
+const API_URL = "http://localhost:5000/api/news";
 
 export const NewsProvider = ({ children }) => {
   const [newsList, setNewsList] = useState([]);

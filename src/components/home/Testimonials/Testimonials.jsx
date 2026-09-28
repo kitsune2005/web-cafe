@@ -48,7 +48,7 @@ const Testimonials = ({ testimonials: propTestimonials }) => {
 
     const fetchTestimonials = async () => {
       try {
-        const res = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/testimonials');
+        const res = await fetch('http://localhost:5000/api/testimonials');
         if (res.ok) {
           const data = await res.json();
           setTestimonials(data.testimonials || data);
