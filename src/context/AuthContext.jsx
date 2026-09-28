@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Giữ nguyên đường dẫn API 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = '[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api';
 
 export const AuthContext = createContext();
 

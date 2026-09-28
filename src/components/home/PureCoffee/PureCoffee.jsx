@@ -21,7 +21,7 @@ const PureCoffee = ({ categories: propCategories }) => {
 
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/categories');
+                const response = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/categories');
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data.categories || data);

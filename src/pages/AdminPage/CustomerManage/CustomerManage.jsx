@@ -14,7 +14,7 @@ const CustomerManage = () => {
     const [errors, setErrors] = useState({ name: '', username: '', email: '', password: '' }); 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const API_URL = 'http://localhost:5000/api';
+    const API_URL = '[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api';
 
     const fetchUsers = async () => {
         try {

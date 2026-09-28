@@ -35,7 +35,7 @@ const Journey = ({ steps: propSteps }) => {
 
     const fetchJourney = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/journey');
+        const response = await fetch('[https://web-cafe-ax9u.onrender.com](https://web-cafe-ax9u.onrender.com)/api/journey');
         if (response.ok) {
           const data = await response.json();
           setSteps(data.steps || data);
